@@ -32,6 +32,9 @@ class ValidatorTests(unittest.TestCase):
     def test_valid(self):
         validate_proposal(self.proposal, self.incident)
 
+    def test_investigation_cannot_authorize_disruption(self):
+        self.reject(lambda p: p['evidence_review'][0].update(decision='investigate'))
+
     def test_decoding_constraints_are_independent(self):
         schema = decoding_schema(self.incident)
         props = schema['properties']

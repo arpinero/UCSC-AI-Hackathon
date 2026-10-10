@@ -82,6 +82,10 @@ For block_egress, scope_host_ids must contain only source_host_ids explicitly
 linked by the cited evidence. Limit the block to the affected source hosts.
 For all other action kinds, use an empty scope_host_ids list (target_id is scope).
 Use request_evidence for ambiguous alerts rather than unsupported disruption.
+Verified authorized activity without independent malicious evidence requires
+no_action. Eligibility is permission to consider a control, never evidence that
+it is necessary. Do not isolate, restrict, or revoke just to be cautious or to
+preserve evidence. An investigate decision authorizes evidence requests only.
 Do not delay necessary targeted containment of confirmed active exfiltration.
 Explain security benefit and availability/evidence tradeoffs in each reason.
 TTL is 1-60 minutes and within policy max_ttl_minutes. For rollback emit exactly
@@ -282,6 +286,10 @@ def validate_proposal(proposal, incident):
             raise ValueError('Missing investigation request for evidence ' + review['evidence_id'])
         if review['decision'] == 'no_action' and relevant:
             raise ValueError('No-action review conflicts with selected controls')
+    decisions = {r['evidence_id']: r['decision'] for r in proposal['evidence_review']}
+    for action in proposal['actions']:
+        if action['kind'] != 'request_evidence' and not any(decisions[eid] == 'contain' for eid in action['evidence_ids']):
+            raise ValueError('Disruptive control requires evidence reviewed as contain; investigation alone cannot authorize disruption')
     normalized = copy.deepcopy(proposal)
     for action in normalized['actions']:
         if action['kind'] == 'request_evidence':
