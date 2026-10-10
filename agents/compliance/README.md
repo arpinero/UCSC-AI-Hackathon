@@ -42,7 +42,7 @@ The `compliance` block is trusted simulator state. Models, logs and peers must n
 
 ## Run
 
-On the GX10 (`asus@169.233.72.113`, folder `~/compliance-agent`), the agent uses Ollama's OpenAI-compatible API:
+On the GX10 (address in team chat, not here: the repo is public; folder `~/compliance-agent`), the agent uses Ollama's OpenAI-compatible API:
 
 ```bash
 python3 -m unittest -v test_agent            # offline, 22 tests
