@@ -68,6 +68,8 @@ def main():
     parser.add_argument('--output', default='results/mitre-evaluation.json')
     parser.add_argument('--endpoint', default='http://127.0.0.1:8000/v1')
     parser.add_argument('--model', default='fdtn-ai/Foundation-Sec-8B-Instruct')
+    parser.add_argument('--max-tokens', type=int, default=2200)
+    parser.add_argument('--reasoning-effort')
     args = parser.parse_args()
     root = Path(__file__).parent
     metadata_path = root / 'mitre-provenance.json'
@@ -90,7 +92,7 @@ def main():
     results = []
     for technique, variant, incident, expected in dataset():
         # Expected answers and ATT&CK metadata stay outside the inference context.
-        result = propose(incident, endpoint=args.endpoint, model=args.model)
+        result = propose(incident, endpoint=args.endpoint, model=args.model, max_tokens=args.max_tokens, reasoning_effort=args.reasoning_effort)
         result.update(incident_id=incident['incident_id'], technique=technique, variant=variant,
                       scenario_pass=score(variant, expected, result))
         results.append(result)

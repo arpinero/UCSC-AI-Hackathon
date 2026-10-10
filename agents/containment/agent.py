@@ -306,7 +306,7 @@ def validate_proposal(proposal, incident):
     return normalized
 
 
-def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=None, previous=None):
+def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=None, previous=None, max_tokens=2200, reasoning_effort=None):
     validate_incident(incident)
     context = {'incident': incident, 'peer_messages': peers or [], 'previous_proposal': previous}
     if len(json.dumps(context).encode()) > 48000:
@@ -318,8 +318,10 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
     attempts = []
     start = time.monotonic()
     for attempt in range(2):
-        body = {'model': model, 'messages': messages, 'temperature': 0, 'max_tokens': 2200,
+        body = {'model': model, 'messages': messages, 'temperature': 0, 'max_tokens': max_tokens,
                 'response_format': {'type': 'json_schema', 'json_schema': {'name': 'containment_proposal', 'strict': True, 'schema': decoding_schema(incident)}}}
+        if reasoning_effort is not None:
+            body['reasoning_effort'] = reasoning_effort
         request = urllib.request.Request(endpoint.rstrip('/') + '/chat/completions',
                                          data=json.dumps(body).encode(), headers={'Content-Type': 'application/json'})
         try:
