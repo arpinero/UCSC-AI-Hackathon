@@ -18,6 +18,7 @@ import rules
 
 MODEL = os.environ.get('COMPLIANCE_MODEL', 'gemma4:26b')
 ENDPOINT = os.environ.get('COMPLIANCE_ENDPOINT', 'http://127.0.0.1:11434/v1')
+API = os.environ.get('COMPLIANCE_API', 'openai')  # or 'native' for Ollama /api/chat
 # Allowlist: Containment's kinds, all reversible and evidence-preserving. Any other
 # kind (reimage, restore, wipe, or a name we've never seen) counts as destructive,
 # because peer action kinds are untrusted.
@@ -217,6 +218,29 @@ def escalation(proposal, clocks, incident, peer_proposals=None):
     return {'required': bool(reasons), 'reasons': reasons}
 
 
+def complete(endpoint, model, messages, schema):
+    """One constrained completion. COMPLIANCE_API=native uses Ollama's /api/chat `format`,
+    which some models honor when the OpenAI-compatible response_format path does not."""
+    if API == 'native':
+        url = endpoint.rstrip('/').removesuffix('/v1') + '/api/chat'
+        body = {'model': model, 'messages': messages, 'stream': False, 'think': False, 'format': schema,
+                'options': {'temperature': 0, 'num_predict': 2200, 'num_ctx': 16384}}
+    else:
+        url = endpoint.rstrip('/') + '/chat/completions'
+        body = {'model': model, 'messages': messages, 'temperature': 0, 'max_tokens': 2200,
+                'reasoning_effort': 'none',  # thinking eats the budget under strict decoding (gemma4 on Ollama)
+                'response_format': {'type': 'json_schema', 'json_schema': {'name': 'compliance_proposal', 'strict': True, 'schema': schema}}}
+    request = urllib.request.Request(url, data=json.dumps(body).encode(), headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(request, timeout=240) as response:
+        result = json.load(response)
+    if API == 'native':
+        return {'raw': result['message']['content'], 'finish_reason': result.get('done_reason'),
+                'usage': {'prompt_tokens': result.get('prompt_eval_count'), 'completion_tokens': result.get('eval_count'),
+                          'decode_tok_s': round(result.get('eval_count', 0) / max(result.get('eval_duration', 1), 1) * 1e9, 1)}}
+    return {'raw': result['choices'][0]['message']['content'], 'usage': result.get('usage'),
+            'finish_reason': result['choices'][0].get('finish_reason')}
+
+
 def propose(incident, endpoint=ENDPOINT, model=MODEL, peers=None, previous=None, peer_proposals=None):
     validate_incident(incident)
     clocks = rules.deadlines(incident['compliance'])
@@ -228,17 +252,9 @@ def propose(incident, endpoint=ENDPOINT, model=MODEL, peers=None, previous=None,
     attempts = []
     start = time.monotonic()
     for attempt in range(2):
-        body = {'model': model, 'messages': messages, 'temperature': 0, 'max_tokens': 2200,
-                'reasoning_effort': 'none',  # thinking eats the budget under strict decoding (gemma4 on Ollama)
-                'response_format': {'type': 'json_schema', 'json_schema': {'name': 'compliance_proposal', 'strict': True,
-                                                                           'schema': decoding_schema(incident, peer_proposals)}}}
-        request = urllib.request.Request(endpoint.rstrip('/') + '/chat/completions',
-                                         data=json.dumps(body).encode(), headers={'Content-Type': 'application/json'})
         try:
-            with urllib.request.urlopen(request, timeout=240) as response:
-                result = json.load(response)
-            raw = result['choices'][0]['message']['content']
-            record = {'raw': raw, 'usage': result.get('usage'), 'finish_reason': result['choices'][0].get('finish_reason')}
+            record = complete(endpoint, model, messages, decoding_schema(incident, peer_proposals))
+            raw = record['raw']
             attempts.append(record)
             if record['finish_reason'] != 'stop':
                 raise ValueError('Incomplete model response')
