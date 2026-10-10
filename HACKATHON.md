@@ -85,6 +85,6 @@ Other terms:
 | C8 | Real-world suite: at least 90% scenario pass, 100% valid JSON | `realworld/evaluate.py` | gemma4:26b 96% |
 | C9 | Under 30s per decision on the GX10 | eval latency | gemma4:26b about 23s mean |
 | C10 | Model chosen by a measured sweep across families and optimized variants, including the pre-loaded Nemotron | `realworld/sweep.py` | running |
-| C11 | Accepts Aidan's ATT&CK/D3FEND scenarios plus the `compliance` block, with no code change | integration run | waiting on data |
-| C12 | Plugs into the council round protocol | team protocol | not started |
+| C11 | Accepts Containment's ATT&CK fixtures plus the `compliance` block, with no code change | `realworld/evaluate.py --suite attack` | running (gemma4:26b) |
+| C12 | Plugs into the council round protocol (Forensics' CouncilMessage v1.0.0: FINDING, VOTE, ESCALATION) | team protocol | mapping written in team doc; adapter not built |
 | C13 | Runs fully on the GX10 with no cloud calls, for the Local AI track | demo | yes (Ollama on the GX10) |
