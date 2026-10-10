@@ -1,0 +1,12 @@
+{
+  "observed_at_local": "2026-10-10 around 15:01 PDT",
+  "ssh_address": "169.233.72.113",
+  "uptime_at_observation": "3 minutes",
+  "verified_services": {"containment-model": "active", "containment-api": "active"},
+  "saved_result_counts_read_over_ssh": {
+    "mitre-qwen-policy.json": {"passed": 11, "completed": 11, "planned": 21},
+    "mitre-foundation-policy.json": {"passed": 8, "completed": 8, "planned": 21},
+    "challenge-qwen-policy.json": {"passed": 6, "completed": 6, "planned": 6}
+  },
+  "note": "Observed directly from saved JSON on device. Local archived MITRE snapshots were fetched earlier and contain fewer cases; these newer raw files have not yet been retrieved. SSH reset again before evaluator-service installation could be verified."
+}

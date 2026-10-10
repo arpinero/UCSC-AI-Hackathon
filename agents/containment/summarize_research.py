@@ -58,7 +58,7 @@ def main():
     lines += ['', 'Every rejection/unavailable response counts as a failed task. Partial runs are not full benchmark scores. Raw files retain all attempts and errors.', '',
               'Foundation uses Q8 weights and llama.cpp; Qwen uses Q4_K_M and Ollama with a larger output budget and explicit incident-bound schema text. These compare configured systems under a shared validator, with runtime/prompt/quantization confounds. No statistical superiority claim is warranted.']
     (ROOT / 'RESULTS.md').write_text('\n'.join(lines) + '\n')
-    (ROOT / 'verification.json').write_text(json.dumps({'unit_tests_passed': 32, 'runs': summaries}, indent=2))
+    (ROOT / 'verification.json').write_text(json.dumps({'unit_tests_passed': 34, 'unit_test_scope': 'Local source tests, including checkpoint resume tests', 'runs': summaries}, indent=2))
 
 if __name__ == '__main__':
     main()

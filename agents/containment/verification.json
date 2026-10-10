@@ -1,5 +1,6 @@
 {
-  "unit_tests_passed": 32,
+  "unit_tests_passed": 34,
+  "unit_test_scope": "Local source tests, including checkpoint resume tests",
   "runs": [
     {
       "run": "Foundation initial serving integration",
@@ -154,12 +155,12 @@
       "median_latency_seconds": 29.67,
       "correction_cases": 1,
       "groups": {
-        "confirmed": {
-          "passed": 6,
-          "total": 6
-        },
         "authorized": {
           "passed": 3,
+          "total": 6
+        },
+        "confirmed": {
+          "passed": 6,
           "total": 6
         }
       },
@@ -255,16 +256,16 @@
       "median_latency_seconds": 37.89,
       "correction_cases": 1,
       "groups": {
+        "authorized": {
+          "passed": 9,
+          "total": 10
+        },
         "chain": {
           "passed": 1,
           "total": 1
         },
         "confirmed": {
           "passed": 10,
-          "total": 10
-        },
-        "authorized": {
-          "passed": 9,
           "total": 10
         }
       },
@@ -350,13 +351,13 @@
       "median_latency_seconds": 31.8,
       "correction_cases": 3,
       "groups": {
-        "confirmed": {
-          "passed": 0,
-          "total": 2
-        },
         "authorized": {
           "passed": 0,
           "total": 1
+        },
+        "confirmed": {
+          "passed": 0,
+          "total": 2
         }
       },
       "failures": [
@@ -399,13 +400,13 @@
       "median_latency_seconds": 46.44,
       "correction_cases": 0,
       "groups": {
-        "confirmed": {
-          "passed": 4,
-          "total": 4
-        },
         "authorized": {
           "passed": 3,
           "total": 3
+        },
+        "confirmed": {
+          "passed": 4,
+          "total": 4
         }
       },
       "failures": []
@@ -452,11 +453,11 @@
       "median_latency_seconds": 53.59,
       "correction_cases": 0,
       "groups": {
-        "confirmed": {
+        "authorized": {
           "passed": 2,
           "total": 2
         },
-        "authorized": {
+        "confirmed": {
           "passed": 2,
           "total": 2
         }
@@ -505,11 +506,11 @@
       "median_latency_seconds": 49.33,
       "correction_cases": 0,
       "groups": {
-        "confirmed": {
+        "authorized": {
           "passed": 4,
           "total": 4
         },
-        "authorized": {
+        "confirmed": {
           "passed": 4,
           "total": 4
         }
@@ -549,13 +550,13 @@
       "median_latency_seconds": 45.06,
       "correction_cases": 0,
       "groups": {
-        "confirmed": {
-          "passed": 4,
-          "total": 4
-        },
         "authorized": {
           "passed": 3,
           "total": 3
+        },
+        "confirmed": {
+          "passed": 4,
+          "total": 4
         }
       },
       "failures": []
