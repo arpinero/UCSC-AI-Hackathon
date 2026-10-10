@@ -16,11 +16,12 @@ import urllib.request
 import evaluate  # realworld/evaluate.py (puts the agent on sys.path)
 
 OUT = Path(__file__).parent / 'results' / 'sweep'
+BASE = os.environ.get('OLLAMA_BASE', 'http://127.0.0.1:11434')  # second server: :11435
 SKIP = {'nemotron-3-super:latest', 'nomic-embed-text:latest'}  # 86 GB; embeddings
 
 
 def local_models():
-    with urllib.request.urlopen('http://127.0.0.1:11434/api/tags') as r:
+    with urllib.request.urlopen(BASE + '/api/tags') as r:
         return sorted(m['name'] for m in json.load(r)['models'] if m['name'] not in SKIP)
 
 
@@ -29,10 +30,10 @@ def run(model, api):
     import agent
     importlib.reload(agent)
     evaluate.propose = agent.propose
-    summary = evaluate.run(model, argparse.Namespace(endpoint=agent.ENDPOINT))
+    summary = evaluate.run(model, argparse.Namespace(endpoint=BASE + '/v1'))
     path = OUT / f"{model.replace('/', '_').replace(':', '_')}__{api}.json"
     path.write_text(json.dumps(summary, indent=2))
-    subprocess.run(['ollama', 'stop', model], capture_output=True)
+    subprocess.run(['ollama', 'stop', model], capture_output=True, env={**os.environ, 'OLLAMA_HOST': BASE})
     return summary
 
 
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)
     done = {f.stem for f in OUT.glob('*.json')}
     idle = 0
-    while idle < 3:  # stop after ~30 min with nothing new to test
+    while idle < int(os.environ.get('SWEEP_IDLE_ROUNDS', 3)):  # 10-min waits for new pulls before stopping
         todo = [m for m in local_models() if f"{m.replace('/', '_').replace(':', '_')}__openai" not in done]
         if not todo:
             idle += 1
