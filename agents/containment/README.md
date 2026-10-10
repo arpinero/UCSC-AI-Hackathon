@@ -8,7 +8,7 @@ Remote folder: `/home/asus/containment-agent` on `asus@169.233.72.113`.
 Model API: `http://127.0.0.1:8000/v1` on the remote device.
 Proposal API: `http://127.0.0.1:8010` when `api.py` is running.
 
-Runtime: existing CUDA-enabled llama.cpp on ARM64/GB10, with Cisco's own Q8_0 GGUF release of Foundation-Sec-8B-Instruct. Quantized model revision: `16deb1934d4b1d28769f7020c15ae018aa537d1f`. The model is aliased to the original Hugging Face model ID for client compatibility; the alias does not mean the weights are BF16. Context is 8,192 tokens per slot, two concurrent model slots, and two simultaneous proposal API requests. GPU memory is unified with CPU memory.
+Runtime: existing CUDA-enabled llama.cpp on ARM64/GB10, with Cisco's own Q8_0 GGUF release of Foundation-Sec-8B-Instruct. Quantized model revision: `16deb1934d4b1d28769f7020c15ae018aa537d1f`. The model is aliased to the original Hugging Face model ID for client compatibility; the alias does not mean the weights are BF16. Context is 16,384 tokens per slot, two concurrent model slots, and two simultaneous proposal API requests. GPU memory is unified with CPU memory.
 
 Connect from your laptop:
 
