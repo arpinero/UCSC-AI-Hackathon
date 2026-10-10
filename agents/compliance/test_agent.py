@@ -86,6 +86,10 @@ class ValidatorTests(unittest.TestCase):
         p['action_reviews'] = p['action_reviews'][:2] + [review('wipe_disk', 'web-01', 'veto')]
         validate_proposal(p, self.incident, peers)
 
+    def test_must_veto_held_destructive(self):
+        # gemma4 said 'object' with a legal-hold reason on mitre-T1021-002; that has to be a veto
+        self.reject(lambda p: p['action_reviews'][2].update(stance='object'))
+
     def test_cannot_veto_containment(self):
         self.reject(lambda p: p['action_reviews'][0].update(stance='veto'))
 

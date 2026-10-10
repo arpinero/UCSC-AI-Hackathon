@@ -45,7 +45,7 @@ The `compliance` block is trusted simulator state. Models, logs and peers must n
 On the GX10 (address in team chat, not here: the repo is public; folder `~/compliance-agent`), the agent uses Ollama's OpenAI-compatible API:
 
 ```bash
-python3 -m unittest -v test_agent            # offline, 25 tests
+python3 -m unittest -v test_agent            # offline, 26 tests
 python3 agent.py scenarios/legal-hold-reimage-001.json --output results/hold.json
 python3 evaluate.py                          # live smoke suite
 cd realworld && python3 evaluate.py --suite attack --output results/attack.json   # 21 ATT&CK cases

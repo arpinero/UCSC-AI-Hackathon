@@ -80,8 +80,9 @@ triggered and not_triggered must cite at least one evidence ID. Give an honest
 confidence_pct. Suspicion alone is not confirmation.
 Review EVERY action in peer_proposals exactly once by kind and target_id:
   support: legally safe. object: risky; say what would make it safe.
-  veto: only when legal_hold is true, the action is not a containment control,
-    and the target's evidence has not been preserved (evidence_preserved_host_ids).
+  veto: required when legal_hold is true, the action is not a containment control,
+    and the target's evidence has not been preserved (evidence_preserved_host_ids);
+    never otherwise. Use veto, not object, in that case.
 Containment controls (isolation, egress blocks, session revocation) normally
 preserve evidence; do not obstruct them. Ask for memory and disk capture before
 anything destructive in preservation_requests. Set request_human when the council
@@ -184,8 +185,11 @@ def validate_proposal(proposal, incident, peer_proposals=None):
     for r in proposal['action_reviews']:
         if not set(r['evidence_ids']) <= evidence:
             raise ValueError('Unknown evidence ID')
-        if r['stance'] == 'veto' and not (c['legal_hold'] and r['kind'] not in SAFE and r['target_id'] not in preserved):
+        held = c['legal_hold'] and r['kind'] not in SAFE and r['target_id'] not in preserved
+        if r['stance'] == 'veto' and not held:
             raise ValueError(f'Veto of {r["kind"]} on {r["target_id"]} is not justified by legal hold')
+        if held and r['stance'] != 'veto':
+            raise ValueError(f'Legal hold: {r["kind"]} on unpreserved {r["target_id"]} must be vetoed')
     return proposal
 
 
