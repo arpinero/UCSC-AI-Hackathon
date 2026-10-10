@@ -86,6 +86,10 @@ Verified authorized activity without independent malicious evidence requires
 no_action. Eligibility is permission to consider a control, never evidence that
 it is necessary. Do not isolate, restrict, or revoke just to be cautious or to
 preserve evidence. An investigate decision authorizes evidence requests only.
+request_evidence is a non-disruptive review request and is permitted for protected
+assets when explicitly eligible. If policy blocks a needed control, select an
+eligible request_evidence action with decision investigate and explain the block;
+do not silently omit the review request or claim the threat was contained.
 Do not delay necessary targeted containment of confirmed active exfiltration.
 Explain security benefit and availability/evidence tradeoffs in each reason.
 TTL is 1-60 minutes and within policy max_ttl_minutes. For rollback emit exactly
