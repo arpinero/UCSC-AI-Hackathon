@@ -1,0 +1,963 @@
+{
+ "contracts_version": "1.0.0",
+ "json_schemas": {
+  "CouncilMessage": {
+   "$defs": {
+    "CouncilMessageType": {
+     "description": "Message types exchanged by council agents at runtime.",
+     "enum": [
+      "INCIDENT_ALERT",
+      "EVIDENCE_REQUEST",
+      "EVIDENCE_RESPONSE",
+      "FINDING",
+      "PROPOSAL",
+      "CHALLENGE",
+      "REVISION",
+      "VOTE",
+      "ESCALATION"
+     ],
+     "title": "CouncilMessageType",
+     "type": "string"
+    }
+   },
+   "additionalProperties": false,
+   "description": "Envelope for one runtime council message.\n\nREQUIRES TEAM AGREEMENT: envelope shape and message-type semantics must\nbe shared by Containment/Recovery/Compliance agents.",
+   "properties": {
+    "correlation_id": {
+     "anyOf": [
+      {
+       "minLength": 1,
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "Links replies to the message they answer",
+     "title": "Correlation Id"
+    },
+    "delivered_at": {
+     "anyOf": [
+      {
+       "format": "date-time",
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Delivered At"
+    },
+    "incident_id": {
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "message_id": {
+     "minLength": 1,
+     "title": "Message Id",
+     "type": "string"
+    },
+    "message_type": {
+     "$ref": "#/$defs/CouncilMessageType"
+    },
+    "payload": {
+     "additionalProperties": true,
+     "description": "Type-specific structured payload",
+     "title": "Payload",
+     "type": "object"
+    },
+    "recipients": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "minItems": 1,
+     "title": "Recipients",
+     "type": "array"
+    },
+    "round": {
+     "description": "Debate round this message belongs to",
+     "minimum": 0,
+     "title": "Round",
+     "type": "integer"
+    },
+    "sender": {
+     "description": "Sending agent identity",
+     "minLength": 1,
+     "title": "Sender",
+     "type": "string"
+    },
+    "timestamp": {
+     "format": "date-time",
+     "title": "Timestamp",
+     "type": "string"
+    }
+   },
+   "required": [
+    "message_id",
+    "incident_id",
+    "round",
+    "sender",
+    "recipients",
+    "message_type",
+    "timestamp"
+   ],
+   "title": "CouncilMessage",
+   "type": "object"
+  },
+  "DebatePosition": {
+   "$defs": {
+    "Position": {
+     "description": "Stance an agent takes on a proposal under debate.",
+     "enum": [
+      "SUPPORT",
+      "OPPOSE",
+      "ABSTAIN"
+     ],
+     "title": "Position",
+     "type": "string"
+    }
+   },
+   "additionalProperties": false,
+   "description": "The forensics agent's position on a proposal under debate.",
+   "properties": {
+    "agent_id": {
+     "minLength": 1,
+     "title": "Agent Id",
+     "type": "string"
+    },
+    "conditions_to_change_position": {
+     "description": "What new evidence/fact would change this position",
+     "items": {
+      "type": "string"
+     },
+     "title": "Conditions To Change Position",
+     "type": "array"
+    },
+    "confidence": {
+     "maximum": 1.0,
+     "minimum": 0.0,
+     "title": "Confidence",
+     "type": "number"
+    },
+    "incident_id": {
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "opposing_evidence_ids": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "title": "Opposing Evidence Ids",
+     "type": "array"
+    },
+    "position": {
+     "$ref": "#/$defs/Position"
+    },
+    "reasoning": {
+     "minLength": 1,
+     "title": "Reasoning",
+     "type": "string"
+    },
+    "round": {
+     "minimum": 0,
+     "title": "Round",
+     "type": "integer"
+    },
+    "supporting_evidence_ids": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "title": "Supporting Evidence Ids",
+     "type": "array"
+    }
+   },
+   "required": [
+    "agent_id",
+    "incident_id",
+    "round",
+    "position",
+    "reasoning",
+    "confidence"
+   ],
+   "title": "DebatePosition",
+   "type": "object"
+  },
+  "Evidence": {
+   "additionalProperties": false,
+   "description": "A single piece of security evidence attached to an incident.\n\nEvidence IDs are stable: once published, an ID must always refer to the\nsame evidence. `source` and `collected_at` provide explicit provenance.",
+   "properties": {
+    "collected_at": {
+     "description": "UTC time the evidence was collected",
+     "format": "date-time",
+     "title": "Collected At",
+     "type": "string"
+    },
+    "collection_tool": {
+     "anyOf": [
+      {
+       "minLength": 1,
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "Tool that produced this evidence, if any",
+     "title": "Collection Tool"
+    },
+    "description": {
+     "minLength": 1,
+     "title": "Description",
+     "type": "string"
+    },
+    "event_type": {
+     "description": "e.g. process_execution, network_flow",
+     "minLength": 1,
+     "title": "Event Type",
+     "type": "string"
+    },
+    "evidence_id": {
+     "description": "Stable unique evidence identifier",
+     "minLength": 1,
+     "title": "Evidence Id",
+     "type": "string"
+    },
+    "host_id": {
+     "minLength": 1,
+     "title": "Host Id",
+     "type": "string"
+    },
+    "incident_id": {
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "raw_data": {
+     "additionalProperties": true,
+     "description": "Structured raw payload (serializable)",
+     "title": "Raw Data",
+     "type": "object"
+    },
+    "source": {
+     "description": "Provenance: where the evidence came from",
+     "minLength": 1,
+     "title": "Source",
+     "type": "string"
+    },
+    "timestamp": {
+     "description": "UTC time the underlying event occurred",
+     "format": "date-time",
+     "title": "Timestamp",
+     "type": "string"
+    }
+   },
+   "required": [
+    "evidence_id",
+    "incident_id",
+    "source",
+    "event_type",
+    "timestamp",
+    "host_id",
+    "description",
+    "collected_at"
+   ],
+   "title": "Evidence",
+   "type": "object"
+  },
+  "Incident": {
+   "$defs": {
+    "IncidentStatus": {
+     "description": "Lifecycle of an incident from the council's point of view.",
+     "enum": [
+      "OPEN",
+      "INVESTIGATING",
+      "CONTAINED",
+      "RESOLVED",
+      "CLOSED"
+     ],
+     "title": "IncidentStatus",
+     "type": "string"
+    },
+    "Severity": {
+     "description": "Incident severity levels.",
+     "enum": [
+      "CRITICAL",
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "INFO"
+     ],
+     "title": "Severity",
+     "type": "string"
+    }
+   },
+   "additionalProperties": false,
+   "description": "A cyber incident under investigation by the council.\n\nREQUIRES TEAM AGREEMENT: field names, severity levels, and status values\nmust match what Containment/Recovery/Compliance agents emit.",
+   "properties": {
+    "affected_hosts": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "title": "Affected Hosts",
+     "type": "array"
+    },
+    "created_at": {
+     "description": "UTC creation time of the incident record",
+     "format": "date-time",
+     "title": "Created At",
+     "type": "string"
+    },
+    "current_status": {
+     "$ref": "#/$defs/IncidentStatus",
+     "default": "OPEN"
+    },
+    "incident_id": {
+     "description": "Stable unique incident identifier",
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "initial_description": {
+     "minLength": 1,
+     "title": "Initial Description",
+     "type": "string"
+    },
+    "scenario_id": {
+     "description": "Synthetic scenario the incident belongs to",
+     "minLength": 1,
+     "title": "Scenario Id",
+     "type": "string"
+    },
+    "severity": {
+     "$ref": "#/$defs/Severity",
+     "description": "Incident severity"
+    },
+    "updated_at": {
+     "anyOf": [
+      {
+       "format": "date-time",
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "Optional UTC time of last status change",
+     "title": "Updated At"
+    }
+   },
+   "required": [
+    "incident_id",
+    "scenario_id",
+    "created_at",
+    "severity",
+    "initial_description"
+   ],
+   "title": "Incident",
+   "type": "object"
+  },
+  "InvestigationFindings": {
+   "$defs": {
+    "Severity": {
+     "description": "Incident severity levels.",
+     "enum": [
+      "CRITICAL",
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "INFO"
+     ],
+     "title": "Severity",
+     "type": "string"
+    },
+    "TimelineEvent": {
+     "additionalProperties": false,
+     "description": "One reconstructed event on the incident timeline.",
+     "properties": {
+      "description": {
+       "minLength": 1,
+       "title": "Description",
+       "type": "string"
+      },
+      "event_type": {
+       "anyOf": [
+        {
+         "minLength": 1,
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "default": null,
+       "title": "Event Type"
+      },
+      "evidence_ids": {
+       "items": {
+        "minLength": 1,
+        "type": "string"
+       },
+       "title": "Evidence Ids",
+       "type": "array"
+      },
+      "host_id": {
+       "anyOf": [
+        {
+         "minLength": 1,
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "default": null,
+       "title": "Host Id"
+      },
+      "timestamp": {
+       "format": "date-time",
+       "title": "Timestamp",
+       "type": "string"
+      }
+     },
+     "required": [
+      "timestamp",
+      "description"
+     ],
+     "title": "TimelineEvent",
+     "type": "object"
+    }
+   },
+   "additionalProperties": false,
+   "description": "Findings published by the forensics agent after investigating.",
+   "properties": {
+    "agent_id": {
+     "minLength": 1,
+     "title": "Agent Id",
+     "type": "string"
+    },
+    "cited_evidence_ids": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "title": "Cited Evidence Ids",
+     "type": "array"
+    },
+    "confidence": {
+     "maximum": 1.0,
+     "minimum": 0.0,
+     "title": "Confidence",
+     "type": "number"
+    },
+    "findings": {
+     "description": "Summary of what was determined",
+     "minLength": 1,
+     "title": "Findings",
+     "type": "string"
+    },
+    "incident_id": {
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "recommended_actions": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Recommended Actions",
+     "type": "array"
+    },
+    "round": {
+     "minimum": 0,
+     "title": "Round",
+     "type": "integer"
+    },
+    "severity_assessment": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Severity"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null
+    },
+    "timeline": {
+     "items": {
+      "$ref": "#/$defs/TimelineEvent"
+     },
+     "title": "Timeline",
+     "type": "array"
+    },
+    "uncertainties": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Uncertainties",
+     "type": "array"
+    }
+   },
+   "required": [
+    "agent_id",
+    "incident_id",
+    "round",
+    "findings",
+    "confidence"
+   ],
+   "title": "InvestigationFindings",
+   "type": "object"
+  },
+  "InvestigationRequest": {
+   "additionalProperties": false,
+   "description": "A question the council asks the forensics agent to investigate.",
+   "properties": {
+    "available_evidence_ids": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "title": "Available Evidence Ids",
+     "type": "array"
+    },
+    "incident_id": {
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "question": {
+     "minLength": 1,
+     "title": "Question",
+     "type": "string"
+    },
+    "request_id": {
+     "minLength": 1,
+     "title": "Request Id",
+     "type": "string"
+    },
+    "requested_by": {
+     "minLength": 1,
+     "title": "Requested By",
+     "type": "string"
+    },
+    "round": {
+     "minimum": 0,
+     "title": "Round",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "request_id",
+    "incident_id",
+    "round",
+    "question",
+    "requested_by"
+   ],
+   "title": "InvestigationRequest",
+   "type": "object"
+  },
+  "PositionRevision": {
+   "$defs": {
+    "DebatePosition": {
+     "additionalProperties": false,
+     "description": "The forensics agent's position on a proposal under debate.",
+     "properties": {
+      "agent_id": {
+       "minLength": 1,
+       "title": "Agent Id",
+       "type": "string"
+      },
+      "conditions_to_change_position": {
+       "description": "What new evidence/fact would change this position",
+       "items": {
+        "type": "string"
+       },
+       "title": "Conditions To Change Position",
+       "type": "array"
+      },
+      "confidence": {
+       "maximum": 1.0,
+       "minimum": 0.0,
+       "title": "Confidence",
+       "type": "number"
+      },
+      "incident_id": {
+       "minLength": 1,
+       "title": "Incident Id",
+       "type": "string"
+      },
+      "opposing_evidence_ids": {
+       "items": {
+        "minLength": 1,
+        "type": "string"
+       },
+       "title": "Opposing Evidence Ids",
+       "type": "array"
+      },
+      "position": {
+       "$ref": "#/$defs/Position"
+      },
+      "reasoning": {
+       "minLength": 1,
+       "title": "Reasoning",
+       "type": "string"
+      },
+      "round": {
+       "minimum": 0,
+       "title": "Round",
+       "type": "integer"
+      },
+      "supporting_evidence_ids": {
+       "items": {
+        "minLength": 1,
+        "type": "string"
+       },
+       "title": "Supporting Evidence Ids",
+       "type": "array"
+      }
+     },
+     "required": [
+      "agent_id",
+      "incident_id",
+      "round",
+      "position",
+      "reasoning",
+      "confidence"
+     ],
+     "title": "DebatePosition",
+     "type": "object"
+    },
+    "Position": {
+     "description": "Stance an agent takes on a proposal under debate.",
+     "enum": [
+      "SUPPORT",
+      "OPPOSE",
+      "ABSTAIN"
+     ],
+     "title": "Position",
+     "type": "string"
+    }
+   },
+   "additionalProperties": false,
+   "description": "An explicit revision of a previously published debate position.\n\nPreserves the audit trail: previous position, new position, the evidence\nthat triggered the change, and an explanation.",
+   "properties": {
+    "agent_id": {
+     "minLength": 1,
+     "title": "Agent Id",
+     "type": "string"
+    },
+    "explanation": {
+     "minLength": 1,
+     "title": "Explanation",
+     "type": "string"
+    },
+    "incident_id": {
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "new_position": {
+     "$ref": "#/$defs/DebatePosition"
+    },
+    "previous_position": {
+     "$ref": "#/$defs/DebatePosition"
+    },
+    "round": {
+     "minimum": 0,
+     "title": "Round",
+     "type": "integer"
+    },
+    "triggering_evidence_ids": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "title": "Triggering Evidence Ids",
+     "type": "array"
+    }
+   },
+   "required": [
+    "agent_id",
+    "incident_id",
+    "round",
+    "previous_position",
+    "new_position",
+    "explanation"
+   ],
+   "title": "PositionRevision",
+   "type": "object"
+  },
+  "ToolInvocation": {
+   "$defs": {
+    "ToolError": {
+     "additionalProperties": false,
+     "description": "Structured error returned by a forensic tool invocation.",
+     "properties": {
+      "error_code": {
+       "description": "Machine-readable error code",
+       "minLength": 1,
+       "title": "Error Code",
+       "type": "string"
+      },
+      "message": {
+       "description": "Human-readable explanation",
+       "minLength": 1,
+       "title": "Message",
+       "type": "string"
+      },
+      "retriable": {
+       "default": false,
+       "title": "Retriable",
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "error_code",
+      "message"
+     ],
+     "title": "ToolError",
+     "type": "object"
+    }
+   },
+   "additionalProperties": false,
+   "description": "Audit record of one forensic tool invocation.",
+   "properties": {
+    "arguments": {
+     "additionalProperties": true,
+     "title": "Arguments",
+     "type": "object"
+    },
+    "duration_ms": {
+     "description": "Wall-clock duration, must be >= 0",
+     "minimum": 0,
+     "title": "Duration Ms",
+     "type": "integer"
+    },
+    "error": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/ToolError"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null
+    },
+    "incident_id": {
+     "minLength": 1,
+     "title": "Incident Id",
+     "type": "string"
+    },
+    "invocation_id": {
+     "minLength": 1,
+     "title": "Invocation Id",
+     "type": "string"
+    },
+    "referenced_evidence_ids": {
+     "items": {
+      "minLength": 1,
+      "type": "string"
+     },
+     "title": "Referenced Evidence Ids",
+     "type": "array"
+    },
+    "result": {
+     "anyOf": [
+      {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Result"
+    },
+    "tool_name": {
+     "minLength": 1,
+     "title": "Tool Name",
+     "type": "string"
+    }
+   },
+   "required": [
+    "invocation_id",
+    "incident_id",
+    "tool_name",
+    "duration_ms"
+   ],
+   "title": "ToolInvocation",
+   "type": "object"
+  }
+ },
+ "status": "PROPOSED for cross-team integration; authoritative inside forensics-agent",
+ "valid_examples": {
+  "CouncilMessage": {
+   "correlation_id": "CM-2026-0000",
+   "delivered_at": null,
+   "incident_id": "INC-2026-001",
+   "message_id": "CM-2026-0001",
+   "message_type": "FINDING",
+   "payload": {
+    "summary": "Exfiltration confirmed; see cited evidence"
+   },
+   "recipients": [
+    "containment-agent"
+   ],
+   "round": 1,
+   "sender": "forensics-agent",
+   "timestamp": "2026-10-10T12:00:00Z"
+  },
+  "DebatePosition": {
+   "agent_id": "forensics-agent",
+   "conditions_to_change_position": [
+    "Transfer proven to be a sanctioned backup"
+   ],
+   "confidence": 0.8,
+   "incident_id": "INC-2026-001",
+   "opposing_evidence_ids": [],
+   "position": "SUPPORT",
+   "reasoning": "Isolation preserves evidence and stops ongoing exfiltration",
+   "round": 2,
+   "supporting_evidence_ids": [
+    "EV-INC-2026-001-0001"
+   ]
+  },
+  "Evidence": {
+   "collected_at": "2026-10-10T12:00:00Z",
+   "collection_tool": "search_logs",
+   "description": "2.1GB outbound to 203.0.113.50 over 443",
+   "event_type": "network_flow",
+   "evidence_id": "EV-INC-2026-001-0001",
+   "host_id": "web-01",
+   "incident_id": "INC-2026-001",
+   "raw_data": {
+    "bytes": 2254857830,
+    "dest_port": 443
+   },
+   "source": "zeek-conn-log",
+   "timestamp": "2026-10-10T12:00:00Z"
+  },
+  "Incident": {
+   "affected_hosts": [
+    "web-01"
+   ],
+   "created_at": "2026-10-10T12:00:00Z",
+   "current_status": "OPEN",
+   "incident_id": "INC-2026-001",
+   "initial_description": "Suspicious 2.1GB outbound transfer from web-01",
+   "scenario_id": "SCN-exfil-001",
+   "severity": "HIGH",
+   "updated_at": null
+  },
+  "InvestigationFindings": {
+   "agent_id": "forensics-agent",
+   "cited_evidence_ids": [
+    "EV-INC-2026-001-0001"
+   ],
+   "confidence": 0.85,
+   "findings": "Confirmed exfiltration to 203.0.113.50 via HTTPS over 40 minutes",
+   "incident_id": "INC-2026-001",
+   "recommended_actions": [
+    "Block 203.0.113.50 at egress"
+   ],
+   "round": 1,
+   "severity_assessment": "HIGH",
+   "timeline": [
+    {
+     "description": "Transfer began",
+     "event_type": null,
+     "evidence_ids": [
+      "EV-INC-2026-001-0001"
+     ],
+     "host_id": null,
+     "timestamp": "2026-10-10T12:00:00Z"
+    }
+   ],
+   "uncertainties": [
+    "Destination ownership unconfirmed"
+   ]
+  },
+  "InvestigationRequest": {
+   "available_evidence_ids": [
+    "EV-INC-2026-001-0001"
+   ],
+   "incident_id": "INC-2026-001",
+   "question": "Was data exfiltrated from web-01, and how?",
+   "request_id": "REQ-INC-2026-001-1",
+   "requested_by": "containment-agent",
+   "round": 1
+  },
+  "PositionRevision": {
+   "agent_id": "forensics-agent",
+   "explanation": "Backup schedule evidence shows the transfer was sanctioned",
+   "incident_id": "INC-2026-001",
+   "new_position": {
+    "agent_id": "forensics-agent",
+    "conditions_to_change_position": [
+     "Transfer proven to be a sanctioned backup"
+    ],
+    "confidence": 0.8,
+    "incident_id": "INC-2026-001",
+    "opposing_evidence_ids": [],
+    "position": "OPPOSE",
+    "reasoning": "Isolation preserves evidence and stops ongoing exfiltration",
+    "round": 3,
+    "supporting_evidence_ids": [
+     "EV-INC-2026-001-0001"
+    ]
+   },
+   "previous_position": {
+    "agent_id": "forensics-agent",
+    "conditions_to_change_position": [
+     "Transfer proven to be a sanctioned backup"
+    ],
+    "confidence": 0.8,
+    "incident_id": "INC-2026-001",
+    "opposing_evidence_ids": [],
+    "position": "SUPPORT",
+    "reasoning": "Isolation preserves evidence and stops ongoing exfiltration",
+    "round": 2,
+    "supporting_evidence_ids": [
+     "EV-INC-2026-001-0001"
+    ]
+   },
+   "round": 3,
+   "triggering_evidence_ids": [
+    "EV-INC-2026-001-0002"
+   ]
+  },
+  "ToolInvocation": {
+   "arguments": {
+    "incident_id": "INC-2026-001",
+    "query": "outbound 203.0.113.50"
+   },
+   "duration_ms": 42,
+   "error": null,
+   "incident_id": "INC-2026-001",
+   "invocation_id": "inv-20261010-000001",
+   "referenced_evidence_ids": [
+    "EV-INC-2026-001-0001"
+   ],
+   "result": {
+    "entries": [],
+    "matched_evidence_ids": [
+     "EV-INC-2026-001-0001"
+    ],
+    "truncated": false
+   },
+   "tool_name": "search_logs"
+  }
+ }
+}
