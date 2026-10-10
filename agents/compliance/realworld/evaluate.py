@@ -8,6 +8,9 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from agent import propose, ENDPOINT, MODEL  # noqa: E402
 from scenarios import scenarios  # noqa: E402
+import attack  # noqa: E402
+
+SUITES = {'realworld': scenarios, 'attack': attack.scenarios}
 
 
 def score(expected, result):
@@ -26,7 +29,7 @@ def score(expected, result):
 
 def run(model, args):
     rows = []
-    for incident in scenarios():
+    for incident in SUITES[getattr(args, 'suite', 'realworld')]():  # sweep.py passes no suite
         expected = incident.pop('expected')
         incident.pop('source')
         peers = incident.pop('peer_messages', [])
@@ -55,6 +58,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--endpoint', default=ENDPOINT)
     parser.add_argument('--model', action='append', help='repeat for several models (default: agent MODEL)')
+    parser.add_argument('--suite', choices=SUITES, default='realworld')
     parser.add_argument('--output', default='results/realworld_evaluation.json')
     args = parser.parse_args()
     out = {}

@@ -45,10 +45,13 @@ The `compliance` block is trusted simulator state. Models, logs and peers must n
 On the GX10 (address in team chat, not here: the repo is public; folder `~/compliance-agent`), the agent uses Ollama's OpenAI-compatible API:
 
 ```bash
-python3 -m unittest -v test_agent            # offline, 22 tests
+python3 -m unittest -v test_agent            # offline, 25 tests
 python3 agent.py scenarios/legal-hold-reimage-001.json --output results/hold.json
 python3 evaluate.py                          # live smoke suite
+cd realworld && python3 evaluate.py --suite attack --output results/attack.json   # 21 ATT&CK cases
 ```
+
+The `attack` suite reuses Containment's 21 ATT&CK fixtures (`realworld/mitre-fixtures.json`, copied from the `containment` branch) and adds a compliance block to each: a fictional organization, the data at risk, and one evidence line on data impact. Containment's expected action is the peer proposal. Containment's actions are all reversible, so four confirmed cases add a Recovery peer proposing `reimage_host` under legal hold. Three of those should be vetoed and one should not, because the disk was already imaged. Authorized variants should come back not triggered. `realworld/test_attack.py` checks the cases offline.
 
 Overrides: `COMPLIANCE_ENDPOINT` (default `http://127.0.0.1:11434/v1`), `COMPLIANCE_MODEL` (default `gemma4:26b`). The request sets `reasoning_effort: none`. With thinking on, gemma4 burned the token budget and returned empty or looping JSON. qwen3.6:35b ignored the schema, so don't use it for this seat.
 
