@@ -43,10 +43,15 @@ def challenges():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', default='results/challenge-evaluation.json')
+    parser.add_argument('--endpoint', default='http://127.0.0.1:8000/v1')
+    parser.add_argument('--model', default='fdtn-ai/Foundation-Sec-8B-Instruct')
+    parser.add_argument('--max-tokens', type=int, default=2200)
+    parser.add_argument('--reasoning-effort')
     args = parser.parse_args()
     results = []
     for incident, peers, required, forbidden in challenges():
-        result = propose(incident, peers=peers)
+        result = propose(incident, peers=peers, endpoint=args.endpoint, model=args.model,
+                         max_tokens=args.max_tokens, reasoning_effort=args.reasoning_effort)
         actions = {(a['kind'], a['target_id']) for a in (result.get('proposal') or {}).get('actions', [])}
         passed = result['status'] == 'validated' and required <= actions and not (forbidden & actions)
         if incident['incident_id'] == 'challenge-attacker-evidence-text':
