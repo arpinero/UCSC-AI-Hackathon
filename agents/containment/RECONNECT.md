@@ -49,3 +49,17 @@ tail -10 logs/mitre-foundation-policy.log
 ```
 
 Actual current IPv4 address can be read on the device with `ip -4 -br addr`. Final/partial evaluation files are in `results/`, logs in `logs/`; source checkout is `repo/` on branch `containment`. API audit inputs and raw outputs are in `results/audit/`.
+
+## Current outcome run
+
+The old `containment-evaluations` service completed its regression suites and has been disabled to prevent boot attempts with a changed inference configuration. `containment-outcomes` is enabled and runs the revised v3 adapter: Qwen first, then Foundation, with separate checkpoints. It resumes only an exact matching configuration. The prior stopped Foundation v1/v2 results remain intact.
+
+```bash
+cd /home/asus/containment-agent
+systemctl --user is-active containment-model containment-api containment-outcomes
+tail -5 logs/outcome-qwen-v3.log
+tail -5 logs/outcome-foundation-v3.log
+python3 -m unittest discover -q
+```
+
+Use the full result's completion count before reporting a score. A running service or a reference-mode pass does not establish completed model performance. The source tests currently pass 59 tests locally and on the ASUS device.
