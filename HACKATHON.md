@@ -9,7 +9,7 @@ Sources are the hack.dev portal documents (Hacker Guide, Track Challenges, ASUS 
 | 9:00 AM | Venue reopens. It closes at 10:00 PM Saturday, with no overnight stay. |
 | **1:30 PM** | **Devpost submission due. Add our table number. Late submissions are not judged.** The link is on Discord. |
 | **2:00 PM sharp** | **Judging: 3 min pitch + 3 min Q&A.** Stay at the table until judging is over. |
-| 3:45 PM | All borrowed hardware back to the hardware desk, including the GX10, in the same condition. |
+| 3:45 PM | All borrowed hardware back to the hardware desk, including the GX10, in the same condition. The Hacker Guide says return it after your judging; the ASUS doc says before closing. **If we make finals at 4:00, ask on Discord whether we can keep the GX10 for the re-pitch.** |
 | 4:00 PM | Finals: top teams pitch again. |
 | 5:15 PM | Awards. |
 
@@ -26,7 +26,7 @@ Sources are the hack.dev portal documents (Hacker Guide, Track Challenges, ASUS 
 
 ## Tracks: pick ONE for track prizes
 
-Each project enters one track. Track prizes go only to teams that meet that track's requirements. The Overall Prize (4x MacBook Pro M4) is open to every team.
+Teams are up to 4 people. Each project enters one track. The PDFs don't list Devpost fields, a video, or a repo requirement; the Devpost items below are our own plan. Other prizes: Best Beginner, Best Use of ElevenLabs. Sponsor credit codes (ElevenLabs, Beeceptor, NVIDIA Brev, n8n) must not be posted publicly. Track prizes go only to teams that meet that track's requirements. The Overall Prize (4x MacBook Pro M4) is open to every team.
 
 ### Local AI, led by ASUS (our current pick)
 
@@ -41,7 +41,7 @@ Each project enters one track. Track prizes go only to teams that meet that trac
   - inspiring and engaging users
 - **Notes:** The GX10 ships with NVIDIA Nemotron (the ASUS doc says "Nemotron 3.5 Lightning"). Using it is a natural sponsor nod.
 - **Prizes:** 1st 4x NVIDIA 5080, 2nd 4x ROG keyboards, 3rd 4x ZenScreen monitors.
-- **Content challenge:** post publicly with the required tags (IG @asususa @hack.dev_ucsc @baskinengineering; LinkedIn @ASUS Education @Hack.dev @Baskin Engineering at UCSC) and the hashtags #ASUSEducation #agentcomputer.
+- **Content challenge:** post publicly (not private or unlisted) with the required tags (IG @asususa @hack.dev_ucsc @baskinengineering; LinkedIn @ASUS Education @Hack.dev @Baskin Engineering at UCSC; TikTok @asuseducation; YouTube @ASUSUSA) and the hashtags #ASUSEducation #agentcomputer. Proof goes in a form handed out during the event. The prize was announced at the opening ceremony.
 
 ### Cloud AI, led by Cisco Outshift / AGNTCY: "When AI Agents Disagree"
 
