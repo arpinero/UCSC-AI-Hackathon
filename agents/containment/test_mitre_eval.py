@@ -1,8 +1,21 @@
 import unittest
 from agent import validate_incident
+import copy
 from mitre_eval import dataset, score
 
 class MitreEvaluationTests(unittest.TestCase):
+    def test_invalid_policy_and_evidence_types_are_rejected_before_inference(self):
+        incident = dataset()[0][2]
+        mutations = [lambda i: i['policy'].update(allow_critical_isolation='false'),
+                     lambda i: i['policy'].update(max_ttl_minutes=True),
+                     lambda i: i['policy'].update(required_preserve_channels=['unavailable']),
+                     lambda i: i['evidence'][0].update(id=42),
+                     lambda i: i['evidence'][0].update(source_host_ids=['unknown'])]
+        for mutate in mutations:
+            candidate = copy.deepcopy(incident)
+            mutate(candidate)
+            with self.assertRaises(ValueError):
+                validate_incident(candidate)
     def test_fixture_validity_and_counterfactuals(self):
         cases = dataset()
         self.assertEqual(len(cases), 21)

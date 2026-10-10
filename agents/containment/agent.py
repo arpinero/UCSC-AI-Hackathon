@@ -199,6 +199,8 @@ def check_schema(value, schema, path='$'):
 
 
 def validate_incident(incident):
+    if not isinstance(incident, dict):
+        raise ValueError('Incident must be an object')
     for field in ('incident_id', 'telemetry_version', 'assets', 'evidence', 'policy'):
         if field not in incident:
             raise ValueError(f'Missing incident field: {field}')
@@ -210,6 +212,8 @@ def validate_incident(incident):
     evidence = incident['evidence']
     if not isinstance(assets, list) or not isinstance(evidence, list):
         raise ValueError('Assets and evidence must be lists')
+    if any(not isinstance(x, dict) for x in assets + evidence):
+        raise ValueError('Asset and evidence records must be objects')
     ids = [a['id'] for a in assets]
     if len(set(ids)) != len(ids) or any(not isinstance(x, str) or not x for x in ids):
         raise ValueError('Invalid or duplicate asset IDs')
@@ -219,16 +223,33 @@ def validate_incident(incident):
         if any(key in asset and type(asset[key]) is not bool for key in ('critical', 'protected')):
             raise ValueError('Asset critical/protected flags must be booleans')
     evidence_ids = [e['id'] for e in evidence]
+    if any(not isinstance(x, str) or not x for x in evidence_ids):
+        raise ValueError('Evidence IDs must be nonempty strings')
     if len(set(evidence_ids)) != len(evidence_ids):
         raise ValueError('Duplicate evidence IDs')
     policy = incident['policy']
-    if not 1 <= policy['max_ttl_minutes'] <= 60:
+    if not isinstance(policy, dict):
+        raise ValueError('Policy must be an object')
+    if type(policy['max_ttl_minutes']) is not int or not 1 <= policy['max_ttl_minutes'] <= 60:
         raise ValueError('Invalid policy TTL')
+    if type(policy.get('allow_critical_isolation', False)) is not bool:
+        raise ValueError('Critical isolation permission must be boolean')
+    for key in ('allowed_actions', 'available_channels', 'required_preserve_channels'):
+        if not isinstance(policy[key], list) or any(not isinstance(x, str) or not x for x in policy[key]):
+            raise ValueError('Policy ' + key + ' must be a list of nonempty strings')
+    if not set(policy['required_preserve_channels']) <= set(policy['available_channels']):
+        raise ValueError('Required preservation channels must be available')
     if not set(policy['allowed_actions']) <= set(KINDS):
         raise ValueError('Unknown allowed action')
     for e in evidence:
         if not isinstance(e['observation'], str):
             raise ValueError('Evidence observation must be text')
+        if not isinstance(e['actionable_for'], list) or any(not isinstance(x, dict) for x in e['actionable_for']):
+            raise ValueError('Evidence eligibility must be a list of objects')
+        sources = e.get('source_host_ids', [])
+        hosts = {a['id'] for a in assets if a['type'] == 'host'}
+        if not isinstance(sources, list) or any(not isinstance(h, str) or h not in hosts for h in sources):
+            raise ValueError('Evidence source hosts must be known host IDs')
         for eligibility in e['actionable_for']:
             if eligibility['kind'] not in KINDS or eligibility['target_id'] not in ids:
                 raise ValueError('Invalid evidence eligibility')

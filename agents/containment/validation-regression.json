@@ -1,0 +1,6 @@
+{
+  "reference_revision": "2888860",
+  "compared_requests": 70,
+  "identical_valid_fixture_requests": true,
+  "change": "Reject malformed input policy/evidence fields before inference; valid fixture prompts unchanged"
+}

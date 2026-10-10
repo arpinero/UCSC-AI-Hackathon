@@ -1,0 +1,420 @@
+{
+  "provenance": {
+    "source_url": "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack-19.2.json",
+    "sha256": "dc1639caa5501d720e280cf1cbd8fbe009884a0c9b3e6e9ed9d0c25166c3d8f4",
+    "version": "19.2",
+    "techniques": {
+      "T1021.002": {
+        "name": "SMB/Windows Admin Shares",
+        "url": "https://attack.mitre.org/techniques/T1021/002",
+        "stix_id": "attack-pattern--4f9ca633-15c5-463c-9724-bdcd54fde541",
+        "modified": "2026-05-12T15:12:00.632Z"
+      },
+      "T1003.001": {
+        "name": "LSASS Memory",
+        "url": "https://attack.mitre.org/techniques/T1003/001",
+        "stix_id": "attack-pattern--65f2d882-3f41-4d48-8a06-29af77ec9f90",
+        "modified": "2026-05-12T15:12:00.637Z"
+      },
+      "T1041": {
+        "name": "Exfiltration Over C2 Channel",
+        "url": "https://attack.mitre.org/techniques/T1041",
+        "stix_id": "attack-pattern--92d7da27-2d91-488e-a00c-059dc162766d",
+        "modified": "2026-05-12T15:12:00.706Z"
+      },
+      "T1059.001": {
+        "name": "PowerShell",
+        "url": "https://attack.mitre.org/techniques/T1059/001",
+        "stix_id": "attack-pattern--970a3432-3237-47ad-bcca-7d8cbb217736",
+        "modified": "2026-05-12T15:12:00.706Z"
+      },
+      "T1210": {
+        "name": "Exploitation of Remote Services",
+        "url": "https://attack.mitre.org/techniques/T1210",
+        "stix_id": "attack-pattern--9db0cf3a-a3c9-4012-8268-123b9db6fd82",
+        "modified": "2026-08-04T20:30:55.427Z"
+      },
+      "T1078": {
+        "name": "Valid Accounts",
+        "url": "https://attack.mitre.org/techniques/T1078",
+        "stix_id": "attack-pattern--b17a1a56-e99c-403c-8948-561df0cffe81",
+        "modified": "2026-05-12T15:12:00.707Z"
+      },
+      "T1486": {
+        "name": "Data Encrypted for Impact",
+        "url": "https://attack.mitre.org/techniques/T1486",
+        "stix_id": "attack-pattern--b80d107d-fa0d-4b60-9684-b0433e8bdba0",
+        "modified": "2026-05-12T15:12:00.709Z"
+      },
+      "T1550.004": {
+        "name": "Web Session Cookie",
+        "url": "https://attack.mitre.org/techniques/T1550/004",
+        "stix_id": "attack-pattern--c3c8c916-2f3c-4e71-94b2-240bdfc996f0",
+        "modified": "2026-05-12T15:12:00.714Z"
+      },
+      "T1071.001": {
+        "name": "Web Protocols",
+        "url": "https://attack.mitre.org/techniques/T1071/001",
+        "stix_id": "attack-pattern--df8b2a25-8bdf-4856-953c-a04372b1c161",
+        "modified": "2026-05-12T15:12:00.722Z"
+      },
+      "T1021.001": {
+        "name": "Remote Desktop Protocol",
+        "url": "https://attack.mitre.org/techniques/T1021/001",
+        "stix_id": "attack-pattern--eb062747-2193-45de-8fa2-e62549c37ddf",
+        "modified": "2026-05-12T15:12:00.723Z"
+      }
+    },
+    "notice": "Author-created synthetic observations and scoring; MITRE provides taxonomy, not these fixtures or endorsement."
+  },
+  "passed": 4,
+  "total": 4,
+  "planned": 21,
+  "results": [
+    {
+      "status": "validated",
+      "proposal_id": "70be4b21-32ca-4f9b-b1dd-9b9d11e3835a",
+      "model": "qwen3.6:35b",
+      "created_at": "2026-10-10T21:42:44.824865+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 73.901,
+      "proposal": {
+        "incident_id": "mitre-T1041",
+        "telemetry_version": 1,
+        "assessment": "Confirmed active exfiltration from critical host web-01 to c2-01. Immediate containment of the egress channel is required to stop data loss while preserving management and evidence collection channels.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Evidence M1 confirms unauthorized sensitive data is actively leaving web-01 to c2-01. This is a confirmed threat requiring immediate containment to prevent further exfiltration."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01",
+            "scope_host_ids": [
+              "web-01"
+            ],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "Blocks the confirmed exfiltration path from the critical host web-01 to the C2 destination c2-01. This interrupts the attacker's ability to exfiltrate data. Management and evidence_collector channels are preserved to maintain visibility and control.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated block_egress control for c2-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "Availability impact on web-01 is unknown as dependency details are not provided, though targeted egress blocking is less disruptive than full isolation."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 60
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1041\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Confirmed active exfiltration from critical host web-01 to c2-01. Immediate containment of the egress channel is required to stop data loss while preserving management and evidence collection channels.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Evidence M1 confirms unauthorized sensitive data is actively leaving web-01 to c2-01. This is a confirmed threat requiring immediate containment to prevent further exfiltration.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"block_egress\",\n      \"target_id\": \"c2-01\",\n      \"scope_host_ids\": [\n        \"web-01\"\n      ],\n      \"evidence_ids\": [\n        \"M1\"\n      ],\n      \"reason\": \"Blocks the confirmed exfiltration path from the critical host web-01 to the C2 destination c2-01. This interrupts the attacker's ability to exfiltrate data. Management and evidence_collector channels are preserved to maintain visibility and control.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\n        \"management\",\n        \"evidence_collector\"\n      ],\n      \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"Availability impact on web-01 is unknown as dependency details are not provided, though targeted egress blocking is less disruptive than full isolation.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 60\n}",
+          "usage": {
+            "prompt_tokens": 2185,
+            "completion_tokens": 388
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1041",
+      "technique": "T1041",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "10b09f8c-36c0-48e1-835d-7aacba146850",
+      "model": "qwen3.6:35b",
+      "created_at": "2026-10-10T21:43:28.376469+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 43.549,
+      "proposal": {
+        "incident_id": "mitre-T1041-authorized",
+        "telemetry_version": 1,
+        "assessment": "The provided evidence M1 explicitly states that the observed activity is verified authorized exercise or administration with no unauthorized activity. The technique label (T1041) is not sufficient evidence of an attack in this context. Therefore, no containment actions are required.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "Evidence M1 confirms the activity is verified authorized exercise or administration with no unauthorized activity observed. No threat exists to contain."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "None. The evidence explicitly rules out malicious activity."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 60
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1041-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The provided evidence M1 explicitly states that the observed activity is verified authorized exercise or administration with no unauthorized activity. The technique label (T1041) is not sufficient evidence of an attack in this context. Therefore, no containment actions are required.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"Evidence M1 confirms the activity is verified authorized exercise or administration with no unauthorized activity observed. No threat exists to contain.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"None. The evidence explicitly rules out malicious activity.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 60\n}",
+          "usage": {
+            "prompt_tokens": 2195,
+            "completion_tokens": 202
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1041-authorized",
+      "technique": "T1041",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "4054d05c-8a51-42c6-b8a7-a12d86b22f88",
+      "model": "qwen3.6:35b",
+      "created_at": "2026-10-10T21:44:29.842473+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 61.464,
+      "proposal": {
+        "incident_id": "mitre-T1071-001",
+        "telemetry_version": 1,
+        "assessment": "Confirmed active C2 communication from critical host web-01 to known C2 destination c2-01. Immediate containment of exfiltration channel is required.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Evidence M1 confirms active attacker HTTP C2 from web-01 to c2-01. This constitutes an active threat requiring immediate containment to stop potential data exfiltration and command execution."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01",
+            "scope_host_ids": [
+              "web-01"
+            ],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "Blocks the confirmed active C2 channel from the critical host web-01 to the attacker destination c2-01, interrupting the attacker's ability to receive commands or exfiltrate data. Preserves management and evidence_collector channels for ongoing monitoring and forensic collection.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated block_egress control for c2-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "Availability impact on web-01 is unknown as dependency mapping is not provided; however, targeted egress blocking minimizes disruption compared to full isolation.",
+          "Forensic evidence preservation status is not guaranteed solely by channel preservation."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 60
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1071-001\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Confirmed active C2 communication from critical host web-01 to known C2 destination c2-01. Immediate containment of exfiltration channel is required.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Evidence M1 confirms active attacker HTTP C2 from web-01 to c2-01. This constitutes an active threat requiring immediate containment to stop potential data exfiltration and command execution.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"block_egress\",\n      \"target_id\": \"c2-01\",\n      \"scope_host_ids\": [\n        \"web-01\"\n      ],\n      \"evidence_ids\": [\n        \"M1\"\n      ],\n      \"reason\": \"Blocks the confirmed active C2 channel from the critical host web-01 to the attacker destination c2-01, interrupting the attacker's ability to receive commands or exfiltrate data. Preserves management and evidence_collector channels for ongoing monitoring and forensic collection.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\n        \"management\",\n        \"evidence_collector\"\n      ],\n      \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"Availability impact on web-01 is unknown as dependency mapping is not provided; however, targeted egress blocking minimizes disruption compared to full isolation.\",\n    \"Forensic evidence preservation status is not guaranteed solely by channel preservation.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 60\n}",
+          "usage": {
+            "prompt_tokens": 2194,
+            "completion_tokens": 410
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1071-001",
+      "technique": "T1071.001",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "db174067-2b5c-4110-94a5-8d37f684582d",
+      "model": "qwen3.6:35b",
+      "created_at": "2026-10-10T21:45:15.558811+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 45.714,
+      "proposal": {
+        "incident_id": "mitre-T1071-001-authorized",
+        "telemetry_version": 1,
+        "assessment": "The provided evidence M1 explicitly confirms that the observed activity is verified authorized exercise or administration. There is no unauthorized activity or malicious threat present. Consequently, no containment actions are required or appropriate. The incident is resolved based on the authorization confirmation.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "Evidence M1 confirms the activity is verified authorized exercise or administration with no unauthorized activity. No threat exists to contain."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "None. The evidence explicitly rules out malicious activity."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 60
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1071-001-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The provided evidence M1 explicitly confirms that the observed activity is verified authorized exercise or administration. There is no unauthorized activity or malicious threat present. Consequently, no containment actions are required or appropriate. The incident is resolved based on the authorization confirmation.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"Evidence M1 confirms the activity is verified authorized exercise or administration with no unauthorized activity. No threat exists to contain.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"None. The evidence explicitly rules out malicious activity.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 60\n}",
+          "usage": {
+            "prompt_tokens": 2203,
+            "completion_tokens": 202
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1071-001-authorized",
+      "technique": "T1071.001",
+      "variant": "authorized",
+      "scenario_pass": true
+    }
+  ]
+}
