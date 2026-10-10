@@ -1,0 +1,8 @@
+{
+  "schema_source": "https://schema.oasf.outshift.com/schema/objects/record",
+  "schema_sha256": "c182b8359174b7de88e435a02224c246800e4b6569b472166f4911f13f9f96dc",
+  "validation": "passed JSON Schema validation using jsonschema",
+  "catalog_skill_source": "https://schema.oasf.outshift.com/1.1.0/skills/security_incident_response",
+  "record_sha256": "ae5734dbfc9d261627443342949cc2533b9313b8c05db2fbb815fd61fd6ef47a",
+  "published": false
+}

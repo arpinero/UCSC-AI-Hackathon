@@ -50,8 +50,6 @@ python3 outcome_benchmark.py --resume --model qwen3.6:35b \
 
 On the device, `containment-outcomes.service` runs `run-outcomes.sh`. It waits for the existing regression service to finish, then runs the models sequentially. It resumes checkpoints after a reboot. Logs are `logs/outcome-*.log`; raw results and generated tables are `results/outcome-*.json` and `.md`. Unit/reference tests prove engine/fixture consistency; only `mode=model` results establish measured model performance. Completed reference verification is 48/48; model outcome scores must be read from actual completed runs.
 
-## Judge-facing claim
-
 ## Development findings and revision v2
 
 The first real Foundation outcome run was stopped with 3/7 completed cases passing out of 48 planned, and preserved as `outcome-foundation.json`. SMB, RDP, remote exploitation and ransomware cases blocked spread but selected both lateral restriction and host isolation, causing avoidable simulated service disruption. The old smoke suite separately found duplicate evidence requests in an attacker-log case. These failures motivated an explicit scoped-control preference, a validator rejection of redundant isolation/lateral pairs, and a decoder action-count cap based on legal candidates. Benchmark scoring and fixture truth were not relaxed. Revised model runs use `outcome-foundation-v2.json` and `outcome-qwen-v2.json`; never resume the old checkpoint with revised inference code.
@@ -60,10 +58,14 @@ The previous regression configuration completed Foundation 21/21 MITRE, 6/6 chal
 
 `benchmark-dashboard.html` opens locally without dependencies. Load one or more outcome JSON files to inspect partial/full status, family scores, counterfactual losses, latency and raw traces. Reference mode is prominently labeled as having no model inference.
 
+## Judge-facing claim
+
 Use: “We evaluated containment planning on 48 synthetic ATT&CK-mapped scenarios spanning 16 response families, with simulated outcome measurement, latency costs and benign controls.” State actual completed counts, model/version, failures and assumptions. Avoid “MITRE certified,” “perfect detection,” “production accuracy,” or “council superiority.” A full council comparison is deferred until teammates have working agents.
 
 ## AGNTCY boundary
 
 The existing `/propose` API and incident/telemetry-version/action contract are independently ready for an adapter. Actual discovery uses AGNTCY Directory/OASF records; messaging uses SLIM. Those are separate from simulator development. Directory/server identity, credentials, naming and routing must match the team's chosen deployment; publishing guessed endpoints would not create working integration. No team resources were changed and no AGNTCY integration is claimed. Once that deployment is known, a transport adapter should invoke the existing proposal function without admitting peer/model text into authoritative incident fields.
+
+Independent discovery preparation is complete: `oasf-record.json` passed validation against the downloaded official record JSON Schema. `oasf-validation.json` records the schema/record hashes; `research/oasf-record-schema.json` freezes the validation schema. The record uses the catalog's Security Incident Response skill (100703), states simulation-only behavior, and supplies a source locator. It advertises neither an invented public service URL nor working SLIM transport. Publishing it and configuring SLIM remain pending the team's directory/routing choice.
 
 Sources: https://attack.mitre.org/resources/attack-data-and-tools/ ; https://attack.mitre.org/techniques/T1486/ ; https://docs.agntcy.org/

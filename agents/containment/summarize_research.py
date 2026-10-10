@@ -25,6 +25,7 @@ RUNS = {
     'mitre-foundation-policy.json': ('Foundation policy-filtered MITRE', 21, '2888860', 'Same policy-filtered input and validator as Qwen'),
     'challenge-foundation-policy.json': ('Foundation policy-filtered challenge', 6, '2888860', 'Same policy-filtered input and validator as Qwen'),
     'smoke-foundation-policy.json': ('Foundation policy-filtered smoke', 8, '2888860', 'Regression suite'),
+    'smoke-qwen-policy.json': ('Qwen policy-filtered smoke', 8, '2888860', 'Regression suite'),
 }
 
 def main():
@@ -58,7 +59,7 @@ def main():
     lines += ['', 'Every rejection/unavailable response counts as a failed task. Partial runs are not full benchmark scores. Raw files retain all attempts and errors.', '',
               'Foundation uses Q8 weights and llama.cpp; Qwen uses Q4_K_M and Ollama with a larger output budget and explicit incident-bound schema text. These compare configured systems under a shared validator, with runtime/prompt/quantization confounds. No statistical superiority claim is warranted.']
     (ROOT / 'RESULTS.md').write_text('\n'.join(lines) + '\n')
-    (ROOT / 'verification.json').write_text(json.dumps({'unit_tests_passed': 34, 'unit_test_scope': 'Local source tests, including checkpoint resume tests', 'runs': summaries}, indent=2))
+    (ROOT / 'verification.json').write_text(json.dumps({'unit_tests_passed': 53, 'unit_test_scope': 'Local and ASUS device source tests, including simulator and checkpoint tests; 2026-10-10', 'runs': summaries}, indent=2))
 
 if __name__ == '__main__':
     main()

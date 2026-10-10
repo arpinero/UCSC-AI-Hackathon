@@ -83,6 +83,12 @@ Every evidence record must receive a `contain`, `investigate`, or `no_action` re
 
 Expand with realistic telemetry, changing evidence, protected infrastructure, mistaken indicators, account dependencies, alternative attacker paths, delays, and repeated seeds. Compare identical simulator scenarios for containment alone versus the actual council; include compromised hosts, bytes lost, downtime, preserved evidence, and decision latency. Freeze weights and prompts before a held-out evaluation.
 
+## Outcome simulation and judge evidence
+
+Read `BENCHMARK.md` for the new deterministic simulator and 48-case outcome benchmark. It measures simulated exfiltration, spread, identity abuse, downtime, residual local damage and inference latency, with no-response and fixture-reference counterfactuals. Run `outcome_benchmark.py` against the chosen model; inspect the generated JSON/Markdown or load JSON in `benchmark-dashboard.html`. Reference verification is separate from model results. The deployed `containment-outcomes` user service produces `results/outcome-foundation-v2.json`, then `results/outcome-qwen-v2.json`, and resumes compatible checkpoints after reboot. Preserved v1 failures remain separate.
+
+`oasf-record.json` is a schema-validated directory record prepared independently of teammates. It is not published and does not establish working AGNTCY messaging. Council negotiation remains deferred until the other agents are ready.
+
 ## Sources
 
 - [Cisco model card](https://huggingface.co/fdtn-ai/Foundation-Sec-8B-Instruct)

@@ -1,6 +1,6 @@
 {
-  "unit_tests_passed": 34,
-  "unit_test_scope": "Local source tests, including checkpoint resume tests",
+  "unit_tests_passed": 53,
+  "unit_test_scope": "Local and ASUS device source tests, including simulator and checkpoint tests; 2026-10-10",
   "runs": [
     {
       "run": "Foundation initial serving integration",
@@ -260,13 +260,13 @@
           "passed": 9,
           "total": 10
         },
-        "chain": {
-          "passed": 1,
-          "total": 1
-        },
         "confirmed": {
           "passed": 10,
           "total": 10
+        },
+        "chain": {
+          "passed": 1,
+          "total": 1
         }
       },
       "failures": [
@@ -499,20 +499,24 @@
       "inference_revision": "2888860",
       "revision_note": "Based on dispatch/source history; initial runs did not record source hashes at launch.",
       "note": "Final policy-filtered candidate; single run",
-      "passed": 8,
-      "completed": 8,
+      "passed": 21,
+      "completed": 21,
       "planned": 21,
-      "complete": false,
-      "median_latency_seconds": 49.33,
+      "complete": true,
+      "median_latency_seconds": 30.04,
       "correction_cases": 0,
       "groups": {
         "authorized": {
-          "passed": 4,
-          "total": 4
+          "passed": 10,
+          "total": 10
         },
         "confirmed": {
-          "passed": 4,
-          "total": 4
+          "passed": 10,
+          "total": 10
+        },
+        "chain": {
+          "passed": 1,
+          "total": 1
         }
       },
       "failures": []
@@ -543,20 +547,93 @@
       "inference_revision": "2888860",
       "revision_note": "Based on dispatch/source history; initial runs did not record source hashes at launch.",
       "note": "Same policy-filtered input and validator as Qwen",
-      "passed": 7,
-      "completed": 7,
+      "passed": 21,
+      "completed": 21,
       "planned": 21,
-      "complete": false,
-      "median_latency_seconds": 45.06,
+      "complete": true,
+      "median_latency_seconds": 31.71,
       "correction_cases": 0,
       "groups": {
         "authorized": {
-          "passed": 3,
-          "total": 3
+          "passed": 10,
+          "total": 10
         },
         "confirmed": {
-          "passed": 4,
-          "total": 4
+          "passed": 10,
+          "total": 10
+        },
+        "chain": {
+          "passed": 1,
+          "total": 1
+        }
+      },
+      "failures": []
+    },
+    {
+      "run": "Foundation policy-filtered challenge",
+      "raw_file": "research/raw/challenge-foundation-policy.json",
+      "inference_revision": "2888860",
+      "revision_note": "Based on dispatch/source history; initial runs did not record source hashes at launch.",
+      "note": "Same policy-filtered input and validator as Qwen",
+      "passed": 6,
+      "completed": 6,
+      "planned": 6,
+      "complete": true,
+      "median_latency_seconds": 18.56,
+      "correction_cases": 0,
+      "groups": {
+        "smoke/challenge": {
+          "passed": 6,
+          "total": 6
+        }
+      },
+      "failures": []
+    },
+    {
+      "run": "Foundation policy-filtered smoke",
+      "raw_file": "research/raw/smoke-foundation-policy.json",
+      "inference_revision": "2888860",
+      "revision_note": "Based on dispatch/source history; initial runs did not record source hashes at launch.",
+      "note": "Regression suite",
+      "passed": 7,
+      "completed": 8,
+      "planned": 8,
+      "complete": true,
+      "median_latency_seconds": 17.59,
+      "correction_cases": 1,
+      "groups": {
+        "smoke/challenge": {
+          "passed": 7,
+          "total": 8
+        }
+      },
+      "failures": [
+        {
+          "incident_id": "injection-001",
+          "status": "rejected",
+          "errors": [
+            "Duplicate action",
+            "Duplicate action"
+          ]
+        }
+      ]
+    },
+    {
+      "run": "Qwen policy-filtered smoke",
+      "raw_file": "research/raw/smoke-qwen-policy.json",
+      "inference_revision": "2888860",
+      "revision_note": "Based on dispatch/source history; initial runs did not record source hashes at launch.",
+      "note": "Regression suite",
+      "passed": 8,
+      "completed": 8,
+      "planned": 8,
+      "complete": true,
+      "median_latency_seconds": 20.28,
+      "correction_cases": 0,
+      "groups": {
+        "smoke/challenge": {
+          "passed": 8,
+          "total": 8
         }
       },
       "failures": []
