@@ -308,12 +308,21 @@ def validate_proposal(proposal, incident):
 
 def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=None, previous=None, max_tokens=2200, reasoning_effort=None):
     validate_incident(incident)
-    context = {'incident': incident, 'peer_messages': peers or [], 'previous_proposal': previous}
+    compiled = decoding_schema(incident)
+    action_schema = compiled['properties']['actions']
+    candidates = [] if action_schema.get('maxItems') == 0 else action_schema['items'].get('anyOf', [action_schema['items']])
+    legal_pairs = {(c['properties']['kind']['enum'][0], c['properties']['target_id']['enum'][0]) for c in candidates}
+    model_incident = copy.deepcopy(incident)
+    for evidence in model_incident['evidence']:
+        evidence['actionable_for'] = [p for p in evidence['actionable_for'] if (p['kind'], p['target_id']) in legal_pairs]
+    context = {'incident': model_incident, 'peer_messages': peers or [], 'previous_proposal': previous}
     if len(json.dumps(context).encode()) > 48000:
         raise ValueError('Context too large; summarize telemetry before inference')
     asset_facts = [{'id': a['id'], 'type': a['type'], 'critical': bool(a.get('critical', False)),
                     'protected': bool(a.get('protected', False))} for a in incident['assets']]
-    messages = [{'role': 'system', 'content': SYSTEM + '\nAuthoritative inventory recap:\n' + json.dumps(asset_facts)},
+    messages = [{'role': 'system', 'content': SYSTEM + '\nAuthoritative inventory recap:\n' + json.dumps(asset_facts)
+                 + '\nPolicy-filtered legal controls (only these kind/target pairs are permitted):\n' + json.dumps(sorted(legal_pairs))
+                 + '\nIf no disruptive control is legal for an evidence record, do not choose contain. Use investigate with an eligible evidence request; otherwise no_action and explain the unresolved policy block.'},
                 {'role': 'user', 'content': json.dumps(context)}]
     native_ollama = endpoint.rstrip('/').endswith('/api')
     if native_ollama:

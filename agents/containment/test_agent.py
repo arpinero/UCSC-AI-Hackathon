@@ -158,6 +158,16 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual(body['format']['properties']['incident_id']['enum'], ['exfiltration-001'])
         self.assertEqual(result['attempts'][0]['usage']['completion_tokens'], 120)
 
+    def test_model_view_filters_policy_without_mutating_audit_input(self):
+        incident = scenarios()[6]
+        original = copy.deepcopy(incident)
+        with patch('agent.urllib.request.urlopen', side_effect=urllib.error.URLError('offline')) as call:
+            propose(incident)
+        body = json.loads(call.call_args.args[0].data)
+        view = json.loads(body['messages'][1]['content'])['incident']
+        self.assertEqual(view['evidence'][0]['actionable_for'], [{'kind': 'request_evidence', 'target_id': 'session-01'}])
+        self.assertEqual(incident, original)
+
     def test_truncated_response_has_no_proposal(self):
         def truncated():
             return io.StringIO(json.dumps({'choices': [{'message': {'content': json.dumps(self.proposal)}, 'finish_reason': 'length'}]}))
