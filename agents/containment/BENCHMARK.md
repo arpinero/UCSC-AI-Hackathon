@@ -41,11 +41,11 @@ python3 -m unittest discover -q
 # Engine/fixture consistency only: NO MODEL INFERENCE.
 python3 outcome_benchmark.py --mode reference --output results/outcome-reference.json
 # Actual Foundation inference and simulated effects:
-python3 outcome_benchmark.py --resume --output results/outcome-foundation.json
+python3 outcome_benchmark.py --resume --output results/outcome-foundation-v2.json
 # Actual Qwen comparison:
 python3 outcome_benchmark.py --resume --model qwen3.6:35b \
   --endpoint http://127.0.0.1:11434/api --reasoning-effort none \
-  --max-tokens 6000 --output results/outcome-qwen.json
+  --max-tokens 6000 --output results/outcome-qwen-v2.json
 ```
 
 On the device, `containment-outcomes.service` runs `run-outcomes.sh`. It waits for the existing regression service to finish, then runs the models sequentially. It resumes checkpoints after a reboot. Logs are `logs/outcome-*.log`; raw results and generated tables are `results/outcome-*.json` and `.md`. Unit/reference tests prove engine/fixture consistency; only `mode=model` results establish measured model performance. Completed reference verification is 48/48; model outcome scores must be read from actual completed runs.
@@ -69,3 +69,11 @@ The existing `/propose` API and incident/telemetry-version/action contract are i
 Independent discovery preparation is complete: `oasf-record.json` passed validation against the downloaded official record JSON Schema. `oasf-validation.json` records the schema/record hashes; `research/oasf-record-schema.json` freezes the validation schema. The record uses the catalog's Security Incident Response skill (100703), states simulation-only behavior, and supplies a source locator. It advertises neither an invented public service URL nor working SLIM transport. Publishing it and configuring SLIM remain pending the team's directory/routing choice.
 
 Sources: https://attack.mitre.org/resources/attack-data-and-tools/ ; https://attack.mitre.org/techniques/T1486/ ; https://docs.agntcy.org/
+
+## Timing and expiry sensitivity
+
+`sensitivity_benchmark.py` replays saved model proposals without making new inference calls. It requires matching dataset/source hashes and exactly reproduced observed effects before perturbation. It varies response delay (0, 30, 120, 240 seconds) and control lifetime (1 or 3 minutes), preserving original evidence and telemetry versions. Late stale responses are rejected. Short-lived controls are not automatically renewed. These are correlated counterfactuals, not extra model trials or estimates of how the model would replan. Six additional replay tests bring local validation to 59 tests.
+
+```bash
+python3 sensitivity_benchmark.py results/outcome-foundation-v2.json --output results/sensitivity-foundation-v2.json
+```
