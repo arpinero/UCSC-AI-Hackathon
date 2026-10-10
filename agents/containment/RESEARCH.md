@@ -34,7 +34,7 @@ A pass requires a validated complete response plus expected control coverage. Au
 
 Each result records model, incident ID, proposal, authoritative asset facts, raw attempts, errors, completion reason, token usage, timestamp and elapsed seconds. Incremental result files have `planned` counts; incomplete runs must not be described as full benchmarks. `verification.json` and `RESULTS.md` summarize completed runs when available. The source revision for each experiment is recorded there; later documentation commits do not change the inference experiment.
 
-No repeated seeds, confidence intervals, paired statistical tests, independent labeling, or production outcome measurements have been performed. Temperature zero does not guarantee identical results across runtimes or concurrent workloads. Preserve failed runs; do not cherry-pick successful retries. Results are development evidence for the hackathon.
+The early classification suites used no repeated seeds, confidence intervals, paired statistical tests, independent labeling, or production outcome measurements. Temperature zero does not guarantee identical results across runtimes or concurrent workloads. Preserve failed runs; do not cherry-pick successful retries. Results are development evidence for the hackathon. The later outcome simulator adds correlated seed variants and descriptive intervals; those are not population confidence estimates.
 
 ## Connectivity and checkpoint recovery
 
@@ -84,3 +84,13 @@ python3 challenge_eval.py --endpoint http://127.0.0.1:11434/api \
 ```
 
 Freeze model digests, prompts, code and scoring before the next held-out set. Add raw telemetry, ambiguous/conflicting observations, opaque IDs, stale/retracted evidence, policy changes, identity dependencies, alternative attacker paths and critical-service downtime costs. Compare independent containment, independent larger model, and the actual council on identical simulator seeds. Measure bytes lost, additional compromised hosts, downtime, preserved evidence, policy violations, false positives, latency and correction rate. Add a reviewer only if a paired experiment demonstrates useful improvement over its latency and complexity costs.
+
+## Outcome simulator development
+
+`BENCHMARK.md` describes 48 opaque-ID cases across 16 response families, modeled attack/control effects and counterfactual outcomes. Eligibility remains shared between benign and malicious counterparts; the model must choose among allowed controls. This exposes failures that the older technique/authorized ID cues could hide. The simulator measures real inference elapsed time as attack time, but the attacks, harm rates and service dependencies remain authored assumptions. Seeds vary IDs, ordering, rates and event schedules; they do not create independent real-world incidents.
+
+Foundation v1 was stopped at 3/7 completed cases passing of 48 planned because redundant broad isolation caused unnecessary disruption. V2 was stopped at 24/30 passing after false positives on approved backups and ambiguous alerts, plus a combined-path failure. A three-case explicit-contract diagnostic improved the remote-exploit choice and avoided disruptive backup containment, but still blocked ambiguous traffic. The diagnostic is development data, not held out. V3 supplies the semantic JSON contract to both serving backends and prioritizes a full Qwen run. No v3 score is inferred from the old results or diagnostic.
+
+The old regression configuration completed Foundation 21/21 MITRE, 6/6 challenge and 7/8 smoke; Qwen completed 21/21, 6/6 and 8/8. These are separate from outcome scores. Current source validation passes 59 tests locally and on the device. The deterministic engine also passed 1,600 generated property cases with zero model calls; that count must not inflate model sample size. Frozen-decision timing/TTL replays have their own explicit no-inference label and retain the original failed proposals. Exact v2 source is archived for reproducibility.
+
+`oasf-record.json` passed official JSON Schema validation for independent AGNTCY discovery preparation. It is not published and does not establish working SLIM messaging. Council comparison remains deferred until the other roles are implemented.
