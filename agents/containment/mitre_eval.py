@@ -2,10 +2,12 @@
 import argparse
 import copy
 import hashlib
+import inspect
 import json
+import os
 import urllib.request
 from pathlib import Path
-from agent import propose
+from agent import propose, SYSTEM, SCHEMA
 from scenarios import scenarios
 
 URL = 'https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack-19.2.json'
@@ -70,6 +72,7 @@ def main():
     parser.add_argument('--model', default='fdtn-ai/Foundation-Sec-8B-Instruct')
     parser.add_argument('--max-tokens', type=int, default=2200)
     parser.add_argument('--reasoning-effort')
+    parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
     root = Path(__file__).parent
     metadata_path = root / 'mitre-provenance.json'
@@ -89,16 +92,38 @@ def main():
         metadata_path.write_text(json.dumps({'source_url': URL, 'sha256': hashlib.sha256(raw).hexdigest(), 'version': '19.2', 'techniques': techniques,
             'notice': 'Author-created synthetic observations and scoring; MITRE provides taxonomy, not these fixtures or endorsement.'}, indent=2))
     provenance = json.loads(metadata_path.read_text())
+    config = {'model': args.model, 'endpoint': args.endpoint, 'max_tokens': args.max_tokens,
+              'reasoning_effort': args.reasoning_effort,
+              'inference_sha256': hashlib.sha256((SYSTEM + json.dumps(SCHEMA, sort_keys=True) + inspect.getsource(propose)).encode()).hexdigest(),
+              'dataset_sha256': hashlib.sha256(json.dumps(dataset(), sort_keys=True).encode()).hexdigest()}
+    output = Path(args.output)
     results = []
-    for technique, variant, incident, expected in dataset():
+    resume_notes = []
+    if args.resume and output.exists():
+        saved = json.loads(output.read_text())
+        results = saved['results']
+        if saved.get('config') and saved['config'] != config:
+            raise RuntimeError('Cannot resume a changed inference configuration or dataset')
+        if [r['incident_id'] for r in results] != [c[2]['incident_id'] for c in dataset()[:len(results)]]:
+            raise RuntimeError('Checkpoint is not the expected scenario prefix')
+        if any(r.get('model') != args.model for r in results if r['status'] == 'validated'):
+            raise RuntimeError('Checkpoint model mismatch')
+        resume_notes = saved.get('resume_notes', []) + [{'preserved_cases': len(results), 'legacy_checkpoint_without_config': 'config' not in saved,
+                      'note': 'Resume preserves failures and successes; reboot/runtime-load segment affects latency comparability.'}]
+    for technique, variant, incident, expected in dataset()[len(results):]:
         # Expected answers and ATT&CK metadata stay outside the inference context.
         result = propose(incident, endpoint=args.endpoint, model=args.model, max_tokens=args.max_tokens, reasoning_effort=args.reasoning_effort)
         result.update(incident_id=incident['incident_id'], technique=technique, variant=variant,
                       scenario_pass=score(variant, expected, result))
         results.append(result)
         print(incident['incident_id'], result['status'], result['scenario_pass'], flush=True)
-        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.output).write_text(json.dumps({'provenance': provenance, 'passed': sum(r['scenario_pass'] for r in results), 'total': len(results), 'planned': len(dataset()), 'results': results}, indent=2))
+        output.parent.mkdir(parents=True, exist_ok=True)
+        temporary = output.with_suffix('.json.tmp')
+        with temporary.open('w') as checkpoint:
+            json.dump({'config': config, 'resume_notes': resume_notes, 'provenance': provenance, 'passed': sum(r['scenario_pass'] for r in results), 'total': len(results), 'planned': len(dataset()), 'results': results}, checkpoint, indent=2)
+            checkpoint.flush()
+            os.fsync(checkpoint.fileno())
+        temporary.replace(output)
 
 if __name__ == '__main__':
     main()
