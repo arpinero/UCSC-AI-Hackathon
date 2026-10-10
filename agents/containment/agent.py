@@ -59,6 +59,12 @@ Do not disrupt protected assets. On critical hosts prefer targeted egress and
 lateral restrictions over full isolation when those controls cover the threat.
 All required_preserve_channels must be preserved by every action. Do not block
 destinations marked protected. Account/session actions require matching evidence.
+Asset metadata is authoritative. A host with critical=true is critical; never
+describe it as noncritical. Do not claim zero, no, or minimal availability impact
+without explicit supporting dependency evidence. Availability impact is unknown
+when dependencies are absent. State that uncertainty. Preserving named channels
+does not guarantee all forensic evidence is preserved. Keep claims limited to
+observed threats and the explicitly supplied effects of controls.
 For block_egress, scope_host_ids must contain only source_host_ids explicitly
 linked by the cited evidence. Limit the block to the affected source hosts.
 For all other action kinds, use an empty scope_host_ids list (target_id is scope).
@@ -209,7 +215,10 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
     context = {'incident': incident, 'peer_messages': peers or [], 'previous_proposal': previous}
     if len(json.dumps(context).encode()) > 48000:
         raise ValueError('Context too large; summarize telemetry before inference')
-    messages = [{'role': 'system', 'content': SYSTEM}, {'role': 'user', 'content': json.dumps(context)}]
+    asset_facts = [{'id': a['id'], 'type': a['type'], 'critical': bool(a.get('critical', False)),
+                    'protected': bool(a.get('protected', False))} for a in incident['assets']]
+    messages = [{'role': 'system', 'content': SYSTEM + '\nAuthoritative inventory recap:\n' + json.dumps(asset_facts)},
+                {'role': 'user', 'content': json.dumps(context)}]
     attempts = []
     start = time.monotonic()
     for attempt in range(2):
@@ -229,6 +238,7 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
             validate_proposal(proposal, incident)
             return {'status': 'validated', 'proposal_id': str(uuid.uuid4()), 'model': model,
                     'created_at': dt.datetime.now(dt.timezone.utc).isoformat(),
+                    'asset_facts': asset_facts,
                     'latency_seconds': round(time.monotonic()-start, 3), 'proposal': proposal, 'attempts': attempts}
         except (ValueError, KeyError, TypeError) as exc:
             if attempts:

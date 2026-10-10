@@ -6,6 +6,7 @@ from unittest.mock import patch
 import urllib.error
 from agent import validate_proposal, propose, decoding_schema, SCHEMA
 from scenarios import scenarios
+from evaluate import passes
 
 
 class ValidatorTests(unittest.TestCase):
@@ -80,6 +81,11 @@ class ValidatorTests(unittest.TestCase):
 
     def test_global_egress_block(self):
         self.reject(lambda p: p['actions'][0].update(scope_host_ids=[]))
+
+    def test_criticality_contradiction_fails_evaluation(self):
+        p = copy.deepcopy(self.proposal)
+        p['actions'][0]['reason'] = 'No impact because web-01 is not a critical service.'
+        self.assertFalse(passes('exfiltration-001', p))
 
     def test_repair_unsupported_action(self):
         bad = copy.deepcopy(self.proposal)

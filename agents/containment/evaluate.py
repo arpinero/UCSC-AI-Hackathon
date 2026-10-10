@@ -1,6 +1,7 @@
 """Smoke evaluation, not a validated real-world effectiveness benchmark."""
 import argparse
 import json
+import re
 from pathlib import Path
 from agent import propose
 from scenarios import scenarios
@@ -9,6 +10,10 @@ from scenarios import scenarios
 def passes(incident_id, proposal):
     actions = {(a['kind'], a['target_id']) for a in proposal['actions']}
     if incident_id == 'exfiltration-001':
+        # Narrow regression for a real observed contradiction, not a truth checker.
+        for action in proposal['actions']:
+            if re.search(r'\bnon[- ]?critical\b|\bnot (?:a )?critical\b|\bno (?:availability )?impact\b', action['reason'], re.I):
+                return False
         return {('block_egress', 'c2-01'), ('restrict_lateral', 'web-01')} <= actions
     if incident_id == 'lateral-001':
         return bool(actions & {('isolate_host', 'workstation-01'), ('restrict_lateral', 'workstation-01')})
