@@ -39,6 +39,20 @@ systemctl --user start containment-model containment-api
 
 The initial BF16 weights and vLLM container downloads were stopped to prioritize startup with the installed runtime. Partial caches remain on the device. `serve-bf16.sh` is an optional alternative launcher, not the active deployment. It requires completing the container and original-weight downloads, verifying GPU compatibility, and stopping the Q8 service to free port 8000 first. NVIDIA CDI metadata was generated under `/var/run/cdi/containment-nvidia.yaml`; the active llama.cpp deployment does not use Docker.
 
+The launcher explicitly applies `chat-template.jinja`, matching the original model's `<|system|>`, `<|user|>`, and `<|assistant|>` role delimiters. The GGUF's fallback chat format was unsuitable in the initial live test. The containment client always supplies its own system prompt.
+
+To download the selected weights into a deployment folder:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install huggingface_hub==2.2.0
+HF_HOME="$PWD/model-cache" .venv/bin/hf download \
+  fdtn-ai/Foundation-Sec-8B-Instruct-Q8_0-GGUF \
+  foundation-sec-8b-instruct-q8_0.gguf \
+  --revision 16deb1934d4b1d28769f7020c15ae018aa537d1f --local-dir models
+bash finish-setup.sh
+```
+
 ## Team integration
 
 Call `agent.propose(incident, peers=peer_messages, previous=previous_proposal)` from your AGNTCY message handler, or POST an envelope to `/propose`:

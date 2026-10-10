@@ -18,7 +18,8 @@ KINDS = ['isolate_host', 'block_egress', 'restrict_lateral', 'revoke_session', '
 
 
 def obj(properties):
-    return {'type': 'object', 'properties': properties, 'required': list(properties), 'additionalProperties': False}
+    return {'type': 'object', 'properties': {k: copy.deepcopy(v) for k, v in properties.items()},
+            'required': list(properties), 'additionalProperties': False}
 
 
 STRING = {'type': 'string', 'minLength': 1}

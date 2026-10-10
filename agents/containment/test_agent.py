@@ -4,7 +4,7 @@ import json
 import unittest
 from unittest.mock import patch
 import urllib.error
-from agent import validate_proposal, propose
+from agent import validate_proposal, propose, decoding_schema, SCHEMA
 from scenarios import scenarios
 
 
@@ -28,6 +28,19 @@ class ValidatorTests(unittest.TestCase):
 
     def test_valid(self):
         validate_proposal(self.proposal, self.incident)
+
+    def test_decoding_constraints_are_independent(self):
+        schema = decoding_schema(self.incident)
+        props = schema['properties']
+        action = props['actions']['items']['properties']
+        self.assertEqual(props['incident_id']['enum'], ['exfiltration-001'])
+        self.assertEqual(action['evidence_ids']['items']['enum'], ['E1', 'E2'])
+        self.assertIn('c2-01', action['target_id']['enum'])
+        self.assertEqual(action['scope_host_ids']['items']['enum'], ['web-01', 'workstation-01'])
+        self.assertNotIn('enum', action['reason'])
+        self.assertNotIn('enum', props['assessment'])
+        self.assertNotIn('enum', action['preserve_channels']['items'])
+        self.assertNotIn('enum', SCHEMA['properties']['incident_id'])
 
     def test_stale(self):
         self.reject(lambda p: p.update(telemetry_version=2))
