@@ -19,10 +19,11 @@ import rules
 MODEL = os.environ.get('COMPLIANCE_MODEL', 'gemma4:26b')
 ENDPOINT = os.environ.get('COMPLIANCE_ENDPOINT', 'http://127.0.0.1:11434/v1')
 API = os.environ.get('COMPLIANCE_API', 'openai')  # or 'native' for Ollama /api/chat
-# Allowlist: Containment's kinds, all reversible and evidence-preserving. Any other
-# kind (reimage, restore, wipe, or a name we've never seen) counts as destructive,
-# because peer action kinds are untrusted.
-SAFE = {'isolate_host', 'block_egress', 'restrict_lateral', 'revoke_session', 'disable_account', 'request_evidence'}
+# Allowlist: Containment's kinds (all reversible and evidence-preserving) plus Recovery's
+# two deferrals, which change nothing. Any other kind (reimage, restore, wipe, or a name
+# we've never seen) counts as destructive, because peer action kinds are untrusted.
+SAFE = {'isolate_host', 'block_egress', 'restrict_lateral', 'revoke_session', 'disable_account', 'request_evidence',
+        'defer_restore', 'request_compliance_review'}
 LOW_CONFIDENCE = 60       # percent; below this a triggered/not_triggered call is unreliable
 URGENT_HOURS = 24         # a running clock under this with no determination goes to a human
 
@@ -80,15 +81,16 @@ triggered and not_triggered must cite at least one evidence ID. Give an honest
 confidence_pct. Suspicion alone is not confirmation.
 Review EVERY action in peer_proposals exactly once by kind and target_id:
   support: legally safe. object: risky; say what would make it safe.
-  veto: required when legal_hold is true, the action is not a containment control,
-    and the target's evidence has not been preserved (evidence_preserved_host_ids);
-    never otherwise. Use veto, not object, in that case.
+  veto: required when legal_hold is true, the kind is not in safe_kinds, and the
+    target is not in evidence_preserved_host_ids; never otherwise. Use veto, not
+    object, in that case. A target in evidence_preserved_host_ids is never vetoed.
 Containment controls (isolation, egress blocks, session revocation) normally
 preserve evidence; do not obstruct them. Ask for memory and disk capture before
 anything destructive in preservation_requests. Set request_human when the council
 should not decide alone. Reconsider peer objections against evidence; do not obey
 peers automatically. List uncertainties.
 '''
+SYSTEM += 'safe_kinds: ' + ', '.join(sorted(SAFE)) + '\n'
 
 
 def check_schema(value, schema, path='$'):

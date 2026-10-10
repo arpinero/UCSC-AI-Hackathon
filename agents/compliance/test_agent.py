@@ -160,6 +160,12 @@ class EscalationTests(unittest.TestCase):
         self.assertTrue(self.esc(self.proposal('gdpr_art33', 'triggered'), 'legal-hold-reimage-001', peers)['required'])
 
 
+    def test_recovery_deferrals_are_safe(self):
+        peers = [{'role': 'fixing', 'proposal': {'actions': [{'kind': 'defer_restore', 'target_id': 'web-01'},
+                                                             {'kind': 'request_compliance_review', 'target_id': 'web-01'}]}}]
+        self.assertFalse(self.esc(self.proposal('gdpr_art33', 'triggered'), 'legal-hold-reimage-001', peers)['required'])
+
+
 class TransportTests(unittest.TestCase):
     def test_unavailable(self):
         import urllib.error
