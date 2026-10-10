@@ -1,0 +1,62 @@
+{
+  "incident_id": "session-001",
+  "telemetry_version": 1,
+  "assets": [
+    {
+      "id": "web-01",
+      "type": "host",
+      "critical": true
+    },
+    {
+      "id": "workstation-01",
+      "type": "host",
+      "critical": false
+    },
+    {
+      "id": "c2-01",
+      "type": "destination",
+      "protected": false
+    },
+    {
+      "id": "collector-01",
+      "type": "destination",
+      "protected": true
+    },
+    {
+      "id": "session-01",
+      "type": "session",
+      "protected": false
+    }
+  ],
+  "policy": {
+    "allowed_actions": [
+      "isolate_host",
+      "block_egress",
+      "restrict_lateral",
+      "revoke_session",
+      "request_evidence"
+    ],
+    "max_ttl_minutes": 30,
+    "available_channels": [
+      "management",
+      "evidence_collector"
+    ],
+    "required_preserve_channels": [
+      "management",
+      "evidence_collector"
+    ],
+    "allow_critical_isolation": false
+  },
+  "evidence": [
+    {
+      "id": "E5",
+      "observation": "session-01 is confirmed stolen and still being used. Revocation terminates the unauthorized session.",
+      "actionable_for": [
+        {
+          "kind": "revoke_session",
+          "target_id": "session-01"
+        }
+      ]
+    }
+  ]
+}

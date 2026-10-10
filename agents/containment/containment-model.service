@@ -1,0 +1,11 @@
+[Unit]
+Description=Foundation-Sec containment model (Q8, CUDA)
+
+[Service]
+WorkingDirectory=/home/asus/containment-agent
+ExecStart=/bin/bash /home/asus/containment-agent/serve-model.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

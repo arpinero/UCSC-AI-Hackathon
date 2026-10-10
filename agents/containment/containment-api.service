@@ -1,0 +1,11 @@
+[Unit]
+Description=Containment proposal API
+
+[Service]
+WorkingDirectory=/home/asus/containment-agent
+ExecStart=/usr/bin/python3 /home/asus/containment-agent/api.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

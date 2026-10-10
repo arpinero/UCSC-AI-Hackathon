@@ -1,0 +1,79 @@
+{
+  "incident_id": "exfiltration-001",
+  "telemetry_version": 1,
+  "assets": [
+    {
+      "id": "web-01",
+      "type": "host",
+      "critical": true
+    },
+    {
+      "id": "workstation-01",
+      "type": "host",
+      "critical": false
+    },
+    {
+      "id": "c2-01",
+      "type": "destination",
+      "protected": false
+    },
+    {
+      "id": "collector-01",
+      "type": "destination",
+      "protected": true
+    },
+    {
+      "id": "session-01",
+      "type": "session",
+      "protected": false
+    }
+  ],
+  "policy": {
+    "allowed_actions": [
+      "isolate_host",
+      "block_egress",
+      "restrict_lateral",
+      "revoke_session",
+      "request_evidence"
+    ],
+    "max_ttl_minutes": 30,
+    "available_channels": [
+      "management",
+      "evidence_collector"
+    ],
+    "required_preserve_channels": [
+      "management",
+      "evidence_collector"
+    ],
+    "allow_critical_isolation": false
+  },
+  "evidence": [
+    {
+      "id": "E1",
+      "observation": "Confirmed unauthorized data transfer from web-01 to c2-01; still active. Destination block stops the observed transfer.",
+      "source_host_ids": [
+        "web-01"
+      ],
+      "actionable_for": [
+        {
+          "kind": "block_egress",
+          "target_id": "c2-01"
+        },
+        {
+          "kind": "request_evidence",
+          "target_id": "web-01"
+        }
+      ]
+    },
+    {
+      "id": "E2",
+      "observation": "Confirmed unauthorized lateral access attempt originating on web-01. Restricting lateral traffic prevents this path.",
+      "actionable_for": [
+        {
+          "kind": "restrict_lateral",
+          "target_id": "web-01"
+        }
+      ]
+    }
+  ]
+}
