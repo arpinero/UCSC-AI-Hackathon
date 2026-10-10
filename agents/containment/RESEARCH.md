@@ -38,11 +38,13 @@ No repeated seeds, confidence intervals, paired statistical tests, independent l
 
 ## Connectivity and checkpoint recovery
 
+After reconnecting through the tunnel, the model startup journal confirmed 33/33 GPU layers after the reboot. A SHA256 computed from the actual installed GGUF file was `d0072df70235e92bd996d4efd2347b38c9db530ed83df21f6be3f8958a9832d0`, matching the previously retrieved Hugging Face file metadata.
+
 The device became unreachable and rebooted around 14:58 PDT. SSH briefly returned at the same address, `169.233.72.113`, around 15:01 PDT. Both model/API user services were active after boot, verifying service recovery. `nohup` evaluator processes had stopped: nohupped jobs survive SSH loss, not device reboot. The saved policy-filtered checkpoints contained 11/11 Qwen MITRE cases and 8/8 Foundation MITRE cases, with Qwen challenge already complete at 6/6. These were partial benchmarks, not 21-case scores.
 
 `--resume` preserves every recorded completed case, including failures, checks prefix/model/configuration compatibility, and runs only remaining cases. New checkpoints record inference and dataset hashes, use atomic replacement, and flush data. Older pre-manifest checkpoints are explicitly labeled as legacy resumes; configuration is supported by the dispatch history and `validation-regression.json` (70 identical valid-fixture request bodies across input-only hardening). A resumed run spans different uptime/load conditions, so aggregate latency is not a controlled hardware benchmark.
 
-`run-evaluations.sh` and `containment-evaluations.service` provide boot-resumable evaluation after installation. Read `RECONNECT.md` and check the actual service state: the source files existing in Git do not establish that the service has been deployed. Deployment was pending when SSH became unreachable a second time.
+`run-evaluations.sh` and `containment-evaluations.service` provide boot-resumable evaluation after installation. Deployment was pending when SSH became unreachable a second time. Access was restored through VS Code Remote Tunnels using the organizer's `asus-machine` tunnel and user-completed Microsoft account authentication. The shell verified `asus@16RW`, `aarch64`, and approximately one hour uptime. After checking no evaluators were running, the containment checkout was pulled, all 34 unit tests passed on the device, and the evaluation service was enabled and verified running at 15:59:47 PDT. Both model/API services were active, and the API reported inference ready. The next observed checkpoints were Foundation MITRE 9/9 completed of 21 and Qwen MITRE 12/12 completed of 21; Qwen challenge remained complete at 6/6. These observations do not replace archived raw results or imply completed MITRE benchmarks. Tunnel persistence after reboot has not yet been verified.
 
 ## Failure history and resulting changes
 

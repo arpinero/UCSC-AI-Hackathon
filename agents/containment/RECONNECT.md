@@ -2,9 +2,9 @@
 
 ## VS Code Remote Tunnels
 
-The organizer-provided screen shows a running tunnel named `asus-machine` at https://vscode.dev/tunnel/asus-machine. The Windows client extension `ms-vscode.remote-server` version 1.5.4 was installed successfully. Connection is awaiting account authentication; remote access through this tunnel has not yet been verified.
+The organizer-provided screen shows a running tunnel named `asus-machine` at https://vscode.dev/tunnel/asus-machine. The Windows client extension `ms-vscode.remote-server` version 1.5.4 was installed successfully. Remote access was verified around 16:00 PDT on October 10 after the user completed Microsoft account authentication. The remote shell reported `asus@16RW`, architecture `aarch64`, and uptime about one hour.
 
-Open the URL and sign in with the same GitHub account that started the tunnel on the ASUS device. For desktop VS Code, press F1 and run **Remote - Tunnels: Connect to Tunnel...**, then select `asus-machine`. Open `/home/asus/containment-agent` after connecting. Keep the device's tunnel process running. The web editor includes the tunnel client; the desktop extension provides an alternative client.
+Open the URL and choose **Microsoft Account**, using the account that started the tunnel on the ASUS device (the user reports this is a teammate's account). For desktop VS Code, press F1 and run **Remote - Tunnels: Connect to Tunnel...**, then select `asus-machine`. Open `/home/asus/containment-agent` after connecting. Keep the device's tunnel process running. The web editor includes the tunnel client; the desktop extension provides an alternative client. No account credentials are recorded here.
 
 This uses the device's outbound tunnel connection and does not require its Wi-Fi address to remain fixed. It does not make the containment model/API publicly available. Once connected, verify the device identity, service health, and existing evaluator processes using the commands below before resuming. Persistence of the tunnel after device reboot still needs verification.
 
@@ -24,7 +24,7 @@ The forwarded proposal API is `http://127.0.0.1:8010`; the Foundation model is `
 
 Remote work is under `/home/asus/containment-agent`. Evaluations run with `nohup`; user services have lingering enabled and survive SSH loss. A network disconnect does not stop them. Do not start duplicate evaluations until checking existing jobs/processes:
 
-`nohup` evaluations do not survive device reboot. The model/API services were verified to restart after a reboot around 14:58 PDT. Boot-resumable evaluation files are now supplied; installation must be verified separately. To install them from the containment checkout after confirming no duplicate evaluators are running:
+`nohup` evaluations do not survive device reboot. The model/API services were verified to restart after a reboot around 14:58 PDT. The boot-resumable evaluation service was installed, enabled and verified active through the tunnel at 15:59:47 PDT. All 34 tests passed on the device before startup. To reinstall from the containment checkout after confirming no duplicate evaluators are running:
 
 ```bash
 cd /home/asus/containment-agent
