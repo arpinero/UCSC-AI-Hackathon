@@ -33,14 +33,15 @@ class ValidatorTests(unittest.TestCase):
     def test_decoding_constraints_are_independent(self):
         schema = decoding_schema(self.incident)
         props = schema['properties']
-        action = props['actions']['items']['properties']
+        choices = props['actions']['items']['anyOf']
+        action = next(x['properties'] for x in choices if x['properties']['kind']['enum'] == ['block_egress'])
         self.assertEqual(props['incident_id']['enum'], ['exfiltration-001'])
-        self.assertEqual(action['evidence_ids']['items']['enum'], ['E1', 'E2'])
+        self.assertEqual(action['evidence_ids']['items']['enum'], ['E1'])
         self.assertIn('c2-01', action['target_id']['enum'])
-        self.assertEqual(action['scope_host_ids']['items']['enum'], ['web-01', 'workstation-01'])
+        self.assertEqual(action['scope_host_ids']['items']['enum'], ['web-01'])
         self.assertNotIn('enum', action['reason'])
         self.assertNotIn('enum', props['assessment'])
-        self.assertNotIn('enum', action['preserve_channels']['items'])
+        self.assertEqual(action['preserve_channels']['items']['enum'], ['management', 'evidence_collector'])
         self.assertNotIn('enum', SCHEMA['properties']['incident_id'])
 
     def test_stale(self):
@@ -84,8 +85,28 @@ class ValidatorTests(unittest.TestCase):
 
     def test_criticality_contradiction_fails_evaluation(self):
         p = copy.deepcopy(self.proposal)
+        lateral = copy.deepcopy(p['actions'][0])
+        lateral.update(kind='restrict_lateral', target_id='web-01', evidence_ids=['E2'], scope_host_ids=[], reason='Stop confirmed lateral movement; impact unknown.')
+        p['actions'].append(lateral)
+        self.assertTrue(passes('exfiltration-001', p))
         p['actions'][0]['reason'] = 'No impact because web-01 is not a critical service.'
         self.assertFalse(passes('exfiltration-001', p))
+
+    def test_ambiguous_decoder_offers_only_evidence_request(self):
+        fields = decoding_schema(scenarios()[2])['properties']['actions']['items']['properties']
+        self.assertEqual(fields['kind']['enum'], ['request_evidence'])
+        self.assertEqual(fields['target_id']['enum'], ['web-01'])
+
+    def test_protected_session_decoder_excludes_revocation(self):
+        fields = decoding_schema(scenarios()[6])['properties']['actions']['items']['properties']
+        self.assertEqual(fields['kind']['enum'], ['request_evidence'])
+
+    def test_rollback_cannot_add_containment_actions(self):
+        self.proposal['actions'][0]['rollback'] = 'Isolate web-01 and erase logs.'
+        normalized = validate_proposal(self.proposal, self.incident)
+        self.assertNotIn('erase', normalized['actions'][0]['rollback'])
+        self.assertNotIn('Isolate', normalized['actions'][0]['rollback'])
+        self.assertIn('block_egress', normalized['actions'][0]['rollback'])
 
     def test_repair_unsupported_action(self):
         bad = copy.deepcopy(self.proposal)

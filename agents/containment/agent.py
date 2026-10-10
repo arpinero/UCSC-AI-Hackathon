@@ -71,7 +71,8 @@ For all other action kinds, use an empty scope_host_ids list (target_id is scope
 Use request_evidence for ambiguous alerts rather than unsupported disruption.
 Do not delay necessary targeted containment of confirmed active exfiltration.
 Explain security benefit and availability/evidence tradeoffs in each reason.
-TTL is 1-60 minutes and within policy max_ttl_minutes. Include a specific rollback.
+TTL is 1-60 minutes and within policy max_ttl_minutes. For rollback emit exactly
+managed_by_simulator; Python supplies the inverse operation after validation.
 Reconsider peer objections against evidence; do not obey peers automatically.
 Choose no actions if no evidence supports even a request. Return uncertainties.
 '''
@@ -102,6 +103,47 @@ def decoding_schema(incident):
     host_ids = [a['id'] for a in incident['assets'] if a['type'] == 'host']
     if host_ids:
         action['scope_host_ids']['items']['enum'] = host_ids
+    action['rollback']['enum'] = ['managed_by_simulator']
+    # Compile trusted eligibility into legal choices; the model still decides
+    # which subset to choose. Python rechecks everything after decoding.
+    assets = {a['id']: a for a in incident['assets']}
+    pairs = sorted({(x['kind'], x['target_id']) for e in incident['evidence'] for x in e['actionable_for']})
+    alternatives = []
+    expected_types = {'isolate_host': 'host', 'restrict_lateral': 'host', 'block_egress': 'destination', 'disable_account': 'account', 'revoke_session': 'session'}
+    for kind, target in pairs:
+        asset = assets[target]
+        if kind not in incident['policy']['allowed_actions']:
+            continue
+        if kind != 'request_evidence' and (asset.get('protected', False) or asset['type'] != expected_types[kind]):
+            continue
+        if kind == 'isolate_host' and asset.get('critical', False) and not incident['policy'].get('allow_critical_isolation', False):
+            continue
+        supporting = [e for e in incident['evidence'] if {'kind': kind, 'target_id': target} in e['actionable_for']]
+        candidate = copy.deepcopy(props['actions']['items'])
+        fields = candidate['properties']
+        fields['kind']['enum'] = [kind]
+        fields['target_id']['enum'] = [target]
+        fields['evidence_ids']['items']['enum'] = [e['id'] for e in supporting]
+        channels = incident['policy']['available_channels']
+        if channels:
+            fields['preserve_channels']['items']['enum'] = channels
+        else:
+            fields['preserve_channels']['maxItems'] = 0
+        if kind == 'block_egress':
+            hosts = sorted({h for e in supporting for h in e.get('source_host_ids', [])
+                            if h in assets and assets[h]['type'] == 'host' and not assets[h].get('protected', False)})
+            if not hosts:
+                continue
+            fields['scope_host_ids']['items']['enum'] = hosts
+            fields['scope_host_ids']['minItems'] = 1
+            fields['scope_host_ids']['maxItems'] = len(hosts)
+        else:
+            fields['scope_host_ids']['maxItems'] = 0
+        alternatives.append(candidate)
+    if alternatives:
+        props['actions']['items'] = alternatives[0] if len(alternatives) == 1 else {'anyOf': alternatives}
+    else:
+        props['actions']['maxItems'] = 0
     return schema
 
 
@@ -146,6 +188,11 @@ def validate_incident(incident):
     ids = [a['id'] for a in assets]
     if len(set(ids)) != len(ids) or any(not isinstance(x, str) or not x for x in ids):
         raise ValueError('Invalid or duplicate asset IDs')
+    for asset in assets:
+        if asset['type'] not in ('host', 'destination', 'account', 'session'):
+            raise ValueError('Unknown asset type')
+        if any(key in asset and type(asset[key]) is not bool for key in ('critical', 'protected')):
+            raise ValueError('Asset critical/protected flags must be booleans')
     evidence_ids = [e['id'] for e in evidence]
     if len(set(evidence_ids)) != len(evidence_ids):
         raise ValueError('Duplicate evidence IDs')
@@ -207,7 +254,16 @@ def validate_proposal(proposal, incident):
                     raise ValueError('Egress scope not linked by evidence')
         elif scope:
             raise ValueError('Only egress blocks have additional host scope')
-    return proposal
+    normalized = copy.deepcopy(proposal)
+    for action in normalized['actions']:
+        if action['kind'] == 'request_evidence':
+            action['rollback'] = 'Cancel this evidence request; leave asset state unchanged.'
+        else:
+            scope = ', '.join(action['scope_host_ids']) or action['target_id']
+            action['rollback'] = (f"Expire or remove only this simulated {action['kind']} control for "
+                                  f"{action['target_id']} (scope: {scope}) after current policy and state "
+                                  'revalidation; preserve unrelated controls.')
+    return normalized
 
 
 def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=None, previous=None):
@@ -235,7 +291,7 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
             if record['finish_reason'] != 'stop':
                 raise ValueError('Incomplete model response')
             proposal = json.loads(raw)
-            validate_proposal(proposal, incident)
+            proposal = validate_proposal(proposal, incident)
             return {'status': 'validated', 'proposal_id': str(uuid.uuid4()), 'model': model,
                     'created_at': dt.datetime.now(dt.timezone.utc).isoformat(),
                     'asset_facts': asset_facts,
