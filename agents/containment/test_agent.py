@@ -13,6 +13,8 @@ class ValidatorTests(unittest.TestCase):
     def setUp(self):
         self.incident = scenarios()[0]
         self.proposal = {'incident_id': 'exfiltration-001', 'telemetry_version': 1,
+            'evidence_review': [{'evidence_id': 'E1', 'decision': 'contain', 'reason': 'Active transfer.'},
+                                {'evidence_id': 'E2', 'decision': 'no_action', 'reason': 'Await peer review.'}],
             'assessment': 'Active exfiltration.', 'actions': [{
                 'kind': 'block_egress', 'target_id': 'c2-01', 'evidence_ids': ['E1'],
                 'scope_host_ids': ['web-01'],
@@ -107,6 +109,12 @@ class ValidatorTests(unittest.TestCase):
         self.assertNotIn('erase', normalized['actions'][0]['rollback'])
         self.assertNotIn('Isolate', normalized['actions'][0]['rollback'])
         self.assertIn('block_egress', normalized['actions'][0]['rollback'])
+
+    def test_cannot_silently_drop_reviewed_threat(self):
+        self.reject(lambda p: p['evidence_review'][1].update(decision='contain'))
+
+    def test_every_evidence_must_be_reviewed(self):
+        self.reject(lambda p: p['evidence_review'].pop())
 
     def test_repair_unsupported_action(self):
         bad = copy.deepcopy(self.proposal)
