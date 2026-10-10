@@ -1,12 +1,18 @@
 """Loopback-only proposal API for the team's transport adapter."""
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import threading
 import uuid
 import urllib.request
 import urllib.error
-from agent import propose
+from agent import propose, MODEL
+
+ENDPOINT = os.environ.get('CONTAINMENT_ENDPOINT', 'http://127.0.0.1:8000/v1')
+SELECTED_MODEL = os.environ.get('CONTAINMENT_MODEL', MODEL)
+MAX_TOKENS = int(os.environ.get('CONTAINMENT_MAX_TOKENS', '2200'))
+REASONING = os.environ.get('CONTAINMENT_REASONING_EFFORT')
 
 SLOTS = threading.BoundedSemaphore(2)
 
@@ -24,13 +30,18 @@ class Handler(BaseHTTPRequestHandler):
         if self.path != '/health':
             return self.respond(404, {'error': 'Unknown route'})
         try:
-            with urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2) as response:
+            native = ENDPOINT.rstrip('/').endswith('/api')
+            health = ENDPOINT.rstrip('/') + '/tags' if native else ENDPOINT.rstrip('/').removesuffix('/v1') + '/health'
+            with urllib.request.urlopen(health, timeout=2) as response:
                 ready = response.status == 200
+                if native:
+                    ready = ready and any(m['name'] == SELECTED_MODEL for m in json.load(response)['models'])
         except (urllib.error.URLError, TimeoutError, OSError):
             ready = False
         self.respond(200 if ready else 503, {'service': 'containment-proposals',
                      'mode': 'simulation', 'inference_ready': ready,
-                     'weights': 'fdtn-ai/Foundation-Sec-8B-Instruct-Q8_0-GGUF'})
+                     'model': SELECTED_MODEL,
+                     'weights': os.environ.get('CONTAINMENT_WEIGHTS', 'fdtn-ai/Foundation-Sec-8B-Instruct-Q8_0-GGUF')})
 
     def do_POST(self):
         if self.path != '/propose':
@@ -43,7 +54,8 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < size <= 48000:
                 return self.respond(413, {'error': 'Body must be 1-48000 bytes'})
             data = json.loads(self.rfile.read(size))
-            result = propose(data['incident'], peers=data.get('peer_messages'), previous=data.get('previous_proposal'))
+            result = propose(data['incident'], peers=data.get('peer_messages'), previous=data.get('previous_proposal'),
+                             endpoint=ENDPOINT, model=SELECTED_MODEL, max_tokens=MAX_TOKENS, reasoning_effort=REASONING)
             audit_id = str(uuid.uuid4())
             root = Path(__file__).parent / 'results' / 'audit'
             root.mkdir(parents=True, exist_ok=True)

@@ -144,6 +144,20 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual(result['status'], 'unavailable')
         self.assertIsNone(result['proposal'])
 
+    def test_native_adapter_enforces_schema_and_budget(self):
+        response = io.StringIO(json.dumps({'message': {'content': json.dumps(self.proposal)},
+                                          'done_reason': 'stop', 'eval_count': 120, 'prompt_eval_count': 500}))
+        with patch('agent.urllib.request.urlopen', return_value=response) as call:
+            result = propose(self.incident, endpoint='http://127.0.0.1:11434/api', model='qwen3.6:35b',
+                             reasoning_effort='none', max_tokens=6000)
+        body = json.loads(call.call_args.args[0].data)
+        self.assertEqual(result['status'], 'validated')
+        self.assertFalse(body['think'])
+        self.assertEqual(body['options']['num_ctx'], 16384)
+        self.assertEqual(body['options']['num_predict'], 6000)
+        self.assertEqual(body['format']['properties']['incident_id']['enum'], ['exfiltration-001'])
+        self.assertEqual(result['attempts'][0]['usage']['completion_tokens'], 120)
+
     def test_truncated_response_has_no_proposal(self):
         def truncated():
             return io.StringIO(json.dumps({'choices': [{'message': {'content': json.dumps(self.proposal)}, 'finish_reason': 'length'}]}))
