@@ -315,6 +315,9 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
                     'protected': bool(a.get('protected', False))} for a in incident['assets']]
     messages = [{'role': 'system', 'content': SYSTEM + '\nAuthoritative inventory recap:\n' + json.dumps(asset_facts)},
                 {'role': 'user', 'content': json.dumps(context)}]
+    native_ollama = endpoint.rstrip('/').endswith('/api')
+    if native_ollama:
+        messages[0]['content'] += '\nReturn exactly this JSON contract (actions contains selected actions only):\n' + json.dumps(SCHEMA)
     attempts = []
     start = time.monotonic()
     for attempt in range(2):
@@ -322,11 +325,18 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
                 'response_format': {'type': 'json_schema', 'json_schema': {'name': 'containment_proposal', 'strict': True, 'schema': decoding_schema(incident)}}}
         if reasoning_effort is not None:
             body['reasoning_effort'] = reasoning_effort
-        request = urllib.request.Request(endpoint.rstrip('/') + '/chat/completions',
+        if native_ollama:
+            body = {'model': model, 'messages': messages, 'stream': False,
+                    'format': decoding_schema(incident), 'think': reasoning_effort != 'none',
+                    'options': {'temperature': 0, 'num_predict': max_tokens, 'num_ctx': 16384}, 'keep_alive': '10m'}
+        request = urllib.request.Request(endpoint.rstrip('/') + ('/chat' if native_ollama else '/chat/completions'),
                                          data=json.dumps(body).encode(), headers={'Content-Type': 'application/json'})
         try:
             with urllib.request.urlopen(request, timeout=240) as response:
                 result = json.load(response)
+            if native_ollama:
+                result = {'choices': [{'message': result['message'], 'finish_reason': result.get('done_reason')}],
+                          'usage': {'prompt_tokens': result.get('prompt_eval_count'), 'completion_tokens': result.get('eval_count')}}
             raw = result['choices'][0]['message']['content']
             record = {'raw': raw, 'usage': result.get('usage'), 'finish_reason': result['choices'][0].get('finish_reason')}
             attempts.append(record)
