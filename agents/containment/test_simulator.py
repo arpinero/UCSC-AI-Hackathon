@@ -94,6 +94,14 @@ class SimulatorTests(unittest.TestCase):
         case=self.case('lateral_smb'); case['events']=[case['events'][-1]]
         sim=Simulator(case); sim.advance(600)
         self.assertEqual(sim.metrics['additional_hosts_compromised'],0)
+    def test_redundant_isolation_and_lateral_controls_rejected(self):
+        case=self.case('lateral_smb'); sim=Simulator(case); p=reference_proposal(case)
+        a=copy.deepcopy(p['actions'][0]); a['kind']='isolate_host'; p['actions'].append(a)
+        self.assertFalse(sim.apply(p)); self.assertEqual(sim.active(),[])
+    def test_single_candidate_decoder_bounds_actions(self):
+        from agent import decoding_schema
+        from scenarios import scenarios
+        self.assertEqual(decoding_schema(scenarios()[2])['properties']['actions']['maxItems'],1)
 
 
 if __name__=='__main__': unittest.main()

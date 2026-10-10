@@ -52,6 +52,14 @@ On the device, `containment-outcomes.service` runs `run-outcomes.sh`. It waits f
 
 ## Judge-facing claim
 
+## Development findings and revision v2
+
+The first real Foundation outcome run was stopped with 3/7 completed cases passing out of 48 planned, and preserved as `outcome-foundation.json`. SMB, RDP, remote exploitation and ransomware cases blocked spread but selected both lateral restriction and host isolation, causing avoidable simulated service disruption. The old smoke suite separately found duplicate evidence requests in an attacker-log case. These failures motivated an explicit scoped-control preference, a validator rejection of redundant isolation/lateral pairs, and a decoder action-count cap based on legal candidates. Benchmark scoring and fixture truth were not relaxed. Revised model runs use `outcome-foundation-v2.json` and `outcome-qwen-v2.json`; never resume the old checkpoint with revised inference code.
+
+The previous regression configuration completed Foundation 21/21 MITRE, 6/6 challenge and 7/8 smoke; Qwen 21/21, 6/6 and 8/8 respectively. These observations precede v2 and are not v2 regression scores. The current source has 53 passing unit tests. A full v2 outcome report must be read from actual run files, not inferred from the reference or partial development run.
+
+`benchmark-dashboard.html` opens locally without dependencies. Load one or more outcome JSON files to inspect partial/full status, family scores, counterfactual losses, latency and raw traces. Reference mode is prominently labeled as having no model inference.
+
 Use: “We evaluated containment planning on 48 synthetic ATT&CK-mapped scenarios spanning 16 response families, with simulated outcome measurement, latency costs and benign controls.” State actual completed counts, model/version, failures and assumptions. Avoid “MITRE certified,” “perfect detection,” “production accuracy,” or “council superiority.” A full council comparison is deferred until teammates have working agents.
 
 ## AGNTCY boundary

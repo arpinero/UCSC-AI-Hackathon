@@ -61,6 +61,13 @@ and no_action only with an explicit evidence-based reason. Address every confirm
 threat, including lateral movement as well as exfiltration. Minimal means covering
 all observed threats with the smallest sufficient set, not ignoring a threat.
 Select the smallest reversible set of controls sufficient for the observed threat.
+Select each kind/target pair at most once, combining supporting evidence IDs.
+Never combine isolate_host and restrict_lateral for the same host: isolation
+already covers its network lateral path. For observed lateral spread alone prefer
+restrict_lateral; for a known outbound destination prefer scoped block_egress.
+Add broader isolation only when supplied facts establish an uncovered network
+path that narrower eligible controls cannot contain. Local malware or encryption
+alone does not justify claiming network isolation stops local execution.
 Never reboot, delete, restore files, kill processes, erase logs, or invent targets.
 Every action must cite evidence explicitly authorizing that action for that target
 via actionable_for. This is eligibility, not a requirement to take the action.
@@ -167,6 +174,7 @@ def decoding_schema(incident):
         alternatives.append(candidate)
     if alternatives:
         props['actions']['items'] = alternatives[0] if len(alternatives) == 1 else {'anyOf': alternatives}
+        props['actions']['maxItems'] = min(6, len(alternatives))
     else:
         props['actions']['maxItems'] = 0
     return schema
@@ -315,6 +323,9 @@ def validate_proposal(proposal, incident):
     for action in proposal['actions']:
         if action['kind'] != 'request_evidence' and not any(decisions[eid] == 'contain' for eid in action['evidence_ids']):
             raise ValueError('Disruptive control requires evidence reviewed as contain; investigation alone cannot authorize disruption')
+    isolated = {target for kind, target in seen if kind == 'isolate_host'}
+    if any(kind == 'restrict_lateral' and target in isolated for kind, target in seen):
+        raise ValueError('Redundant network controls: choose scoped lateral restriction or host isolation, not both on the same host')
     normalized = copy.deepcopy(proposal)
     for action in normalized['actions']:
         if action['kind'] == 'request_evidence':
