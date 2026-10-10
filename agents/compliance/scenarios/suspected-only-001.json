@@ -1,0 +1,46 @@
+{
+  "incident_id": "suspected-only-001",
+  "telemetry_version": 1,
+  "evidence": [
+    {
+      "id": "E3",
+      "observation": "Single anomalous 40 MB outbound burst from web-01. Destination unknown; could be the nightly backup. No confirmed access to customer data."
+    }
+  ],
+  "compliance": {
+    "discovered_at": "2026-10-08T03:00:00Z",
+    "now": "2026-10-10T15:00:00Z",
+    "organization": {
+      "public_company": false,
+      "eu_establishment": true
+    },
+    "affected_data": [
+      {
+        "class": "personal_data",
+        "jurisdictions": [
+          "EU"
+        ],
+        "records": 12000
+      }
+    ],
+    "legal_hold": false,
+    "evidence_preserved_host_ids": []
+  },
+  "peer_proposals": [
+    {
+      "role": "containment",
+      "proposal": {
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01"
+          },
+          {
+            "kind": "restrict_lateral",
+            "target_id": "web-01"
+          }
+        ]
+      }
+    }
+  ]
+}

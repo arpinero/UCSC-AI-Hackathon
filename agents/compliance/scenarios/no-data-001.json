@@ -1,0 +1,19 @@
+{
+  "incident_id": "no-data-001",
+  "telemetry_version": 1,
+  "evidence": [
+    {
+      "id": "E7",
+      "observation": "Port scan against web-01 from an external IP; blocked at the perimeter. No access gained."
+    }
+  ],
+  "compliance": {
+    "discovered_at": "2026-10-09T09:00:00Z",
+    "now": "2026-10-10T15:00:00Z",
+    "organization": {},
+    "affected_data": [],
+    "legal_hold": false,
+    "evidence_preserved_host_ids": []
+  },
+  "peer_proposals": []
+}
