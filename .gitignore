@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment / secrets
+.env
+
+# SQLite coordination database (lives OUTSIDE the repo, never commit it)
+*.db
+*.db-wal
+*.db-shm
+
+# Model artifacts (never commit weights)
+*.safetensors
+*.gguf
+models/
+model-cache/
+
+# Logs
+logs/
+*.log
