@@ -357,10 +357,16 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
                  + '\nIf no disruptive control is legal for an evidence record, do not choose contain. Use investigate with an eligible evidence request; otherwise no_action and explain the unresolved policy block.'},
                 {'role': 'user', 'content': json.dumps(context)}]
     native_ollama = endpoint.rstrip('/').endswith('/api')
-    if native_ollama:
-        messages[0]['content'] += ('\nReturn exactly this incident-bound JSON contract. The actions array contains only selected controls, '
-                                  'never options that you decided against. Empty actions is valid for no_action. '
-                                  'Each action must match a listed legal action/target alternative:\n' + json.dumps(decoding_schema(incident)))
+    # Decoder constraints enforce syntax but do not explain the contract to the
+    # model. Supply its meaning explicitly for both serving backends.
+    messages[0]['content'] += ('\nJSON field meanings: assessment is a short factual incident assessment, not a timestamp. '
+                              'evidence_review records your decision for EVERY observation: contain only when the observation '
+                              'establishes an unauthorized threat, investigate for unresolved authorization, and no_action for '
+                              'verified authorized activity. Allowed action candidates are not findings of compromise. '
+                              'Explain each review and action in one short sentence. State only supported facts. '
+                              'The actions array contains selected controls, not every eligible option. Empty actions is valid. '
+                              'Return this complete incident-bound JSON contract, using the current incident and evidence IDs:\n'
+                              + json.dumps(decoding_schema(incident)))
     attempts = []
     start = time.monotonic()
     for attempt in range(2):

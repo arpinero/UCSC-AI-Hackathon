@@ -77,3 +77,9 @@ Sources: https://attack.mitre.org/resources/attack-data-and-tools/ ; https://att
 ```bash
 python3 sensitivity_benchmark.py results/outcome-foundation-v2.json --output results/sensitivity-foundation-v2.json
 ```
+
+## Explicit-contract revision v3
+
+The v2 Foundation run also produced unsupported containment for approved backup and ambiguous proxy samples. The OpenAI-compatible adapter supplied the JSON schema to the decoder, but did not explicitly put its field contract in the prompt; the native Qwen adapter did. A development probe adds the incident-bound schema and concise field meanings to Foundation's prompt. This is a hypothesis about the integration, not proof that the backend is defective. The revised adapter supplies that guidance to both backends. Old failures remain in their original files. New runs use `outcome-foundation-v3.json` and `outcome-qwen-v3.json`. The diagnostic uses failed development cases and is not held out. Concurrent diagnostic calls also affected v2 machine load; its latency cannot be called an isolated runtime comparison.
+
+For current reproduction, use the commands above with `-v3.json` output filenames. Never resume a v2 checkpoint with revised inference code. Timing replays likewise require the exact source used for their input run; archived v2 replay results were produced before changing that source.

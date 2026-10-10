@@ -1,6 +1,6 @@
 {
-  "unit_tests_passed": 53,
-  "unit_test_scope": "Local and ASUS device source tests, including simulator and checkpoint tests; 2026-10-10",
+  "unit_tests_passed": 59,
+  "unit_test_scope": "Local and ASUS device source tests, including simulator, checkpoint and sensitivity tests; 2026-10-10",
   "runs": [
     {
       "run": "Foundation initial serving integration",
@@ -260,13 +260,13 @@
           "passed": 9,
           "total": 10
         },
-        "confirmed": {
-          "passed": 10,
-          "total": 10
-        },
         "chain": {
           "passed": 1,
           "total": 1
+        },
+        "confirmed": {
+          "passed": 10,
+          "total": 10
         }
       },
       "failures": [
@@ -510,13 +510,13 @@
           "passed": 10,
           "total": 10
         },
-        "confirmed": {
-          "passed": 10,
-          "total": 10
-        },
         "chain": {
           "passed": 1,
           "total": 1
+        },
+        "confirmed": {
+          "passed": 10,
+          "total": 10
         }
       },
       "failures": []
@@ -558,13 +558,13 @@
           "passed": 10,
           "total": 10
         },
-        "confirmed": {
-          "passed": 10,
-          "total": 10
-        },
         "chain": {
           "passed": 1,
           "total": 1
+        },
+        "confirmed": {
+          "passed": 10,
+          "total": 10
         }
       },
       "failures": []
