@@ -1,5 +1,17 @@
 # Reconnect after an address change
 
+## VS Code Remote Tunnels
+
+The organizer-provided screen shows a running tunnel named `asus-machine` at https://vscode.dev/tunnel/asus-machine. The Windows client extension `ms-vscode.remote-server` version 1.5.4 was installed successfully. Connection is awaiting account authentication; remote access through this tunnel has not yet been verified.
+
+Open the URL and sign in with the same GitHub account that started the tunnel on the ASUS device. For desktop VS Code, press F1 and run **Remote - Tunnels: Connect to Tunnel...**, then select `asus-machine`. Open `/home/asus/containment-agent` after connecting. Keep the device's tunnel process running. The web editor includes the tunnel client; the desktop extension provides an alternative client.
+
+This uses the device's outbound tunnel connection and does not require its Wi-Fi address to remain fixed. It does not make the containment model/API publicly available. Once connected, verify the device identity, service health, and existing evaluator processes using the commands below before resuming. Persistence of the tunnel after device reboot still needs verification.
+
+Official connection instructions: https://code.visualstudio.com/docs/remote/tunnels
+
+## SSH fallback
+
 Last verified Wi-Fi address: `169.233.72.113`, account `asus`. Tailscale currently has no IP and requires login; there is no verified alternate route. Device SSH ED25519 fingerprint: `SHA256:F12Hgmh9zoQxo3dyFxIFt0M1cnpF5zDqjpW+r7bScUk`.
 
 Update only `HostName` in the included `ssh-config` to the organizer-provided new address. Keep `HostKeyAlias` so SSH verifies the device against its already-trusted key. Do not bypass a key mismatch; establish why it changed first. The configuration contains no password.
