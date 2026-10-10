@@ -1,0 +1,1733 @@
+[
+  {
+    "technique": "T1041",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1041",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Confirmed unauthorized sensitive-data bytes are leaving web-01 over an established attacker channel to c2-01.",
+          "actionable_for": [
+            {
+              "kind": "block_egress",
+              "target_id": "c2-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "web-01"
+            }
+          ],
+          "source_host_ids": [
+            "web-01"
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "block_egress",
+        "c2-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1041",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1041-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "block_egress",
+              "target_id": "c2-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "web-01"
+            }
+          ],
+          "source_host_ids": [
+            "web-01"
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1071.001",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1071-001",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "EDR and proxy correlation confirms active attacker HTTP command-and-control from web-01 to c2-01.",
+          "actionable_for": [
+            {
+              "kind": "block_egress",
+              "target_id": "c2-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "web-01"
+            }
+          ],
+          "source_host_ids": [
+            "web-01"
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "block_egress",
+        "c2-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1071.001",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1071-001-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "block_egress",
+              "target_id": "c2-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "web-01"
+            }
+          ],
+          "source_host_ids": [
+            "web-01"
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1021.002",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1021-002",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Confirmed attacker SMB administrative-share access from workstation-01 is spreading malicious files to peer hosts.",
+          "actionable_for": [
+            {
+              "kind": "restrict_lateral",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "restrict_lateral",
+        "workstation-01"
+      ],
+      [
+        "isolate_host",
+        "workstation-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1021.002",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1021-002-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "restrict_lateral",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1021.001",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1021-001",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Confirmed attacker remote-desktop sessions from workstation-01 are being used to compromise peer hosts.",
+          "actionable_for": [
+            {
+              "kind": "restrict_lateral",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "restrict_lateral",
+        "workstation-01"
+      ],
+      [
+        "isolate_host",
+        "workstation-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1021.001",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1021-001-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "restrict_lateral",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1210",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1210",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Correlated EDR confirms workstation-01 is actively exploiting remote services on peer hosts.",
+          "actionable_for": [
+            {
+              "kind": "restrict_lateral",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "restrict_lateral",
+        "workstation-01"
+      ],
+      [
+        "isolate_host",
+        "workstation-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1210",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1210-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "restrict_lateral",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1486",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1486",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "EDR confirms attacker encryption is actively modifying files on workstation-01. Network isolation limits spread but does not stop local encryption; recovery must address that residual risk.",
+          "actionable_for": [
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "isolate_host",
+        "workstation-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1486",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1486-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1003.001",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1003-001",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "EDR confirms unauthorized credential dumping from LSASS on workstation-01; host remains attacker-controlled.",
+          "actionable_for": [
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "isolate_host",
+        "workstation-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1003.001",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1003-001-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1059.001",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1059-001",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "EDR confirms malicious PowerShell execution and active attacker control on workstation-01.",
+          "actionable_for": [
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "isolate_host",
+        "workstation-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1059.001",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1059-001-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "isolate_host",
+              "target_id": "workstation-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "workstation-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1550.004",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1550-004",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Identity telemetry confirms stolen web session session-01 is actively used by an unauthorized party.",
+          "actionable_for": [
+            {
+              "kind": "revoke_session",
+              "target_id": "session-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "session-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "revoke_session",
+        "session-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1550.004",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1550-004-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "revoke_session",
+              "target_id": "session-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "session-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1078",
+    "variant": "confirmed",
+    "incident": {
+      "incident_id": "mitre-T1078",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Identity investigation confirms account-01 is compromised and actively used for unauthorized access.",
+          "actionable_for": [
+            {
+              "kind": "disable_account",
+              "target_id": "account-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "account-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "disable_account",
+        "account-01"
+      ]
+    ]
+  },
+  {
+    "technique": "T1078",
+    "variant": "authorized",
+    "incident": {
+      "incident_id": "mitre-T1078-authorized",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence",
+          "disable_account"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "M1",
+          "observation": "Verified authorized exercise or administration, approved change record and asset owner confirmation; no unauthorized activity. The technique label alone is not evidence of an attack.",
+          "actionable_for": [
+            {
+              "kind": "disable_account",
+              "target_id": "account-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "account-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": []
+  },
+  {
+    "technique": "T1041+T1021.002",
+    "variant": "chain",
+    "incident": {
+      "incident_id": "mitre-chain-exfil-lateral",
+      "telemetry_version": 1,
+      "assets": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "protected": false
+        }
+      ],
+      "policy": {
+        "allowed_actions": [
+          "isolate_host",
+          "block_egress",
+          "restrict_lateral",
+          "revoke_session",
+          "request_evidence"
+        ],
+        "max_ttl_minutes": 30,
+        "available_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "required_preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "allow_critical_isolation": false
+      },
+      "evidence": [
+        {
+          "id": "E1",
+          "observation": "Confirmed unauthorized data transfer from web-01 to c2-01; still active. Destination block stops the observed transfer.",
+          "source_host_ids": [
+            "web-01"
+          ],
+          "actionable_for": [
+            {
+              "kind": "block_egress",
+              "target_id": "c2-01"
+            },
+            {
+              "kind": "request_evidence",
+              "target_id": "web-01"
+            }
+          ]
+        },
+        {
+          "id": "E2",
+          "observation": "Confirmed unauthorized lateral access attempt originating on web-01. Restricting lateral traffic prevents this path.",
+          "actionable_for": [
+            {
+              "kind": "restrict_lateral",
+              "target_id": "web-01"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_alternatives": [
+      [
+        "block_egress",
+        "c2-01"
+      ],
+      [
+        "restrict_lateral",
+        "web-01"
+      ]
+    ]
+  }
+]
