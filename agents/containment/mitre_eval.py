@@ -7,6 +7,7 @@ import json
 import os
 import urllib.request
 from pathlib import Path
+import agent
 from agent import propose, SYSTEM, SCHEMA
 from scenarios import scenarios
 
@@ -94,7 +95,7 @@ def main():
     provenance = json.loads(metadata_path.read_text())
     config = {'model': args.model, 'endpoint': args.endpoint, 'max_tokens': args.max_tokens,
               'reasoning_effort': args.reasoning_effort,
-              'inference_sha256': hashlib.sha256((SYSTEM + json.dumps(SCHEMA, sort_keys=True) + inspect.getsource(propose)).encode()).hexdigest(),
+              'inference_sha256': hashlib.sha256((SYSTEM + json.dumps(SCHEMA, sort_keys=True) + inspect.getsource(agent.propose)).encode()).hexdigest(),
               'dataset_sha256': hashlib.sha256(json.dumps(dataset(), sort_keys=True).encode()).hexdigest()}
     output = Path(args.output)
     results = []

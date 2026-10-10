@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 from agent import propose
 from scenarios import scenarios
+from eval_checkpoint import configuration, load, save
 
 
 def passes(incident_id, proposal):
@@ -30,14 +31,20 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--endpoint', default='http://127.0.0.1:8000/v1')
     parser.add_argument('--output', default='results/evaluation.json')
+    parser.add_argument('--model', default='fdtn-ai/Foundation-Sec-8B-Instruct')
+    parser.add_argument('--max-tokens', type=int, default=2200)
+    parser.add_argument('--reasoning-effort')
+    parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
-    results = []
-    for incident in scenarios():
+    cases = scenarios()
+    config = configuration(args, cases)
+    results, notes = load(args.output, config, [c['incident_id'] for c in cases], args.resume)
+    for incident in cases[len(results):]:
         peers = incident.pop('peer_messages', [])
-        result = propose(incident, endpoint=args.endpoint, peers=peers)
+        result = propose(incident, endpoint=args.endpoint, peers=peers, model=args.model,
+                         max_tokens=args.max_tokens, reasoning_effort=args.reasoning_effort)
         result['incident_id'] = incident['incident_id']
         result['scenario_pass'] = result['status'] == 'validated' and passes(incident['incident_id'], result['proposal'])
         results.append(result)
         print(incident['incident_id'], result['status'], result['scenario_pass'], flush=True)
-        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.output).write_text(json.dumps({'passed': sum(r['scenario_pass'] for r in results), 'total': len(results), 'results': results}, indent=2))
+        save(args.output, {'config': config, 'resume_notes': notes, 'passed': sum(r['scenario_pass'] for r in results), 'total': len(results), 'planned': len(cases), 'results': results})

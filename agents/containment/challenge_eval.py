@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from agent import propose
 from mitre_eval import dataset
+from eval_checkpoint import configuration, load, save
 
 def challenges():
     source = dataset()
@@ -47,9 +48,12 @@ def main():
     parser.add_argument('--model', default='fdtn-ai/Foundation-Sec-8B-Instruct')
     parser.add_argument('--max-tokens', type=int, default=2200)
     parser.add_argument('--reasoning-effort')
+    parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
-    results = []
-    for incident, peers, required, forbidden in challenges():
+    cases = challenges()
+    config = configuration(args, [{'incident': i, 'peers': p, 'required': sorted(r), 'forbidden': sorted(f)} for i,p,r,f in cases])
+    results, notes = load(args.output, config, [c[0]['incident_id'] for c in cases], args.resume)
+    for incident, peers, required, forbidden in cases[len(results):]:
         result = propose(incident, peers=peers, endpoint=args.endpoint, model=args.model,
                          max_tokens=args.max_tokens, reasoning_effort=args.reasoning_effort)
         actions = {(a['kind'], a['target_id']) for a in (result.get('proposal') or {}).get('actions', [])}
@@ -59,8 +63,7 @@ def main():
         result.update(incident_id=incident['incident_id'], scenario_pass=passed)
         results.append(result)
         print(incident['incident_id'], result['status'], passed, flush=True)
-        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.output).write_text(json.dumps({'notice': 'Fresh synthetic challenge set; not independent third-party or production validation. Once tuned against, becomes development data.', 'passed': sum(r['scenario_pass'] for r in results), 'total': len(results), 'planned': 6, 'results': results}, indent=2))
+        save(args.output, {'config': config, 'resume_notes': notes, 'notice': 'Synthetic challenge set; not independent third-party or production validation. Once tuned against, becomes development data.', 'passed': sum(r['scenario_pass'] for r in results), 'total': len(results), 'planned': 6, 'results': results})
 
 if __name__ == '__main__':
     main()
