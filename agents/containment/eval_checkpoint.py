@@ -36,3 +36,9 @@ def save(output, data):
         checkpoint.flush()
         os.fsync(checkpoint.fileno())
     temporary.replace(output)
+    if os.name == 'posix':
+        directory = os.open(str(output.parent), os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)

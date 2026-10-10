@@ -36,6 +36,14 @@ Each result records model, incident ID, proposal, authoritative asset facts, raw
 
 No repeated seeds, confidence intervals, paired statistical tests, independent labeling, or production outcome measurements have been performed. Temperature zero does not guarantee identical results across runtimes or concurrent workloads. Preserve failed runs; do not cherry-pick successful retries. Results are development evidence for the hackathon.
 
+## Connectivity and checkpoint recovery
+
+The device became unreachable and rebooted around 14:58 PDT. SSH briefly returned at the same address, `169.233.72.113`, around 15:01 PDT. Both model/API user services were active after boot, verifying service recovery. `nohup` evaluator processes had stopped: nohupped jobs survive SSH loss, not device reboot. The saved policy-filtered checkpoints contained 11/11 Qwen MITRE cases and 8/8 Foundation MITRE cases, with Qwen challenge already complete at 6/6. These were partial benchmarks, not 21-case scores.
+
+`--resume` preserves every recorded completed case, including failures, checks prefix/model/configuration compatibility, and runs only remaining cases. New checkpoints record inference and dataset hashes, use atomic replacement, and flush data. Older pre-manifest checkpoints are explicitly labeled as legacy resumes; configuration is supported by the dispatch history and `validation-regression.json` (70 identical valid-fixture request bodies across input-only hardening). A resumed run spans different uptime/load conditions, so aggregate latency is not a controlled hardware benchmark.
+
+`run-evaluations.sh` and `containment-evaluations.service` provide boot-resumable evaluation after installation. Read `RECONNECT.md` and check the actual service state: the source files existing in Git do not establish that the service has been deployed. Deployment was pending when SSH became unreachable a second time.
+
 ## Failure history and resulting changes
 
 | Observation | Interpretation | Change |
