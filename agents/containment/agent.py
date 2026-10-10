@@ -317,7 +317,9 @@ def propose(incident, endpoint='http://127.0.0.1:8000/v1', model=MODEL, peers=No
                 {'role': 'user', 'content': json.dumps(context)}]
     native_ollama = endpoint.rstrip('/').endswith('/api')
     if native_ollama:
-        messages[0]['content'] += '\nReturn exactly this JSON contract (actions contains selected actions only):\n' + json.dumps(SCHEMA)
+        messages[0]['content'] += ('\nReturn exactly this incident-bound JSON contract. The actions array contains only selected controls, '
+                                  'never options that you decided against. Empty actions is valid for no_action. '
+                                  'Each action must match a listed legal action/target alternative:\n' + json.dumps(decoding_schema(incident)))
     attempts = []
     start = time.monotonic()
     for attempt in range(2):

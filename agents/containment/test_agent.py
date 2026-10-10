@@ -144,7 +144,7 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual(result['status'], 'unavailable')
         self.assertIsNone(result['proposal'])
 
-    def test_native_adapter_enforces_schema_and_budget(self):
+    def test_native_adapter_sends_schema_and_budget(self):
         response = io.StringIO(json.dumps({'message': {'content': json.dumps(self.proposal)},
                                           'done_reason': 'stop', 'eval_count': 120, 'prompt_eval_count': 500}))
         with patch('agent.urllib.request.urlopen', return_value=response) as call:
