@@ -18,9 +18,10 @@ import rules
 
 MODEL = os.environ.get('COMPLIANCE_MODEL', 'gemma4:26b')
 ENDPOINT = os.environ.get('COMPLIANCE_ENDPOINT', 'http://127.0.0.1:11434/v1')
-# Peer actions that destroy volatile or disk evidence. Containment's kinds are all
-# non-destructive; these come from a remediation/fixing seat.
-DESTRUCTIVE = {'reimage_host', 'restore_files', 'wipe_host', 'power_off', 'reboot', 'delete_logs', 'kill_process'}
+# Allowlist: Containment's kinds, all reversible and evidence-preserving. Any other
+# kind (reimage, restore, wipe, or a name we've never seen) counts as destructive,
+# because peer action kinds are untrusted.
+SAFE = {'isolate_host', 'block_egress', 'restrict_lateral', 'revoke_session', 'disable_account', 'request_evidence'}
 LOW_CONFIDENCE = 60       # percent; below this a triggered/not_triggered call is unreliable
 URGENT_HOURS = 24         # a running clock under this with no determination goes to a human
 
@@ -78,8 +79,8 @@ triggered and not_triggered must cite at least one evidence ID. Give an honest
 confidence_pct. Suspicion alone is not confirmation.
 Review EVERY action in peer_proposals exactly once by kind and target_id:
   support: legally safe. object: risky; say what would make it safe.
-  veto: only when legal_hold is true and the action destroys evidence on a host
-    whose evidence has not been preserved (see evidence_preserved_host_ids).
+  veto: only when legal_hold is true, the action is not a containment control,
+    and the target's evidence has not been preserved (evidence_preserved_host_ids).
 Containment controls (isolation, egress blocks, session revocation) normally
 preserve evidence; do not obstruct them. Ask for memory and disk capture before
 anything destructive in preservation_requests. Set request_human when the council
@@ -182,12 +183,18 @@ def validate_proposal(proposal, incident, peer_proposals=None):
     for r in proposal['action_reviews']:
         if not set(r['evidence_ids']) <= evidence:
             raise ValueError('Unknown evidence ID')
-        if r['stance'] == 'veto' and not (c['legal_hold'] and r['kind'] in DESTRUCTIVE and r['target_id'] not in preserved):
+        if r['stance'] == 'veto' and not (c['legal_hold'] and r['kind'] not in SAFE and r['target_id'] not in preserved):
             raise ValueError(f'Veto of {r["kind"]} on {r["target_id"]} is not justified by legal hold')
     return proposal
 
 
-def escalation(proposal, clocks):
+def held_destructive(incident, peer_proposals):
+    c = incident['compliance']
+    preserved = set(c.get('evidence_preserved_host_ids', []))
+    return [(k, t) for k, t in peer_actions(peer_proposals) if c['legal_hold'] and k not in SAFE and t not in preserved]
+
+
+def escalation(proposal, clocks, incident, peer_proposals=None):
     """Deterministic: the council does not get to vote these away."""
     reasons = []
     status = {o['regime']: o for o in proposal['obligations']}
@@ -202,9 +209,9 @@ def escalation(proposal, clocks):
             reasons.append(f'{clock["regime"]}: low-confidence call ({o["confidence_pct"]}%) on a short clock')
         if clock['regime'] == 'sec_8k_105' and not clock['clock_started'] and o['status'] == 'needs_determination':
             reasons.append('sec_8k_105: materiality determination required from management')
-    for r in proposal['action_reviews']:
-        if r['stance'] == 'veto':
-            reasons.append(f'veto: {r["kind"]} on {r["target_id"]} under legal hold')
+    # Independent of the model's stance, so injected text that wins a 'support' still escalates.
+    for kind, target in held_destructive(incident, peer_proposals):
+        reasons.append(f'legal hold: {kind} on unpreserved {target} needs human sign-off')
     if proposal['request_human']:
         reasons.append('compliance model requested human review')
     return {'required': bool(reasons), 'reasons': reasons}
@@ -240,7 +247,7 @@ def propose(incident, endpoint=ENDPOINT, model=MODEL, peers=None, previous=None,
             return {'status': 'validated', 'proposal_id': str(uuid.uuid4()), 'model': model,
                     'created_at': dt.datetime.now(dt.timezone.utc).isoformat(),
                     'latency_seconds': round(time.monotonic()-start, 3), 'proposal': proposal,
-                    'deadlines': clocks, 'escalation': escalation(proposal, clocks), 'attempts': attempts}
+                    'deadlines': clocks, 'escalation': escalation(proposal, clocks, incident, peer_proposals), 'attempts': attempts}
         except (ValueError, KeyError, TypeError) as exc:
             if attempts:
                 attempts[-1]['validation_error'] = str(exc)
@@ -248,6 +255,7 @@ def propose(incident, endpoint=ENDPOINT, model=MODEL, peers=None, previous=None,
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             attempts.append({'transport_error': str(exc)})
             return {'status': 'unavailable', 'proposal': None, 'deadlines': clocks, 'attempts': attempts,
+                    'escalation': {'required': True, 'reasons': ['compliance unavailable']},
                     'latency_seconds': round(time.monotonic()-start, 3)}
     # No validated proposal is itself a reason not to let the council decide alone.
     return {'status': 'rejected', 'proposal': None, 'deadlines': clocks, 'attempts': attempts,

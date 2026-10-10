@@ -13,8 +13,8 @@ Simulation only, not legal advice. There is no real notification or ticketing ex
 | Each regime: `triggered` / `not_triggered` / `needs_determination`, with cited evidence | Model, validated |
 | SEC materiality | Always a human; `triggered` is rejected until `materiality_determined_at` is set |
 | Each peer action: `support` / `object` / `veto` | Model, validated |
-| Veto | Only under `legal_hold`, only for destructive kinds (`reimage_host`, `restore_files`, `wipe_host`, `power_off`, `reboot`, `delete_logs`, `kill_process`), only on hosts not in `evidence_preserved_host_ids` |
-| Escalate to a human | Python: deadline passed; under 24h left with no determination; low confidence (<60%) on a clock under 72h; SEC materiality pending; any veto; model asked; no valid proposal |
+| Veto | Only under `legal_hold`, only on hosts not in `evidence_preserved_host_ids`, and only for kinds outside Containment's reversible allowlist. Unknown kinds count as destructive. |
+| Escalate to a human | Python: deadline passed; under 24h left with no determination; low confidence (<60%) on a clock under 72h; SEC materiality pending; any non-allowlisted peer action on an unpreserved host under legal hold, whatever stance the model took; model asked; no valid proposal or compliance unavailable |
 
 Rule facts were checked against primary sources on 2026-10-10. Two are flagged in `rules.py`: California's 30-day limit (SB 446) comes from secondary summaries, and NYDFS uses discovery as a stand-in for determination. CIRCIA is deliberately left out because it has no final rule yet.
 

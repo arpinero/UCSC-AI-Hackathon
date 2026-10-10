@@ -80,6 +80,12 @@ class ValidatorTests(unittest.TestCase):
     def test_unreviewed_peer_action(self):
         self.reject(lambda p: p['action_reviews'].pop())
 
+    def test_can_veto_unknown_destructive_kind(self):
+        peers = [CONTAINMENT, {'role': 'fixing', 'proposal': {'actions': [{'kind': 'wipe_disk', 'target_id': 'web-01'}]}}]
+        p = copy.deepcopy(self.proposal)
+        p['action_reviews'] = p['action_reviews'][:2] + [review('wipe_disk', 'web-01', 'veto')]
+        validate_proposal(p, self.incident, peers)
+
     def test_cannot_veto_containment(self):
         self.reject(lambda p: p['action_reviews'][0].update(stance='veto'))
 
@@ -113,30 +119,41 @@ class ValidatorTests(unittest.TestCase):
 
 
 class EscalationTests(unittest.TestCase):
-    def clocks(self, incident_id):
-        return rules.deadlines(by_id(incident_id)[0]['compliance'])
+    def esc(self, proposal, incident_id, peers=None):
+        incident = by_id(incident_id)[0]
+        return escalation(proposal, rules.deadlines(incident['compliance']), incident, peers)
 
     def proposal(self, regime, status, confidence=90, reviews=(), human=False):
         return {'obligations': [{'regime': regime, 'status': status, 'confidence_pct': confidence}],
                 'action_reviews': list(reviews), 'request_human': human}
 
     def test_confident_triggered_with_time_left_does_not_escalate(self):
-        self.assertFalse(escalation(self.proposal('gdpr_art33', 'triggered'), self.clocks('eu-pii-exfil-001'))['required'])
+        self.assertFalse(self.esc(self.proposal('gdpr_art33', 'triggered'), 'eu-pii-exfil-001')['required'])
 
     def test_undetermined_short_clock_escalates(self):
-        e = escalation(self.proposal('gdpr_art33', 'needs_determination'), self.clocks('suspected-only-001'))
+        e = self.esc(self.proposal('gdpr_art33', 'needs_determination'), 'suspected-only-001')
         self.assertTrue(e['required'])
         self.assertIn('12.0h left', e['reasons'][0])
 
     def test_low_confidence_short_clock_escalates(self):
-        self.assertTrue(escalation(self.proposal('gdpr_art33', 'triggered', 40), self.clocks('eu-pii-exfil-001'))['required'])
+        self.assertTrue(self.esc(self.proposal('gdpr_art33', 'triggered', 40), 'eu-pii-exfil-001')['required'])
 
     def test_sec_undetermined_escalates(self):
-        self.assertTrue(escalation(self.proposal('sec_8k_105', 'needs_determination'), self.clocks('public-co-001'))['required'])
+        self.assertTrue(self.esc(self.proposal('sec_8k_105', 'needs_determination'), 'public-co-001')['required'])
 
-    def test_veto_escalates(self):
-        p = self.proposal('gdpr_art33', 'triggered', reviews=[review('reimage_host', 'web-01', 'veto')])
-        self.assertTrue(escalation(p, self.clocks('eu-pii-exfil-001'))['required'])
+    def test_held_destructive_escalates_even_if_model_supports_it(self):
+        p = self.proposal('gdpr_art33', 'triggered', reviews=[review('reimage_host', 'web-01', 'support')])
+        e = self.esc(p, 'legal-hold-reimage-001', [FIXING])
+        self.assertTrue(e['required'])
+        self.assertIn('legal hold: reimage_host', e['reasons'][0])
+
+    def test_preserved_host_does_not_escalate(self):
+        p = self.proposal('gdpr_art33', 'triggered', reviews=[review('reimage_host', 'web-01', 'support')])
+        self.assertFalse(self.esc(p, 'legal-hold-preserved-001', [FIXING])['required'])
+
+    def test_unknown_kind_counts_as_destructive(self):
+        peers = [{'role': 'fixing', 'proposal': {'actions': [{'kind': 'wipe_disk', 'target_id': 'web-01'}]}}]
+        self.assertTrue(self.esc(self.proposal('gdpr_art33', 'triggered'), 'legal-hold-reimage-001', peers)['required'])
 
 
 class TransportTests(unittest.TestCase):
@@ -144,7 +161,9 @@ class TransportTests(unittest.TestCase):
         import urllib.error
         incident, peers = by_id('eu-pii-exfil-001')
         with patch('urllib.request.urlopen', side_effect=urllib.error.URLError('down')):
-            self.assertEqual(propose(incident, peer_proposals=peers)['status'], 'unavailable')
+            result = propose(incident, peer_proposals=peers)
+        self.assertEqual(result['status'], 'unavailable')
+        self.assertTrue(result['escalation']['required'])
 
     def test_rejected_twice_escalates(self):
         incident, peers = by_id('eu-pii-exfil-001')
