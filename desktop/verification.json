@@ -27,5 +27,14 @@
   ],
   "prior_live_failure": "Run 20314cc16b4749b094318fc24e10e48d: optional Recovery endpoint on 8001 timed out at 240 seconds. Failure retained; specialist server untouched.",
   "live_chat": "Read-only incident chat returned an actual ASUS model response after the compliance escalation.",
-  "ui_base": "Original llama.cpp floating sidebar and ChatFormTextarea, original app.css light/dark theme; council adapter replaces conversation transport."
+  "ui_base": "Original llama.cpp floating sidebar and ChatFormTextarea, original app.css light/dark theme; council adapter replaces conversation transport.",
+  "llama_remake_browser_smoke": [
+    "Compared welcome screen with original ASUS llama UI on port 8000",
+    "Original floating sidebar opens and closes",
+    "Original light/dark theme switches",
+    "Existing live ASUS run loads four actual agent responses",
+    "Evidence tab renders three source observations",
+    "Metrics tab renders measured 210 second protocol run",
+    "New investigation dialog opens with live models selected by default"
+  ]
 }
