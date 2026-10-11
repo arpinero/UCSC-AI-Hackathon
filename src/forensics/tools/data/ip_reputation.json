@@ -1,0 +1,36 @@
+{
+  "version": "1",
+  "comment": "SYNTHETIC IP enrichment data for the forensics-agent evaluation scenarios ONLY. This is NOT real threat intelligence: it is a static, committed map written by tools-engineer so the enrich_ip tool can return deterministic results without querying any real reputation service or system. Reputation answers are marked with their source via a reputation_source:* label. IPs use RFC 5737 documentation ranges (192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24) and RFC 1918 private ranges.",
+  "internal_ranges": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"],
+  "default_reputation": "unknown",
+  "entries": {
+    "192.0.2.99": {
+      "asn": "AS64514",
+      "country": "ZZ",
+      "reputation": "benign",
+      "threat_labels": [],
+      "source": "synthetic-static-map-v1"
+    },
+    "198.51.100.23": {
+      "asn": "AS64513",
+      "country": "YY",
+      "reputation": "malicious",
+      "threat_labels": ["c2-server", "cobalt-strike-team-server"],
+      "source": "synthetic-static-map-v1"
+    },
+    "203.0.113.50": {
+      "asn": "AS64512",
+      "country": "XX",
+      "reputation": "suspicious",
+      "threat_labels": ["known-scanner", "password-spray-source"],
+      "source": "synthetic-static-map-v1"
+    },
+    "203.0.113.7": {
+      "asn": "AS64515",
+      "country": "XX",
+      "reputation": "suspicious",
+      "threat_labels": ["c2-beacon-endpoint"],
+      "source": "synthetic-static-map-v1"
+    }
+  }
+}
