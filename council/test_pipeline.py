@@ -82,6 +82,14 @@ class PipelineTests(unittest.TestCase):
         self.assertTrue(result['human_alert']['required'])
         self.assertFalse(result['decisions'])
 
+    def test_live_compliance_rejection_reports_its_reasons(self):
+        rejected = {'status': 'rejected', 'proposal': None,
+                    'attempts': [{'validation_error': 'unknown evidence id E9'}],
+                    'escalation': {'required': True, 'reasons': ['compliance produced no valid assessment']}}
+        with patch('council.seats.post', return_value=rejected):
+            with self.assertRaisesRegex(ValueError, 'Compliance rejected: unknown evidence id E9'):
+                Seats('live').compliance({'incident': {}}, [])
+
     def test_update_requires_new_consensus(self):
         case = next(c for c in self.cases if c.expected.get('family') == 'destination_rotation')
         result = run(case)

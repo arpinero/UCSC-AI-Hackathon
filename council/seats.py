@@ -309,7 +309,10 @@ class Seats:
             return mock_compliance(context, peer_proposals)
         result = post(self.compliance_url + '/review', {'incident': context['incident'], 'peer_proposals': peer_proposals}, self.client.timeout)
         if result.get('status') != 'validated':
-            raise ValueError('Compliance unavailable or rejected')
+            # Compliance answers 200 even when it fails closed; surface its own reasons in reports.
+            errors = [a.get('validation_error') or a.get('transport_error') for a in result.get('attempts') or []]
+            detail = '; '.join(e for e in errors if e) or '; '.join(result.get('escalation', {}).get('reasons', []))
+            raise ValueError(f"Compliance {result.get('status', 'error')}: {detail[:300]}")
         return sources.compliance()['agent'].validate_proposal(result['proposal'], context['incident'], peer_proposals)
 
     def forensics(self, context, containment, fixing):
