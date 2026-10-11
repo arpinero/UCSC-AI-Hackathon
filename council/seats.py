@@ -208,9 +208,14 @@ def validate_fixing(proposal, context):
 
 
 def review_peers(containment, fixing, context):
-    recovery = []
+    recovery, seen = [], set()
     for a in fixing.get('actions', []):
-        recovery.append(dict(a, target_id=context['fixing']['host_id']))
+        # Compliance tracks preserved HOSTS, so recovery targets are normalized to the host. Several
+        # file/artifact actions then collapse to one (kind, host) pair; Compliance reviews each pair once.
+        pair = (a['kind'], context['fixing']['host_id'])
+        if pair not in seen:
+            seen.add(pair)
+            recovery.append(dict(a, target_id=pair[1]))
     return [{'role': 'containment', 'proposal': containment},
             {'role': 'fixing', 'proposal': {'actions': recovery}}]
 

@@ -135,4 +135,13 @@ def dataset():
             case.impact['affected_hosts'] = 8
         case.expected['human_required'] = True
         cases.append(case.validate())
+    # Compliance design rule (SEC Item 1.05): materiality is always a management decision. A public
+    # company with a confirmed incident and no recorded determination must reach a human. Authorized
+    # twins have no incident to assess, so they are deliberately NOT labeled: a seat that escalates
+    # them is being over-cautious, and that should show up as a miss, not be excused by the label.
+    for case in cases:
+        compliance = case.incident['compliance']
+        if (compliance['organization'].get('public_company') and not compliance.get('materiality_determined_at')
+                and case.expected.get('fixing_variant') != 'authorized' and 'human_required' not in case.expected):
+            case.expected['human_required'] = True
     return cases

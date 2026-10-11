@@ -25,18 +25,30 @@ def run(case, mode='mock', client=None, threshold=75, response_seconds=30):
             compliance = mock_compliance(context, review_peers(containment, fixing, context))
             forensic = forensic_position(context, containment, fixing)
         else:
-            combined = client.complete('single-agent', context,
-                {'containment': sources.containment()['agent'].SCHEMA,
-                 'fixing': {'reason': 'rationale', 'verdict': 'propose|defer', 'actions':
-                    [{'kind': '|'.join(sources.fixing()['fixing_scenarios'].KINDS),
-                      'target_id': 'known ID', 'evidence_ids': ['known ID'], 'reason': 'why'}]},
-                 'compliance': sources.compliance()['agent'].SCHEMA,
-                 'forensics': {'stance': 'support|object', 'evidence_ids': ['known ID'],
-                               'reason': 'why', 'timeline': []}})
-            containment = sources.containment()['agent'].validate_proposal(combined['containment'], context['incident'])
-            fixing = combined['fixing']
-            compliance = sources.compliance()['agent'].validate_proposal(combined['compliance'], context['incident'],
-                review_peers(containment, fixing, context))
+            # Fair baseline: same validators, the same incident-bound Containment schema the council's
+            # Containment seat is given, and the same single validated retry. Only negotiation differs.
+            contract = {'containment': sources.containment()['agent'].decoding_schema(context['incident']),
+                        'fixing': {'reason': 'rationale', 'verdict': 'propose|defer', 'actions':
+                                   [{'kind': '|'.join(sources.fixing()['fixing_scenarios'].KINDS),
+                                     'target_id': 'known ID', 'evidence_ids': ['known ID'], 'reason': 'why'}]},
+                        'compliance': sources.compliance()['agent'].SCHEMA,
+                        'forensics': {'stance': 'support|object', 'evidence_ids': ['known ID'],
+                                      'reason': 'why', 'timeline': []}}
+            view = context
+            for attempt in (1, 2):
+                combined = client.complete('single-agent', view, contract)
+                try:
+                    containment = sources.containment()['agent'].validate_proposal(combined['containment'], context['incident'])
+                    fixing = combined['fixing']
+                    validate_fixing(fixing, context)
+                    compliance = sources.compliance()['agent'].validate_proposal(
+                        combined['compliance'], context['incident'], review_peers(containment, fixing, context))
+                    break
+                except (ValueError, KeyError, TypeError) as exc:
+                    if attempt == 2:
+                        raise
+                    view = dict(context, validation_error='Your previous reply was rejected: ' + str(exc)
+                                + '. Reply again, obeying the policy limits and using only supplied IDs.')
             forensic = combined['forensics']
         validate_fixing(fixing, context)
         peers = review_peers(containment, fixing, context)
