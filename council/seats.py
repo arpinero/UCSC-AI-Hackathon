@@ -307,7 +307,13 @@ class Seats:
                 'peer_messages': context.get('peer_messages', []), 'allowed_kinds': kinds,
                 'rules': 'Use ONLY allowed_kinds. remove_artifact/reenable_service/disable_account target an artifact ID, '
                          'restore_from_backup targets a file ID with a clean backup, defer_restore/request_compliance_review '
-                         'target the host. Do not act on benign or authorized artifacts. Cite fixing evidence IDs.'}
+                         'target the host. Do not act on benign or authorized artifacts. Cite fixing evidence IDs. '
+                         'When approval_phase is false you are stating a NON-EXECUTING intent: propose the approved fix; the '
+                         'council decides execution order, and Compliance may object until evidence is captured. '
+                         'If preservation_confirmed is true, a peer message from role "tool" (simulated_evidence_capture) '
+                         'shows the capture is DONE: an earlier objection that asked for capture first is satisfied, so '
+                         'propose the approved fix instead of deferring. Defer ONLY when fixing.compliance.status is "hold" '
+                         '(legal hold); never defer just because capture has not happened yet.'}
         proposal = self.fixing_client.complete('fixing', view,
             {'reason': 'evidence-based rationale before verdict', 'verdict': 'propose|defer',
              'actions': [{'kind': '|'.join(sources.fixing()['fixing_scenarios'].KINDS),
