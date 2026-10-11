@@ -59,10 +59,11 @@ def post(url, payload, timeout=120):
 class ModelClient:
     def __init__(self, endpoint=None, model=None, timeout=120, cache_dir=None):
         self.endpoint = local_url(endpoint or os.environ.get('COUNCIL_MODEL_ENDPOINT', 'http://127.0.0.1:11434/api'))
-        self.model = model or os.environ.get('COUNCIL_MODEL', 'qwen2.5:7b')
+        self.model = model or os.environ.get('COUNCIL_MODEL', 'gemma4:26b')
         self.timeout = timeout
         self.cache_dir = Path(cache_dir) if cache_dir else None
         self.calls = 0
+        self.max_tokens = int(os.environ.get('COUNCIL_MAX_TOKENS', '6000'))
 
     def complete(self, role, context, contract):
         messages = [{'role': 'system', 'content':
@@ -72,8 +73,8 @@ class ModelClient:
             {'role': 'user', 'content': json.dumps(context)}]
         native = self.endpoint.endswith('/api')
         body = {'model': self.model, 'messages': messages, 'stream': False,
-                'format': 'json', 'options': {'temperature': 0, 'num_predict': 2200}} if native else {
-                'model': self.model, 'messages': messages, 'temperature': 0, 'max_tokens': 2200,
+                'format': 'json', 'think': False, 'options': {'temperature': 0, 'num_predict': self.max_tokens, 'num_ctx': 16384}} if native else {
+                'model': self.model, 'messages': messages, 'temperature': 0, 'max_tokens': self.max_tokens,
                 'response_format': {'type': 'json_object'}}
         key = hashlib.sha256(json.dumps({'endpoint': self.endpoint, 'body': body}, sort_keys=True).encode()).hexdigest()
         path = self.cache_dir / (key + '.json') if self.cache_dir else None
@@ -298,7 +299,16 @@ class Seats:
     def fixing(self, context, approved):
         if self.mode == 'mock':
             return validate_fixing(fixing_plan(context, approved), context)
-        proposal = self.fixing_client.complete('fixing', dict(context, approval_phase=approved),
+        # Fixing sees only its own recovery view. The full incident carries Containment's policy
+        # (block_egress, isolate_host...), which a live model otherwise borrows as recovery kinds.
+        kinds = sources.fixing()['fixing_scenarios'].KINDS
+        view = {'fixing': context['fixing'], 'approval_phase': approved,
+                'preservation_confirmed': context.get('preservation_confirmed', False),
+                'peer_messages': context.get('peer_messages', []), 'allowed_kinds': kinds,
+                'rules': 'Use ONLY allowed_kinds. remove_artifact/reenable_service/disable_account target an artifact ID, '
+                         'restore_from_backup targets a file ID with a clean backup, defer_restore/request_compliance_review '
+                         'target the host. Do not act on benign or authorized artifacts. Cite fixing evidence IDs.'}
+        proposal = self.fixing_client.complete('fixing', view,
             {'reason': 'evidence-based rationale before verdict', 'verdict': 'propose|defer',
              'actions': [{'kind': '|'.join(sources.fixing()['fixing_scenarios'].KINDS),
                           'target_id': 'known artifact/file ID; host for defer', 'evidence_ids': ['known ID'], 'reason': 'why'}]})
