@@ -1,0 +1,20 @@
+{
+  "pipeline_base": "b2dc838",
+  "live_model_run": "Not validated in this UI handoff",
+  "upstream": "b97ebdc98f6053604a19d861c08d8087601b96e0",
+  "build": "passed",
+  "frontend_check": "0 errors, 0 warnings",
+  "browser_smoke": [
+    "Started real protocol in mock mode",
+    "10 agent calls displayed",
+    "Objections and scoped revision displayed",
+    "Approval pauses before simulated actions",
+    "Written UI approval recorded",
+    "Outcome displayed as INVESTIGATION_PENDING with residual risk",
+    "Demo context chat returned actual recorded metrics"
+  ],
+  "deployment": "browser-first",
+  "python_tests": 34,
+  "date": "2026-10-10",
+  "branch": "desktop-ui"
+}

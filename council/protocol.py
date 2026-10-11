@@ -15,7 +15,7 @@ def compliance_state(proposal, incident, peers):
     return enriched, escalation
 
 
-def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
+def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30, observer=None, approval=None):
     if type(max_rounds) is not int or max_rounds < 1 or max_rounds > 10:
         raise ValueError('Round limit must be 1..10')
     if not isinstance(response_seconds, (int, float)) or not 0 <= response_seconds <= 120:
@@ -36,6 +36,8 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
         transcript.append({'sequence': len(transcript) + 1, 'round': round_number,
                            'telemetry_version': incident['telemetry_version'],
                            'role': role, 'stance': stance, 'proposal': copy.deepcopy(proposal)})
+        if observer:
+            observer('message', copy.deepcopy(transcript[-1]))
 
     updates = [None] + sorted(case.simulation.get('updates', []), key=lambda u: u['at'])
     try:
@@ -50,6 +52,8 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
                 incident['compliance']['evidence_preserved_host_ids'] = sorted(
                     set(preserved) | set(incident['compliance']['evidence_preserved_host_ids']))
                 sim.update(incident)
+                if observer:
+                    observer('incident_updated', {'incident': copy.deepcopy(incident)})
                 message(0, 'telemetry', 'revision', {'at': update['at'], 'evidence_ids': [e['id'] for e in incident['evidence']]})
             context = case.context(incident)
             context['fixing']['telemetry_version'] = incident['telemetry_version']
@@ -105,6 +109,11 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
                     controls = [a for a in fixing['actions'] if a['kind'] in sources.fixing()['fixing_scenarios'].CONTROL_KINDS and not done(a)]
                     if controls and (not context['preservation_confirmed'] or context['fixing']['compliance']['status'] != 'approved'):
                         raise ValueError('Recovery execution lacks preservation / approval')
+                    if approval and not approval({'telemetry_version': incident['telemetry_version'],
+                            'round': round_number, 'containment': copy.deepcopy(containment),
+                            'fixing': copy.deepcopy(fixing)}):
+                        reasons.append('Human declined or timed out on the proposed simulation plan')
+                        break
                     decisions.append({'telemetry_version': incident['telemetry_version'], 'round': round_number,
                                       'votes': {r: 'support' for r in ('containment', 'forensics', 'compliance', 'fixing')},
                                       'containment': copy.deepcopy(containment), 'fixing': copy.deepcopy(fixing)})
