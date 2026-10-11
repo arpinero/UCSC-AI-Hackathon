@@ -17,7 +17,7 @@
   "python_tests": 35,
   "date": "2026-10-10",
   "branch": "desktop-ui",
-  "javascript_tests": 9,
+  "javascript_tests": 13,
   "hosted_browser_smoke": [
     "Private ASUS tunnel on port 8787",
     "10 distinct agent calls and 2 deliberation rounds rendered",
@@ -53,5 +53,20 @@
       "Unsafe link schemes and remote media blocked",
       "Evidence references constrained to supplied IDs; code text preserved"
     ]
+  },
+  "interactive_controls": {
+    "checks": [
+      "13 JavaScript tests passed",
+      "svelte-check: 0 errors, 0 warnings",
+      "Vite production build passed"
+    ],
+    "features": [
+      "Stage and agent response navigation",
+      "Exact evidence citation drill-down and filters",
+      "Role-specific draft questions",
+      "Expandable scope, preservation, expiry and rollback",
+      "Suggestions respect pending decisions and escalation"
+    ],
+    "browser_checks": []
   }
 }

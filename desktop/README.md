@@ -63,3 +63,11 @@ npm --prefix desktop test
 
 Approval tests exercise actual pipeline blocking, rejection, timeout, duplicate/stale decision handling, unchanged binding escalation and ordered incremental events. Live-model correctness is the pipeline team's responsibility; a working web Demo does not claim all live services are ready.
 
+
+### Interactive investigation controls
+
+Click an agent stage under the incident title to inspect its latest recorded response. The agent viewer has tabs for all four roles and distinct follow-up questions; it reports a missing, failed, or in-progress response without inventing output. Each question fills the existing chat composer and requires Send before calling the model.
+
+Evidence citations open the exact observation. Use the evidence filter to switch IDs or return to all evidence. Proposed controls expand to show host scope, preserved channels, expiry, rollback, and the original structured control. Missing fields remain explicitly unspecified.
+
+Suggestions above the composer change with inference, evidence browsing, escalation, and approval. During a written decision they only navigate or cancel decision mode, so a chat prompt cannot overwrite the approval reason. Approval and compliance policy enforcement remain in the Python pipeline. New incidents always require an explicit Start click; these exploration controls never start model runs.

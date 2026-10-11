@@ -22,7 +22,7 @@ const markdown = new Marked({gfm:true, breaks:true, renderer: {
 }});
 
 /** Captured evidence and model content are untrusted. No remote media or active HTML. */
-export function renderMarkdown(content, evidenceIds = [], browserWindow = window) {
+export function renderMarkdown(content, evidenceIds = [], browserWindow = window, interactive = false) {
   const clean = createDOMPurify(browserWindow).sanitize(markdown.parse(String(content || '')),
     {ALLOWED_TAGS:['p','br','strong','em','del','h1','h2','h3','h4','ul','ol','li','blockquote','pre','code','span','div','a','table','thead','tbody','tr','th','td','hr'],
      ALLOWED_ATTR:['href','title','class'], ALLOW_DATA_ATTR:false});
@@ -46,7 +46,13 @@ export function renderMarkdown(content, evidenceIds = [], browserWindow = window
     const fragment = browserWindow.document.createDocumentFragment(); let cursor=0;
     for (const match of matches) {
       fragment.append(text.slice(cursor,match.index));
-      const chip=browserWindow.document.createElement('span');
+      const isEvidence = knownIds.has(match[0]);
+      const chip=browserWindow.document.createElement(isEvidence && interactive ? 'button' : 'span');
+      if(isEvidence && interactive) {
+        chip.setAttribute('type','button');
+        chip.setAttribute('data-evidence-id',match[0]);
+        chip.setAttribute('aria-label',`Inspect evidence ${match[0]}`);
+      }
       chip.className=knownIds.has(match[0])?'inline-evidence':'inline-entity'; chip.textContent=match[0];
       fragment.append(chip); cursor=match.index+match[0].length;
     }

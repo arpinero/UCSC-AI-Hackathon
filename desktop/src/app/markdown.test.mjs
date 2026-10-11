@@ -27,3 +27,13 @@ test('links exclude local and credential schemes; tables and lists stay formatte
   assert.ok(document.querySelector('table'));
   assert.ok(highlightedCode('<img onerror=evil()>','unknown').includes('&lt;'));
 });
+test('only known evidence becomes an accessible control, never untrusted markup or code',()=>{
+  const html=renderMarkdown('M1 Q9 `M1` <button data-evidence-id="Q9">spoof</button>',['M1'],browser,true);
+  const document=new JSDOM(html).window.document;
+  const buttons=document.querySelectorAll('button');
+  assert.equal(buttons.length,1);
+  assert.equal(buttons[0].dataset.evidenceId,'M1');
+  assert.equal(buttons[0].type,'button');
+  assert.equal(buttons[0].getAttribute('aria-label'),'Inspect evidence M1');
+  assert.equal(new JSDOM(renderMarkdown('M1',['M1'],browser)).window.document.querySelector('button'),null);
+});
