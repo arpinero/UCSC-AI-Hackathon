@@ -57,6 +57,21 @@ Overrides: `COMPLIANCE_ENDPOINT` (default `http://127.0.0.1:11434/v1`), `COMPLIA
 
 Python calls `agent.propose(incident, peers=messages, previous=prev, peer_proposals=proposals)`.
 
+## Calling it from the council
+
+`python3 server.py` starts a loopback API on `127.0.0.1:8020` (`COMPLIANCE_PORT` to change). It works like Containment's `/propose` on :8010.
+
+```bash
+curl -s localhost:8020/health
+curl -s -X POST localhost:8020/review -H 'Content-Type: application/json' \
+  -d '{"incident": {...}, "peer_proposals": [{"role": "containment", "proposal": {"actions": [{"kind": "isolate_host", "target_id": "web-01"}]}}], "peer_messages": []}'
+```
+
+- `incident` is the same shape as in Input above, including the `compliance` block. Containment's `/propose` output can go straight into `peer_proposals` as `{"role": "containment", "proposal": <its output>}`.
+- The response is the full result: `status`, `proposal` (obligations, action_reviews), `deadlines`, `escalation`. Read `escalation.required` first: if it's true, the council must not decide alone.
+- `status` other than `validated` still returns 200, with `escalation.required: true` (fail closed). Bad input returns 400 with `{"error": ...}`.
+- A call takes 20–100 s on the GX10 and can take up to about 8 minutes in the worst case (two attempts with a 240 s limit each). Set the client timeout to at least 600 s.
+
 ## Results and limits
 
 `evaluate.py` on 2026-10-10, gemma4:26b on the GX10: **9/9 passed, all on the first attempt, 3–16 s each.** The nine scenarios:
