@@ -8,8 +8,12 @@ with HF transformers. Model-specific concerns stay in this module:
 - structured output via JSON prompting + Pydantic validation with one retry.
 
 Notes on this host (aarch64 NVIDIA GB10):
-- PyPI torch wheels for linux/aarch64 ship CUDA 13 support; when
-  ``torch.cuda.is_available()`` the backend runs on the GPU, otherwise CPU.
+- PyPI torch wheels for linux/aarch64 ship CUDA 13 support; the backend
+  prefers CUDA when available. On THIS machine the GPU is already fully
+  occupied by the llama.cpp server, so placing the SOC model on CUDA fails
+  with an out-of-memory error — the backend then falls back to CPU
+  automatically (documented behavior, `self._device_resolved` records the
+  device actually used).
 - The weights cache lives OUTSIDE the git tree via ``HF_HOME``
   (default set by the factory / validation script to
   ``/home/asus/forensics-agent-coordination/hf-cache``).
@@ -136,9 +140,20 @@ class TransformersBackend(InferenceBackend):
         try:
             model = model.to(resolved)  # type: ignore[arg-type]
         except Exception as exc:
-            raise InferenceBackendError(
-                f"failed to place model on '{resolved}': {exc}"
-            ) from exc
+            if resolved == "cuda" and self.device is None:
+                # Expected on this GB10: the GPU is already fully occupied by
+                # the llama.cpp server. CPU is the documented fallback.
+                resolved = "cpu"
+                try:
+                    model = model.to("cpu")  # type: ignore[arg-type]
+                except Exception as cpu_exc:
+                    raise InferenceBackendError(
+                        f"failed to place model on 'cpu': {cpu_exc}"
+                    ) from cpu_exc
+            else:
+                raise InferenceBackendError(
+                    f"failed to place model on '{resolved}': {exc}"
+                ) from exc
         model.eval()
         self._model = model
         self._tokenizer = tokenizer
