@@ -5,6 +5,7 @@ import json
 import os
 import re
 from pathlib import Path
+import urllib.error
 import urllib.parse
 import urllib.request
 from council import sources
@@ -36,8 +37,20 @@ def post(url, payload, timeout=120):
     if len(raw) > 48000:
         raise ValueError('Seat context exceeds 48 KB')
     request = urllib.request.Request(url, data=raw, headers={'Content-Type': 'application/json'})
-    with urllib.request.build_opener(NoRedirect).open(request, timeout=timeout) as response:
-        body = response.read(1000001)
+    try:
+        with urllib.request.build_opener(NoRedirect).open(request, timeout=timeout) as response:
+            body = response.read(1000001)
+    except urllib.error.HTTPError as exc:
+        # Surface the seat's own rejection reason (e.g. validator failure) in reports.
+        detail = exc.read(200000).decode('utf-8', 'replace')
+        try:
+            parsed = json.loads(detail)
+            attempts = parsed.get('attempts') or []
+            detail = '; '.join(a['validation_error'] for a in attempts if a.get('validation_error')) \
+                or parsed.get('error') or parsed.get('status') or detail
+        except (ValueError, AttributeError, TypeError):
+            pass
+        raise RuntimeError(f'HTTP {exc.code} from {urllib.parse.urlparse(url).netloc}: {str(detail)[:300]}') from None
     if len(body) > 1000000:
         raise ValueError('Response too large')
     return json.loads(body)
