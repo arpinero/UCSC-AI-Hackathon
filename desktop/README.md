@@ -2,6 +2,8 @@
 
 Browser-first incident response UI on branch `desktop-ui`, synced with `council` commit `e0312bd`. Run activity comes from the actual council protocol. All incidents and execution remain simulated. Demo mode uses deterministic seats; live mode calls the configured model services. There is no automatic live-to-demo fallback.
 
+Sentinel uses a dark theme by default, with a saved light/dark preference. Agent outputs render sanitized Markdown, highlighted code and copyable JSON. Containment/recovery proposals, forensic timelines and policy reviews have separate presentations. Conversation, side panel and dialog scrollbars are hidden while scrolling remains available; the composer shares the conversation scroll area.
+
 The UI uses llama.cpp's original floating sidebar, text input and light/dark theme, with the connected incident pipeline as its conversation adapter. The centered chat layout is retained; evidence, metrics and human decisions are added inside it. Source mapping and MIT attribution are in upstream/PROVENANCE.md.
 
 ## Open locally

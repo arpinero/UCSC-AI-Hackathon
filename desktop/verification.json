@@ -17,7 +17,7 @@
   "python_tests": 35,
   "date": "2026-10-10",
   "branch": "desktop-ui",
-  "javascript_tests": 6,
+  "javascript_tests": 9,
   "hosted_browser_smoke": [
     "Private ASUS tunnel on port 8787",
     "10 distinct agent calls and 2 deliberation rounds rendered",
@@ -36,5 +36,22 @@
     "Evidence tab renders three source observations",
     "Metrics tab renders measured 210 second protocol run",
     "New investigation dialog opens with live models selected by default"
-  ]
+  ],
+  "sentinel_polish": {
+    "theme": "Dark by default with a dedicated persisted Sentinel preference",
+    "renderer": "Sanitized Markdown, literal raw HTML, no remote media, highlighted JSON/code, known evidence references",
+    "browser_checks": [
+      "Existing real ASUS run still loads all four agent responses",
+      "Compact model dialog fits the observed 1223x651 viewport",
+      "Agent panel shows Compliance human review requested",
+      "Forensics timeline resolves API evidence ID groups",
+      "Final chat response remains readable at scroll end",
+      "No browser console errors"
+    ],
+    "security_tests": [
+      "Script and event-handler removal",
+      "Unsafe link schemes and remote media blocked",
+      "Evidence references constrained to supplied IDs; code text preserved"
+    ]
+  }
 }
