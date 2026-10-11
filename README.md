@@ -93,7 +93,7 @@ Council without the UI: `python3 -m council.run --list`, then `python3 -m counci
 4. A unanimous plan still pauses for a **written human decision** before any simulated action. Stale, duplicate and expired approvals fail closed.
 5. Consensus is not always the right outcome. The council can stop, keep the disagreement, or hand the case to a human.
 
-57 composite cases back the evaluation. Results compare the council with a single-pass baseline on the same cases (see `results/council-live.md` and the limits listed there). The baseline is not an equal-compute experiment, so we do not claim superiority beyond what those files show.
+58 composite cases back the evaluation (57 evaluated, plus the `mitre-T1498-001` DDoS demo case in `council/ddos.py`). Results compare the council with a single-pass baseline on the same cases (see `results/council-live.md` and the limits listed there). The baseline is not an equal-compute experiment, so we do not claim superiority beyond what those files show.
 
 ## Branches
 

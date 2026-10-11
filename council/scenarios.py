@@ -144,4 +144,7 @@ def dataset():
         if (compliance['organization'].get('public_company') and not compliance.get('materiality_determined_at')
                 and case.expected.get('fixing_variant') != 'authorized' and 'human_required' not in case.expected):
             case.expected['human_required'] = True
+    # One extra demo case: ATT&CK T1498.001 flood from two compromised internal hosts (council/ddos.py).
+    from council import ddos
+    cases.append(ddos.build(next(c for c in cases if c.case_id == 'mitre-T1041')))
     return cases

@@ -162,7 +162,7 @@ class RelocatableLaunchTests(unittest.TestCase):
                 self.assertGreater(port, 0)
                 health = json.load(urlopen(f'http://127.0.0.1:{port}/api/health', timeout=10))
                 self.assertTrue(health['simulation_only'])
-                self.assertEqual(len(json.load(urlopen(f'http://127.0.0.1:{port}/api/cases', timeout=10))), 57)
+                self.assertEqual(len(json.load(urlopen(f'http://127.0.0.1:{port}/api/cases', timeout=10))), 58)
                 self.assertTrue((Path(tmp) / 'data').is_dir())
                 self.assertFalse((Path(tmp) / 'reports').exists())
             finally:

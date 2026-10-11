@@ -46,6 +46,18 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result['containment']['actions'][0]['kind'], 'block_egress')
         self.assertEqual(result['outcomes']['additional_hosts_compromised'], 0)
 
+    def test_ddos_flood_case_is_blocked_without_notifications(self):
+        result = run(self.by_id['mitre-T1498-001'])
+        self.assertFalse(result['human_alert']['required'])
+        self.assertEqual(result['compliance']['obligations'], [])
+        outcome = result['outcomes']
+        self.assertEqual(outcome['blocked_attack_events'], 2)
+        self.assertEqual(outcome['additional_hosts_compromised'], 0)
+        control = next(e for e in outcome['trace'] if e['type'] == 'control_applied')
+        self.assertEqual(control['key'][:2], ['block_egress', 'victim-01'])
+        self.assertEqual(sorted(control['key'][2]), ['kiosk-02', 'workstation-01'])
+        self.assertTrue(any(r['kind'] == 'simulated_restoration' for r in result['tool_receipts']))
+
     def test_authorized_no_false_positive(self):
         for case in self.cases:
             if case.expected['fixing_variant'] == 'authorized' and case.simulation['truth'] == 'benign':
