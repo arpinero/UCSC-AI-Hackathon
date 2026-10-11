@@ -1,0 +1,19 @@
+{
+  "evidence_id": "EV-ransom01-12",
+  "incident_id": "INC-2026-0001",
+  "source": "zeek",
+  "event_type": "c2_beacon",
+  "timestamp": "2026-09-18T04:27:44Z",
+  "host_id": "WS-FIN-07",
+  "description": "Periodic HTTPS beacon (60s interval) from WS-FIN-07 to 198.51.100.23 between 04:05 and 04:30 UTC.",
+  "raw_data": {
+    "src_ip": "10.0.8.15",
+    "dst_ip": "198.51.100.23",
+    "dst_port": 443,
+    "interval_s": 60,
+    "beacons": 26,
+    "mitre": "T1071.001"
+  },
+  "collected_at": "2026-09-18T06:12:00Z",
+  "collection_tool": "zeek-sensor"
+}

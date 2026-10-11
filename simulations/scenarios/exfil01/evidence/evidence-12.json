@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-exfil01-12",
+  "incident_id": "INC-2026-0003",
+  "source": "backup-system",
+  "event_type": "integrity_check",
+  "timestamp": "2026-10-02T02:10:07Z",
+  "host_id": "BCK-MGR-01",
+  "description": "Post-replication verification: manifest checksums of cust_rec_20261002.7z on the vendor target match the source; job logs show an identical 12.4 GB transfer each night since 2026-10-01.",
+  "raw_data": {
+    "manifest_match": true,
+    "verified_file": "cust_rec_20261002.7z",
+    "nightly_transfers_since": "2026-10-01",
+    "bytes": 13314398618
+  },
+  "collected_at": "2026-10-02T02:52:00Z",
+  "collection_tool": "backup-manager"
+}

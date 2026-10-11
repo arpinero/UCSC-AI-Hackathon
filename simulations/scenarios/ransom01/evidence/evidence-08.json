@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-ransom01-08",
+  "incident_id": "INC-2026-0001",
+  "source": "auth",
+  "event_type": "admin_share_access",
+  "timestamp": "2026-09-18T04:20:58Z",
+  "host_id": "FS-01",
+  "description": "Authenticated ADMIN$ share access from WS-FIN-07 (10.0.8.15) to FS-01 using WIN-FIN\\backup_admin.",
+  "raw_data": {
+    "user": "WIN-FIN\\backup_admin",
+    "share": "ADMIN$",
+    "src_ip": "10.0.8.15",
+    "mitre": "T1021.002"
+  },
+  "collected_at": "2026-09-18T04:40:00Z",
+  "collection_tool": "wef-forwarder"
+}

@@ -1,0 +1,62 @@
+{
+  "scenario_id": "exfil01",
+  "incident_id": "INC-2026-0003",
+  "classification": "suspicious_activity",
+  "expected_severity": "LOW",
+  "containment_proposal": "Isolate FS-ARCH-05 and block egress to 198.51.100.140",
+  "expected_stance": "OPPOSE",
+  "expected_findings": [
+    "Initial indicators (off-hours logon, password-protected 7z archive, rclone, 12.4 GB egress) were consistent with data exfiltration",
+    "The backup job log shows the transfer was the scheduled nightly job NIGHTLY-ARCH-REPLICA (JB-1142)",
+    "Change ticket CHG-2071 approved the vendor-cloud replication migration in advance",
+    "The VPN source and rclone activity are attributable to the sanctioned backup automation from BCK-MGR-01"
+  ],
+  "must_cite_evidence_ids": [
+    "EV-exfil01-09",
+    "EV-exfil01-10",
+    "EV-exfil01-11"
+  ],
+  "timeline_anchors": [
+    {
+      "timestamp": "2026-10-02T01:12:09Z",
+      "host_id": "FS-ARCH-05",
+      "description_contains": "archive"
+    },
+    {
+      "timestamp": "2026-10-02T02:07:31Z",
+      "host_id": "BCK-MGR-01",
+      "description_contains": "backup job"
+    }
+  ],
+  "mitre_techniques": [
+    "T1560.001",
+    "T1567.002"
+  ],
+  "evidence_reveal_rounds": {
+    "EV-exfil01-01": 1,
+    "EV-exfil01-02": 1,
+    "EV-exfil01-03": 1,
+    "EV-exfil01-04": 1,
+    "EV-exfil01-05": 1,
+    "EV-exfil01-06": 1,
+    "EV-exfil01-07": 1,
+    "EV-exfil01-08": 1,
+    "EV-exfil01-09": 2,
+    "EV-exfil01-10": 2,
+    "EV-exfil01-11": 2,
+    "EV-exfil01-12": 2
+  },
+  "expected_position_revisions": [
+    {
+      "previous_position": "SUPPORT",
+      "new_position": "OPPOSE",
+      "triggering_evidence_ids": [
+        "EV-exfil01-09",
+        "EV-exfil01-10",
+        "EV-exfil01-11"
+      ],
+      "min_round": 2
+    }
+  ],
+  "narrative": "Round-1 evidence strongly suggested exfiltration, but round-2 evidence (backup job log, approved change ticket, VPN session from the registered automation host, checksum verification) shows the transfer was the sanctioned nightly replica migration. A correct investigator revises SUPPORT -> OPPOSE on the containment proposal."
+}

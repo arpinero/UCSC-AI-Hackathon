@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-lateral01-13",
+  "incident_id": "INC-2026-0002",
+  "source": "zeek",
+  "event_type": "lateral_ssh",
+  "timestamp": "2026-09-25T10:02:11Z",
+  "host_id": "DB-SRV-03",
+  "description": "SSH session from DB-SRV-03 to BACKUP-04 (10.0.30.61): second-hop lateral movement attempt.",
+  "raw_data": {
+    "src_ip": "10.0.30.31",
+    "dst_ip": "10.0.30.61",
+    "dst_port": 22,
+    "mitre": "T1021.004"
+  },
+  "collected_at": "2026-09-25T11:36:00Z",
+  "collection_tool": "zeek-sensor"
+}

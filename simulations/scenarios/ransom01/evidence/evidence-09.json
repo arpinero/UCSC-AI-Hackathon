@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-ransom01-09",
+  "incident_id": "INC-2026-0001",
+  "source": "edr",
+  "event_type": "process_execution",
+  "timestamp": "2026-09-18T04:23:14Z",
+  "host_id": "FS-01",
+  "description": "encryptor.exe executed on FS-01 from \\\\WS-FIN-07\\C$\\temp\\encryptor.exe; mass file encryption begins.",
+  "raw_data": {
+    "process": "encryptor.exe",
+    "parent": "svchost.exe",
+    "image_path": "\\\\WS-FIN-07\\C$\\temp\\encryptor.exe",
+    "mitre": "T1486"
+  },
+  "collected_at": "2026-09-18T04:41:00Z",
+  "collection_tool": "edr-agent"
+}

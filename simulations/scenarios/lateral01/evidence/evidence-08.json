@@ -1,0 +1,18 @@
+{
+  "evidence_id": "EV-lateral01-08",
+  "incident_id": "INC-2026-0002",
+  "source": "auth",
+  "event_type": "ssh_login",
+  "timestamp": "2026-09-25T09:41:27Z",
+  "host_id": "DB-SRV-03",
+  "description": "SSH password authentication for db_admin on DB-SRV-03 from 10.0.30.12 (WS-SALES-12); abnormal source: db_admin normally connects only from JUMP-02.",
+  "raw_data": {
+    "user": "db_admin",
+    "auth_method": "password",
+    "src_ip": "10.0.30.12",
+    "expected_src": "JUMP-02",
+    "mitre": "T1021.004"
+  },
+  "collected_at": "2026-09-25T10:25:00Z",
+  "collection_tool": "sshd-audit"
+}

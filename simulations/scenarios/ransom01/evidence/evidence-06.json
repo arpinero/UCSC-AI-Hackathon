@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-ransom01-06",
+  "incident_id": "INC-2026-0001",
+  "source": "auth",
+  "event_type": "account_created",
+  "timestamp": "2026-09-18T04:16:05Z",
+  "host_id": "WS-FIN-07",
+  "description": "Local account svc_backup2$ created on WS-FIN-07 and added to the Administrators group.",
+  "raw_data": {
+    "new_account": "svc_backup2$",
+    "group": "Administrators",
+    "event_id": 4720,
+    "mitre": "T1136.001"
+  },
+  "collected_at": "2026-09-18T04:36:00Z",
+  "collection_tool": "wef-forwarder"
+}

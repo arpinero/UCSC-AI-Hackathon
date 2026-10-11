@@ -1,0 +1,18 @@
+{
+  "evidence_id": "EV-exfil01-10",
+  "incident_id": "INC-2026-0003",
+  "source": "itsm",
+  "event_type": "change_ticket",
+  "timestamp": "2026-09-22T10:14:00Z",
+  "host_id": "BCK-MGR-01",
+  "description": "Change ticket CHG-2071 'Migrate nightly customer-records archive replication to vendor cloud storage-42' approved in advance; implementation window 2026-10-01 to 2026-10-05, owner backup-team.",
+  "raw_data": {
+    "ticket": "CHG-2071",
+    "title": "Migrate nightly customer-records archive replication to vendor cloud",
+    "approved_by": "ciso-office",
+    "window": "2026-10-01/2026-10-05",
+    "owner": "backup-team"
+  },
+  "collected_at": "2026-10-02T02:52:00Z",
+  "collection_tool": "itsm-export"
+}

@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-lateral01-07",
+  "incident_id": "INC-2026-0002",
+  "source": "syslog",
+  "event_type": "service_install",
+  "timestamp": "2026-09-25T09:33:51Z",
+  "host_id": "FS-HR-01",
+  "description": "Remote service 'SvcHelp' installed and started on FS-HR-01 via SCM over SMB (PsExec-style lateral movement).",
+  "raw_data": {
+    "service": "SvcHelp",
+    "binary": "C:\\Windows\\SvcHelp.exe",
+    "install_via": "SCM over SMB",
+    "mitre": "T1021.002"
+  },
+  "collected_at": "2026-09-25T10:24:00Z",
+  "collection_tool": "wef-forwarder"
+}

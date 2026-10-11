@@ -1,0 +1,22 @@
+{
+  "evidence_id": "EV-ransom01-10",
+  "incident_id": "INC-2026-0001",
+  "source": "edr",
+  "event_type": "mass_file_modification",
+  "timestamp": "2026-09-18T04:24:31Z",
+  "host_id": "FS-01",
+  "description": "Mass file encryption: 38,412 files renamed with .locked extension across FS-01 shares in 6 minutes.",
+  "raw_data": {
+    "files_affected": 38412,
+    "extension": ".locked",
+    "duration_s": 360,
+    "shares": [
+      "finance$",
+      "hr$",
+      "public"
+    ],
+    "mitre": "T1486"
+  },
+  "collected_at": "2026-09-18T04:41:00Z",
+  "collection_tool": "edr-agent"
+}

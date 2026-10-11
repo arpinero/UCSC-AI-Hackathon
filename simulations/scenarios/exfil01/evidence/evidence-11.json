@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-exfil01-11",
+  "incident_id": "INC-2026-0003",
+  "source": "auth",
+  "event_type": "vpn_session",
+  "timestamp": "2026-10-02T01:02:58Z",
+  "host_id": "BCK-MGR-01",
+  "description": "VPN session for svc_archive established from approved backup jump host BCK-MGR-01 (10.0.44.9); source matches the automation host registered for nightly replica jobs.",
+  "raw_data": {
+    "user": "CORP\\svc_archive",
+    "src_ip": "10.0.44.9",
+    "src_host": "BCK-MGR-01",
+    "registered_for": "nightly replica automation"
+  },
+  "collected_at": "2026-10-02T02:52:00Z",
+  "collection_tool": "vpn-gw"
+}

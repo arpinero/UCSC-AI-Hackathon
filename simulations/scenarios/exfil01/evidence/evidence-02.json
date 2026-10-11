@@ -1,0 +1,18 @@
+{
+  "evidence_id": "EV-exfil01-02",
+  "incident_id": "INC-2026-0003",
+  "source": "edr",
+  "event_type": "process_execution",
+  "timestamp": "2026-10-02T01:12:09Z",
+  "host_id": "FS-ARCH-05",
+  "description": "7z.exe created password-protected archive C:\\Temp\\cust_rec_20261002.7z (12.4 GB) from D:\\export\\customer_records.",
+  "raw_data": {
+    "process": "7z.exe",
+    "archive": "C:\\Temp\\cust_rec_20261002.7z",
+    "source_dir": "D:\\export\\customer_records",
+    "size_gb": 12.4,
+    "mitre": "T1560.001"
+  },
+  "collected_at": "2026-10-02T02:30:00Z",
+  "collection_tool": "edr-agent"
+}

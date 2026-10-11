@@ -1,0 +1,18 @@
+{
+  "evidence_id": "EV-lateral01-01",
+  "incident_id": "INC-2026-0002",
+  "source": "mail-gateway",
+  "event_type": "email_delivered",
+  "timestamp": "2026-09-25T08:41:07Z",
+  "host_id": "WS-SALES-12",
+  "description": "Phishing email 'Invoice P-0912 overdue' with credential-harvester link delivered to m.chen.",
+  "raw_data": {
+    "recipient": "m.chen@corp.example",
+    "sender": "billing@invoice-portal.example.net",
+    "url": "hxxp://corp-invoice-verify.example.net/login",
+    "verdict": "phishing",
+    "mitre": "T1566.002"
+  },
+  "collected_at": "2026-09-25T10:20:00Z",
+  "collection_tool": "mail-gw"
+}

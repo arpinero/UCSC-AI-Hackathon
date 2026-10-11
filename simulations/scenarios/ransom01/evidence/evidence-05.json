@@ -1,0 +1,18 @@
+{
+  "evidence_id": "EV-ransom01-05",
+  "incident_id": "INC-2026-0001",
+  "source": "syslog",
+  "event_type": "scheduled_task_created",
+  "timestamp": "2026-09-18T04:15:22Z",
+  "host_id": "WS-FIN-07",
+  "description": "New scheduled task 'SysHealthCheck' registered to run C:\\Users\\Public\\svc.exe at every logon.",
+  "raw_data": {
+    "task_name": "SysHealthCheck",
+    "action": "C:\\Users\\Public\\svc.exe",
+    "trigger": "logon",
+    "event_id": 4698,
+    "mitre": "T1053.005"
+  },
+  "collected_at": "2026-09-18T04:36:00Z",
+  "collection_tool": "wef-forwarder"
+}

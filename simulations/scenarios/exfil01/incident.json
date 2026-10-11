@@ -1,0 +1,13 @@
+{
+  "incident_id": "INC-2026-0003",
+  "scenario_id": "exfil01",
+  "created_at": "2026-10-02T02:20:00Z",
+  "severity": "HIGH",
+  "affected_hosts": [
+    "FS-ARCH-05",
+    "BCK-MGR-01"
+  ],
+  "initial_description": "DLP alert: 12.4 GB uploaded from FS-ARCH-05 to an external storage host at 01:20 UTC. A password-protected archive of customer records was created off-hours just before the transfer. Possible data exfiltration; a containment proposal is on the table pending investigation.",
+  "current_status": "INVESTIGATING",
+  "updated_at": "2026-10-02T02:55:00Z"
+}

@@ -1,0 +1,14 @@
+{
+  "incident_id": "INC-2026-0001",
+  "scenario_id": "ransom01",
+  "created_at": "2026-09-18T04:31:00Z",
+  "severity": "CRITICAL",
+  "affected_hosts": [
+    "WS-FIN-07",
+    "FS-01",
+    "DC-01"
+  ],
+  "initial_description": "Users report files on FS-01 shares renamed with a .locked extension and a ransom note on every share root. EDR flagged suspicious process activity on WS-FIN-07 overnight. Suspected ransomware with lateral movement.",
+  "current_status": "INVESTIGATING",
+  "updated_at": "2026-09-18T06:05:00Z"
+}

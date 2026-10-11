@@ -1,0 +1,21 @@
+{
+  "evidence_id": "EV-exfil01-09",
+  "incident_id": "INC-2026-0003",
+  "source": "backup-system",
+  "event_type": "backup_job_log",
+  "timestamp": "2026-10-02T02:07:31Z",
+  "host_id": "BCK-MGR-01",
+  "description": "Backup job NIGHTLY-ARCH-REPLICA (id JB-1142) ran on its schedule (daily 01:00) from FS-ARCH-05 to storage-42.vendor-backup.example.com; transferred 12.4 GB; status SUCCESS; retention R-90.",
+  "raw_data": {
+    "job_id": "JB-1142",
+    "job_name": "NIGHTLY-ARCH-REPLICA",
+    "schedule": "daily 01:00",
+    "target": "storage-42.vendor-backup.example.com",
+    "bytes": 13314398618,
+    "status": "SUCCESS",
+    "retention": "R-90",
+    "initiator": "svc_archive automation"
+  },
+  "collected_at": "2026-10-02T02:50:00Z",
+  "collection_tool": "backup-manager"
+}

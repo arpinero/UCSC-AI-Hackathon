@@ -1,0 +1,16 @@
+{
+  "evidence_id": "EV-exfil01-03",
+  "incident_id": "INC-2026-0003",
+  "source": "syslog",
+  "event_type": "file_access",
+  "timestamp": "2026-10-02T01:14:37Z",
+  "host_id": "FS-ARCH-05",
+  "description": "Bulk read of 8,412 files under D:\\export\\customer_records by the svc_archive session.",
+  "raw_data": {
+    "files_read": 8412,
+    "directory": "D:\\export\\customer_records",
+    "user": "CORP\\svc_archive"
+  },
+  "collected_at": "2026-10-02T02:30:00Z",
+  "collection_tool": "fs-audit"
+}

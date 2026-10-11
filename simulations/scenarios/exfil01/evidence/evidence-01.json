@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-exfil01-01",
+  "incident_id": "INC-2026-0003",
+  "source": "auth",
+  "event_type": "interactive_logon",
+  "timestamp": "2026-10-02T01:05:41Z",
+  "host_id": "FS-ARCH-05",
+  "description": "Interactive logon for CORP\\svc_archive on FS-ARCH-05 from VPN address 10.0.44.9; unusual: svc_archive sessions are normally non-interactive.",
+  "raw_data": {
+    "user": "CORP\\svc_archive",
+    "logon_type": 10,
+    "src_ip": "10.0.44.9",
+    "event_id": 4624
+  },
+  "collected_at": "2026-10-02T02:30:00Z",
+  "collection_tool": "wef-forwarder"
+}

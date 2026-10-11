@@ -1,0 +1,22 @@
+{
+  "evidence_id": "EV-lateral01-02",
+  "incident_id": "INC-2026-0002",
+  "source": "zeek",
+  "event_type": "http_post",
+  "timestamp": "2026-09-25T08:52:33Z",
+  "host_id": "WS-SALES-12",
+  "description": "HTTP POST of credential form data (username/password fields) from WS-SALES-12 to 203.0.113.90 (harvester site).",
+  "raw_data": {
+    "src_ip": "10.0.30.12",
+    "dst_ip": "203.0.113.90",
+    "dst_port": 80,
+    "posted_fields": [
+      "user",
+      "pass"
+    ],
+    "bytes": 1840,
+    "mitre": "T1566.002"
+  },
+  "collected_at": "2026-09-25T10:21:00Z",
+  "collection_tool": "zeek-sensor"
+}

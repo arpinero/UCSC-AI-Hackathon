@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-ransom01-11",
+  "incident_id": "INC-2026-0001",
+  "source": "syslog",
+  "event_type": "file_drop",
+  "timestamp": "2026-09-18T04:26:02Z",
+  "host_id": "FS-01",
+  "description": "Ransom note HOW_TO_RECOVER.hta written to every share root on FS-01 demanding cryptocurrency payment.",
+  "raw_data": {
+    "filename": "HOW_TO_RECOVER.hta",
+    "copies": 3,
+    "note": "payment demanded in cryptocurrency",
+    "mitre": "T1491"
+  },
+  "collected_at": "2026-09-18T04:41:00Z",
+  "collection_tool": "edr-agent"
+}
