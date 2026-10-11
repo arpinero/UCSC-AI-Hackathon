@@ -2,7 +2,7 @@
 
 Source: https://github.com/ggml-org/llama.cpp
 
-Revision: 97ebdc98f6053604a19d861c08d8087601b96e0, matching the ASUS installation. The original full web UI source is preserved in llama-webui-src.zip. MIT license: LLAMA-LICENSE.
+Revision: b97ebdc98f6053604a19d861c08d8087601b96e0, matching the ASUS installation. The original full web UI source is preserved in llama-webui-src.zip. MIT license: LLAMA-LICENSE.
 
 The browser now renders the original floating Sidebar.Provider, Root, Inset, Trigger and Menu components, along with original Button, Tooltip, Input, Separator, Skeleton and Card components copied into src/lib/ui. Original app.css and css-classes.ts provide the complete llama light/dark theme and composer tokens. Original ChatFormTextarea.svelte, is-mobile.svelte.ts, autoresize-textarea.ts and css.ts are copied unchanged.
 

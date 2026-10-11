@@ -145,7 +145,7 @@
       <Button variant="ghost" class="justify-start" onclick={()=>modal='models'}><Cpu size={16}/>Models & services</Button>
     </Sidebar.Header>
     <Sidebar.Content><Sidebar.Group><Sidebar.GroupLabel>Investigations</Sidebar.GroupLabel><Sidebar.GroupContent><Sidebar.Menu>
-      {#each filteredRuns as run}<Sidebar.MenuItem><Sidebar.MenuButton isActive={current?.id===run.id} onclick={()=>selectRun(run)}><MessageSquare size={16}/><span>{run.case_id}</span></Sidebar.MenuButton><div class="px-7 pb-2 text-xs text-muted-foreground">{run.mode==='live'?'Live models':'Deterministic'} � {friendly(run.status)}</div></Sidebar.MenuItem>{:else}<p class="px-3 py-4 text-sm text-muted-foreground">No investigations yet.</p>{/each}
+      {#each filteredRuns as run}<Sidebar.MenuItem><Sidebar.MenuButton isActive={current?.id===run.id} onclick={()=>selectRun(run)}><MessageSquare size={16}/><span>{run.case_id}</span></Sidebar.MenuButton><div class="px-7 pb-2 text-xs text-muted-foreground">{run.mode==='live'?'Live models':'Deterministic'} · {friendly(run.status)}</div></Sidebar.MenuItem>{:else}<p class="px-3 py-4 text-sm text-muted-foreground">No investigations yet.</p>{/each}
     </Sidebar.Menu></Sidebar.GroupContent></Sidebar.Group></Sidebar.Content>
     <Sidebar.Footer class="p-3"><Button variant="ghost" class="justify-start" onclick={()=>modal='connection'}><Settings2 size={16}/>Connection settings</Button><Button variant="ghost" class="justify-start" onclick={toggleMode}><Moon size={16}/>Toggle theme</Button><div class="px-3 py-2 text-xs text-muted-foreground">{connected?'Connected to '+pipelineHost:'Bridge offline'}</div></Sidebar.Footer>
   </Sidebar.Root>
