@@ -243,6 +243,56 @@ class PipelineTests(unittest.TestCase):
         ids = [body['evidence_id'] for body in sends if body['raw_data']['original_id'] == 'M1']
         self.assertEqual(len(set(ids)), 2)
 
+    def _objecting_compliance(self, case_id, stance):
+        """Mock seats whose Compliance always objects/vetoes the recovery action, like a stubborn live model."""
+        class Stubborn(Seats):
+            def compliance(inner, context, peers):
+                result = mock_compliance(context, peers)
+                for review in result['action_reviews']:
+                    if review['kind'] not in sources.compliance()['agent'].SAFE:
+                        review['stance'] = stance
+                return result
+        return run(self.by_id[case_id], Stubborn('mock'))
+
+    def test_plain_objection_after_capture_does_not_block(self):
+        result = self._objecting_compliance('mitre-T1041', 'object')
+        self.assertFalse(result['human_alert']['required'], result['human_alert']['reasons'])
+        self.assertTrue(any(m['role'] == 'router' and m['stance'] == 'objection_satisfied' for m in result['transcript']))
+        self.assertTrue(any(r['kind'] == 'simulated_restoration' for r in result['tool_receipts']))
+
+    def test_legal_hold_objection_is_not_overridden(self):
+        result = self._objecting_compliance('mitre-T1021-002', 'object')
+        self.assertFalse(any(m['role'] == 'router' for m in result['transcript']))
+        self.assertFalse(any(r['kind'] == 'simulated_restoration' for r in result['tool_receipts']))
+
+    def test_live_seat_gets_one_validated_retry(self):
+        case = self.by_id['mitre-T1041']
+        context = case.context()
+        good = {'stance': 'support', 'reason': 'ok', 'evidence_ids': [context['incident']['evidence'][0]['id']]}
+        bad = dict(good, evidence_ids=['NOPE'])
+
+        class Client:
+            def __init__(inner, replies):
+                inner.replies, inner.views = list(replies), []
+            def complete(inner, role, view, contract):
+                inner.views.append(view)
+                return inner.replies.pop(0)
+        seats = Seats('mock')
+        seats.mode = 'live'
+        seats.client = seats.fixing_client = Client([bad, good])
+        vote = seats.vote('containment', context, {}, {})
+        self.assertEqual(vote['stance'], 'support')
+        self.assertEqual(len(seats.client.views), 2)
+        self.assertIn('rejected', seats.client.views[1]['validation_error'])
+        seats.client = Client([bad, bad])
+        with self.assertRaises(ValueError):
+            seats.vote('containment', context, {}, {})
+        self.assertEqual(len(seats.client.views), 2)
+
+    def test_veto_is_never_overridden(self):
+        result = self._objecting_compliance('mitre-T1041', 'veto')
+        self.assertFalse(any(m['role'] == 'router' for m in result['transcript']))
+
 
 if __name__ == '__main__':
     unittest.main()

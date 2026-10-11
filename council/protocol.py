@@ -72,6 +72,19 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
                 reviews = compliance['action_reviews']
                 compliance_stance = 'veto' if any(r['stance'] == 'veto' for r in reviews) else 'object' if any(r['stance'] == 'object' for r in reviews) else 'support'
                 message(round_number, 'compliance', compliance_stance, compliance)
+                # Pre-agreed rule (code, not a model): a plain objection is satisfied once the condition it
+                # can legally rest on is met: no legal hold, host evidence preserved, capture receipt on record.
+                # Vetoes, deadline/materiality/human-request escalations and the severity gate are unaffected.
+                capture_done = any(r['kind'] == 'simulated_evidence_capture' and r['host_id'] == context['fixing']['host_id']
+                                   for r in receipts)
+                if (compliance_stance == 'object' and not incident['compliance']['legal_hold']
+                        and context['preservation_confirmed'] and capture_done and not escalation['reasons']):
+                    objections = [{'kind': r['kind'], 'target_id': r['target_id'], 'reason': r['reason']}
+                                  for r in reviews if r['stance'] == 'object']
+                    message(round_number, 'router', 'objection_satisfied',
+                            {'rule': 'No legal hold, host preserved, capture receipt recorded: plain objections do not block',
+                             'objections': objections})
+                    compliance_stance = 'support'
                 # Negotiable legal-hold conflict must be revised to a deferral. Other
                 # code-required human determinations remain binding immediately.
                 nonnegotiable = [r for r in escalation['reasons'] if not r.startswith('legal hold:')]
