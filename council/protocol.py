@@ -40,9 +40,15 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
     updates = [None] + sorted(case.simulation.get('updates', []), key=lambda u: u['at'])
     try:
         for update in updates:
+            phase_start = time.monotonic()
             if update:
-                sim.advance(update['at'])
+                # Live inference can run past the update time; never move the clock backwards.
+                sim.advance(max(sim.time, update['at']))
+                preserved = incident['compliance']['evidence_preserved_host_ids']
                 incident = copy.deepcopy(update['incident'])
+                # New telemetry doesn't undo evidence already captured earlier in this run.
+                incident['compliance']['evidence_preserved_host_ids'] = sorted(
+                    set(preserved) | set(incident['compliance']['evidence_preserved_host_ids']))
                 sim.update(incident)
                 message(0, 'telemetry', 'revision', {'at': update['at'], 'evidence_ids': [e['id'] for e in incident['evidence']]})
             context = case.context(incident)
@@ -90,15 +96,19 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
                             reasons.append('Council deadlock: author seat objects to final shared plan')
                             break
                         containment = seats.containment(context, transcript[-8:])
+                        context['peer_messages'] = transcript[-8:]
                         fixing = seats.fixing(context, True)
                         continue
-                    controls = [a for a in fixing['actions'] if a['kind'] in sources.fixing()['fixing_scenarios'].CONTROL_KINDS]
+                    # Skip recovery already executed before a telemetry update.
+                    done = lambda a: (recovery_state['files'].get(a['target_id']) == 'restored_clean'
+                                      or recovery_state['artifacts'].get(a['target_id'], 'unchanged') != 'unchanged')
+                    controls = [a for a in fixing['actions'] if a['kind'] in sources.fixing()['fixing_scenarios'].CONTROL_KINDS and not done(a)]
                     if controls and (not context['preservation_confirmed'] or context['fixing']['compliance']['status'] != 'approved'):
                         raise ValueError('Recovery execution lacks preservation / approval')
                     decisions.append({'telemetry_version': incident['telemetry_version'], 'round': round_number,
                                       'votes': {r: 'support' for r in ('containment', 'forensics', 'compliance', 'fixing')},
                                       'containment': copy.deepcopy(containment), 'fixing': copy.deepcopy(fixing)})
-                    delay = response_seconds if seats.mode == 'mock' else time.monotonic() - started
+                    delay = response_seconds if seats.mode == 'mock' else time.monotonic() - phase_start
                     sim.advance(min(case.simulation['horizon_seconds'], sim.time + max(0, delay)))
                     if not sim.apply(containment):
                         raise ValueError('Simulator rejected accepted containment')
@@ -135,12 +145,13 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30):
                     incident = copy.deepcopy(context['incident'])
                 peer_messages = [{'role': 'forensics', **forensic}, {'role': 'compliance', 'stance': compliance_stance, 'proposal': compliance}]
                 containment = seats.containment(context, peer_messages)
+                context['peer_messages'] = transcript[-8:]
                 fixing = seats.fixing(context, True)
             if reasons:
                 break
         if not reasons:
             sim.advance(case.simulation['horizon_seconds'])
-    except (ValueError, KeyError, TypeError, RuntimeError, OSError) as exc:
+    except (ValueError, KeyError, TypeError, AttributeError, IndexError, RuntimeError, OSError) as exc:
         reasons.append('Seat/validation failure: ' + str(exc))
     severity = assess(case.impact, deadlines, reasons, threshold)
     status = 'ESCALATED' if severity['human_required'] else 'CONTAINED_RECOVERY_DEFERRED' if deferred else 'RESOLVED_SIMULATION'
