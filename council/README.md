@@ -2,19 +2,19 @@
 
 Python 3.10+, standard library only. No UI, cloud telemetry, real attacks, firewall
 changes, process termination, or file restoration. All action execution is **simulated**.
-The existing teammate modules remain unchanged. Development branch: `council-pipeline`.
+The existing teammate modules remain unchanged. Development branch: `council`.
 
 ## Run offline
 
-Run from `/home/runai-home/UCSC-AI-Hackathon`:
+Run from `/home/asus/UCSC-AI-Hackathon`:
 
 ```bash
-cd /home/runai-home/UCSC-AI-Hackathon
-python -m unittest council.test_pipeline -v
-python -m council.run --list
-python -m council.run --case mitre-T1041 --output /home/runai-home/UCSC-AI-Hackathon/reports
-python -m council.run --case council-critical-impact --output /home/runai-home/UCSC-AI-Hackathon/reports
-python -m council.evaluate --mode mock --output /home/runai-home/UCSC-AI-Hackathon/results/council-mock.json --reports /home/runai-home/UCSC-AI-Hackathon/reports
+cd /home/asus/UCSC-AI-Hackathon
+python3 -m unittest council.test_pipeline -v
+python3 -m council.run --list
+python3 -m council.run --case mitre-T1041 --output /home/asus/UCSC-AI-Hackathon/reports
+python3 -m council.run --case council-critical-impact --output /home/asus/UCSC-AI-Hackathon/reports
+python3 -m council.evaluate --mode mock --output /home/asus/UCSC-AI-Hackathon/results/council-mock.json --reports /home/asus/UCSC-AI-Hackathon/reports
 ```
 
 Reports are JSON + Markdown. Escalations also create a local JSON file in the
@@ -93,27 +93,28 @@ Do not weaken these gates merely to reduce alert counts.
 First run the teammate services against their **locally installed** model weights:
 
 ```bash
-cd /home/runai-home/UCSC-AI-Hackathon/agents/containment
-python api.py
+cd /home/asus/UCSC-AI-Hackathon/agents/containment
+python3 api.py
 # separate terminal
-cd /home/runai-home/UCSC-AI-Hackathon/agents/compliance
-python server.py
+cd /home/asus/UCSC-AI-Hackathon/agents/compliance
+python3 server.py
 ```
 
 Follow their existing model-server READMEs; this pipeline does not download weights
 or start/reconfigure another teammate's servers. Verify service health and installed
-model names before running. The examined GB300 workspace exposed only `qwen2.5:7b`
-through Ollama; the advertised Foundation-Sec/Gemma services were unavailable.
+model names before running. The default council model is `gemma4:26b` (override with
+`COUNCIL_MODEL` or `--model`). On the GX10 used for the last live runs, Containment's API ran
+`qwen3.6:35b` and Compliance ran `gemma4:26b`, both through Ollama on :11434.
 
 ```bash
-cd /home/runai-home/UCSC-AI-Hackathon
+cd /home/asus/UCSC-AI-Hackathon
 # Optional Aidan model; must actually be running on 8001:
 export COUNCIL_FIXING_ENDPOINT=http://127.0.0.1:8001/v1
 export COUNCIL_FIXING_MODEL=fdtn-ai/Foundation-Sec-8B-Reasoning
 # Optional Andrew service with an injected, ready investigation engine:
 # export COUNCIL_FORENSICS_URL=http://127.0.0.1:8747
-python -m council.run --mode live --case mitre-T1041 --endpoint http://127.0.0.1:11434/api --model qwen2.5:7b --timeout 240
-python -m council.evaluate --mode live --limit 3 --output /home/runai-home/UCSC-AI-Hackathon/results/council-live.json --timeout 240
+python3 -m council.run --mode live --case mitre-T1041 --endpoint http://127.0.0.1:11434/api --model gemma4:26b --timeout 300
+python3 -m council.evaluate --mode live --limit 6 --output /home/asus/UCSC-AI-Hackathon/results/council-live.json --timeout 300
 ```
 
 Use `COUNCIL_CONTAINMENT_URL` and `COUNCIL_COMPLIANCE_URL` to change local agent

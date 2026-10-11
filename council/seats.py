@@ -208,9 +208,14 @@ def validate_fixing(proposal, context):
 
 
 def review_peers(containment, fixing, context):
-    recovery = []
+    recovery, seen = [], set()
     for a in fixing.get('actions', []):
-        recovery.append(dict(a, target_id=context['fixing']['host_id']))
+        # Compliance tracks preserved HOSTS, so recovery targets are normalized to the host. Several
+        # file/artifact actions then collapse to one (kind, host) pair; Compliance reviews each pair once.
+        pair = (a['kind'], context['fixing']['host_id'])
+        if pair not in seen:
+            seen.add(pair)
+            recovery.append(dict(a, target_id=pair[1]))
     return [{'role': 'containment', 'proposal': containment},
             {'role': 'fixing', 'proposal': {'actions': recovery}}]
 
@@ -275,18 +280,32 @@ class Seats:
             os.environ.get('COUNCIL_FIXING_MODEL', self.client.model), self.client.timeout,
             self.client.cache_dir) if os.environ.get('COUNCIL_FIXING_ENDPOINT') else self.client
 
+    def ask(self, client, role, view, contract, check):
+        """One model call plus a single retry that feeds the validator's message back (as Containment does)."""
+        for attempt in (1, 2):
+            proposal = client.complete(role, view, contract)
+            try:
+                return check(proposal)
+            except ValueError as exc:
+                if attempt == 2:
+                    raise
+                view = dict(view, validation_error='Your previous reply was rejected: ' + str(exc)
+                            + '. Reply again using only IDs that appear in the supplied incident.')
+
     def vote(self, role, context, containment, fixing):
         if self.mode == 'mock':
             return {'stance': 'support', 'evidence_ids': [e['id'] for e in context['incident']['evidence']],
                     'reason': 'Exact authored plan meets this mock seat objective'}
         client = self.fixing_client if role == 'fixing' else self.client
-        proposal = client.complete(role, dict(context, containment_proposal=containment,
-            fixing_proposal=fixing, task='Vote on this exact shared plan. Object if it conflicts with your objective.'),
-            {'stance': 'support|object', 'evidence_ids': ['known ID'], 'reason': 'why'})
         ids = {e['id'] for e in context['incident']['evidence']}
-        if proposal.get('stance') not in ('support', 'object') or not proposal.get('reason') or not proposal.get('evidence_ids') or not set(proposal['evidence_ids']) <= ids:
-            raise ValueError('Invalid peer vote')
-        return proposal
+
+        def check(proposal):
+            if proposal.get('stance') not in ('support', 'object') or not proposal.get('reason') or not proposal.get('evidence_ids') or not set(proposal['evidence_ids']) <= ids:
+                raise ValueError('Invalid peer vote')
+            return proposal
+        return self.ask(client, role, dict(context, containment_proposal=containment,
+            fixing_proposal=fixing, task='Vote on this exact shared plan. Object if it conflicts with your objective.'),
+            {'stance': 'support|object', 'evidence_ids': ['known ID'], 'reason': 'why'}, check)
 
     def containment(self, context, peers):
         if self.mode == 'mock':
@@ -307,18 +326,21 @@ class Seats:
                 'peer_messages': context.get('peer_messages', []), 'allowed_kinds': kinds,
                 'rules': 'Use ONLY allowed_kinds. remove_artifact/reenable_service/disable_account target an artifact ID, '
                          'restore_from_backup targets a file ID with a clean backup, defer_restore/request_compliance_review '
-                         'target the host. Do not act on benign or authorized artifacts. Cite fixing evidence IDs. '
+                         'target the host. Do not act on benign or authorized artifacts. If the fixing evidence says the activity '
+                         'is a verified authorized exercise or approved change with no unauthorized activity, EVERY artifact '
+                         'is in scope of that authorization: return verdict "propose" with an EMPTY actions list. '
+                         'A PowerShell payload or scheduled task alone is not proof of compromise. Cite fixing evidence IDs. '
                          'When approval_phase is false you are stating a NON-EXECUTING intent: propose the approved fix; the '
                          'council decides execution order, and Compliance may object until evidence is captured. '
                          'If preservation_confirmed is true, a peer message from role "tool" (simulated_evidence_capture) '
                          'shows the capture is DONE: an earlier objection that asked for capture first is satisfied, so '
                          'propose the approved fix instead of deferring. Defer ONLY when fixing.compliance.status is "hold" '
                          '(legal hold); never defer just because capture has not happened yet.'}
-        proposal = self.fixing_client.complete('fixing', view,
+        return self.ask(self.fixing_client, 'fixing', view,
             {'reason': 'evidence-based rationale before verdict', 'verdict': 'propose|defer',
              'actions': [{'kind': '|'.join(sources.fixing()['fixing_scenarios'].KINDS),
-                          'target_id': 'known artifact/file ID; host for defer', 'evidence_ids': ['known ID'], 'reason': 'why'}]})
-        return validate_fixing(proposal, context)
+                          'target_id': 'known artifact/file ID; host for defer', 'evidence_ids': ['known ID'], 'reason': 'why'}]},
+            lambda proposal: validate_fixing(proposal, context))
 
     def compliance(self, context, peer_proposals):
         if self.mode == 'mock':
@@ -337,14 +359,23 @@ class Seats:
             return forensic_position(context, containment, fixing)
         if self.forensics_api:
             return self.forensics_api.position(context, containment, fixing)
-        proposal = self.client.complete('forensics', dict(context, containment_proposal=containment, fixing_proposal=fixing),
-            {'stance': 'support|object', 'evidence_ids': ['known evidence ID'], 'reason': 'evidence-based objection or support',
-             'timeline': [{'evidence_id': 'known ID', 'observation': 'finding', 'timestamp': None, 'sequence': 0}]})
+        view = dict(context, containment_proposal=containment, fixing_proposal=fixing,
+                    rules='Your concern is losing volatile evidence. If preservation_confirmed is true and peer_messages '
+                          'contain a role "tool" simulated_evidence_capture receipt for the host, the evidence has ALREADY been '
+                          'captured: do not object to restoration or artifact removal on evidence-destruction grounds. '
+                          'Object only to a real, still-unaddressed forensic risk, such as broad isolation when a narrower '
+                          'eligible control exists, or removal before any capture receipt.')
         ids = {e['id'] for e in context['incident']['evidence']}
-        if proposal.get('stance') not in ('support', 'object') or not isinstance(proposal.get('reason'), str):
-            raise ValueError('Invalid Forensics stance')
-        if not proposal.get('evidence_ids') or not set(proposal['evidence_ids']) <= ids:
-            raise ValueError('Forensics must cite known evidence')
-        if not isinstance(proposal.get('timeline'), list) or any(e.get('evidence_id') not in ids for e in proposal['timeline']):
-            raise ValueError('Invalid forensic timeline')
-        return proposal
+
+        def check(proposal):
+            if proposal.get('stance') not in ('support', 'object') or not isinstance(proposal.get('reason'), str):
+                raise ValueError('Invalid Forensics stance')
+            if not proposal.get('evidence_ids') or not set(proposal['evidence_ids']) <= ids:
+                raise ValueError('Forensics must cite known evidence')
+            if not isinstance(proposal.get('timeline'), list) or any(e.get('evidence_id') not in ids for e in proposal['timeline']):
+                raise ValueError('Invalid forensic timeline')
+            return proposal
+        return self.ask(self.client, 'forensics', view,
+            {'stance': 'support|object', 'evidence_ids': ['known evidence ID'], 'reason': 'evidence-based objection or support',
+             'timeline': [{'evidence_id': 'known ID', 'observation': 'finding', 'timestamp': None, 'sequence': 0}]},
+            check)

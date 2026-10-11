@@ -85,10 +85,19 @@ Review EVERY action in peer_proposals exactly once by kind and target_id:
     legal hold, safe_kinds and evidence_preserved_host_ids); never for any other.
     Use veto, not object, for those.
 Containment controls (isolation, egress blocks, session revocation) normally
-preserve evidence; do not obstruct them. Ask for memory and disk capture before
-anything destructive in preservation_requests. Set request_human when the council
+preserve evidence; do not obstruct them. Set request_human when the council
 should not decide alone. Reconsider peer objections against evidence; do not obey
 peers automatically. List uncertainties.
+Evidence-capture objections are decided by action_facts, which is computed in code and
+is authoritative; do not re-derive it from prose, receipts or peer messages. For each
+action, object on evidence-preservation grounds ONLY when its capture_objection_open is
+true (destructive action on a host whose evidence is not yet preserved); then ask for
+memory and disk capture in preservation_requests. When capture_objection_open is false,
+that concern is closed: a destructive action on a host with host_evidence_preserved true
+and legal_hold false is legally safe and you must support it, however much the action
+changes the host. Object to such an action only for a different, concrete legal reason
+that you cite from the evidence. "It destroys evidence" is not such a reason once the
+host is preserved. Do not set request_human merely because an action is destructive.
 '''
 SYSTEM += 'safe_kinds: ' + ', '.join(sorted(SAFE)) + '\n'
 
@@ -203,6 +212,26 @@ def held_destructive(incident, peer_proposals):
     return [(k, t) for k, t in peer_actions(peer_proposals) if c['legal_hold'] and k not in SAFE and t not in preserved]
 
 
+def action_facts(incident, peer_proposals):
+    """Per-action facts computed in code, so the model never has to infer them from prose.
+
+    `capture_objection_open` is the only case where "capture evidence first" is a valid reason to
+    object: a destructive action on a host whose evidence is not yet preserved. Once the host is in
+    evidence_preserved_host_ids there is nothing left to capture, and with no legal hold there is no
+    other legal reason to block it on evidence grounds.
+    """
+    c = incident['compliance']
+    preserved = set(c.get('evidence_preserved_host_ids', []))
+    facts = []
+    for kind, target in peer_actions(peer_proposals):
+        destructive = kind not in SAFE
+        host_preserved = target in preserved
+        facts.append({'kind': kind, 'target_id': target, 'destructive': destructive,
+                      'host_evidence_preserved': host_preserved, 'legal_hold': bool(c['legal_hold']),
+                      'capture_objection_open': destructive and not host_preserved})
+    return facts
+
+
 def escalation(proposal, clocks, incident, peer_proposals=None):
     """Deterministic: the council does not get to vote these away."""
     reasons = []
@@ -254,6 +283,7 @@ def propose(incident, endpoint=ENDPOINT, model=MODEL, peers=None, previous=None,
     clocks = rules.deadlines(incident['compliance'])
     context = {'incident': incident, 'candidate_regimes': clocks, 'peer_proposals': peer_proposals or [],
                'veto_required': [{'kind': k, 'target_id': t} for k, t in held_destructive(incident, peer_proposals)],
+               'action_facts': action_facts(incident, peer_proposals),
                'peer_messages': peers or [], 'previous_proposal': previous}
     if len(json.dumps(context).encode()) > 48000:
         raise ValueError('Context too large; summarize telemetry before inference')
