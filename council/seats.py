@@ -307,7 +307,8 @@ class Seats:
     def compliance(self, context, peer_proposals):
         if self.mode == 'mock':
             return mock_compliance(context, peer_proposals)
-        result = post(self.compliance_url + '/review', {'incident': context['incident'], 'peer_proposals': peer_proposals}, self.client.timeout)
+        result = post(self.compliance_url + '/review', {'incident': context['incident'], 'peer_proposals': peer_proposals,
+                                                         'peer_messages': context.get('peer_messages', [])}, self.client.timeout)
         if result.get('status') != 'validated':
             # Compliance answers 200 even when it fails closed; surface its own reasons in reports.
             errors = [a.get('validation_error') or a.get('transport_error') for a in result.get('attempts') or []]
