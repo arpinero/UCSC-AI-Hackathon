@@ -61,6 +61,15 @@ APPIMAGE_EXTRACT_AND_RUN=1 ./desktop/release/Sentinel-0.1.0-arm64.AppImage
 
 `APPIMAGE_EXTRACT_AND_RUN=1` is needed only when `libfuse2` is missing, as on the GX10 image. The app starts its own bridge on a free loopback port and stops it when you close the window. The `.deb` is the better choice when Chromium's process sandbox matters. Details and limits are in [desktop/README.md](desktop/README.md).
 
+### Quick start on the GX10 (after building)
+
+```bash
+desktop/scripts/install-shortcut.sh   # once: adds a Sentinel icon to the desktop, app menu and dock
+desktop/scripts/sentinel-live.sh      # launches the app configured for the local live services
+```
+
+`sentinel-live.sh` sets `COUNCIL_MODEL=gemma4:26b`, `COUNCIL_FORENSICS_URL=http://127.0.0.1:8747` and a label for the Forensics model, and respects any value you already exported. The Forensics service does not report its own model, so Sentinel shows the configured label and marks it "Configured label, not reported by the service". The desktop icon runs the same script. After rebuilding, the launcher prefers `desktop/release/next/` over `desktop/release/`.
+
 ### 3. Live mode (real models on the GX10)
 
 Live mode makes real model calls. It needs these services running locally before you start an investigation:
