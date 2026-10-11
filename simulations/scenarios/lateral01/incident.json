@@ -1,0 +1,14 @@
+{
+  "incident_id": "INC-2026-0002",
+  "scenario_id": "lateral01",
+  "created_at": "2026-09-25T10:15:00Z",
+  "severity": "HIGH",
+  "affected_hosts": [
+    "WS-SALES-12",
+    "FS-HR-01",
+    "DB-SRV-03"
+  ],
+  "initial_description": "Impossible-travel alert for CORP\\m.chen followed by LSASS access on WS-SALES-12 and unusual SMB/SSH activity reaching DB-SRV-03. Suspected credential theft via phishing with lateral movement.",
+  "current_status": "INVESTIGATING",
+  "updated_at": "2026-09-25T11:40:00Z"
+}

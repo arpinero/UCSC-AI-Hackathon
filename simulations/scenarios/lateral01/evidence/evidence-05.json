@@ -1,0 +1,22 @@
+{
+  "evidence_id": "EV-lateral01-05",
+  "incident_id": "INC-2026-0002",
+  "source": "edr",
+  "event_type": "network_scan",
+  "timestamp": "2026-09-25T09:26:44Z",
+  "host_id": "WS-SALES-12",
+  "description": "Internal port scan from WS-SALES-12: 302 hosts probed on 10.0.30.0/24 (ports 22, 445, 3389).",
+  "raw_data": {
+    "src_ip": "10.0.30.12",
+    "dst_subnet": "10.0.30.0/24",
+    "ports": [
+      22,
+      445,
+      3389
+    ],
+    "hosts_probed": 302,
+    "mitre": "T1046"
+  },
+  "collected_at": "2026-09-25T10:22:00Z",
+  "collection_tool": "edr-agent"
+}

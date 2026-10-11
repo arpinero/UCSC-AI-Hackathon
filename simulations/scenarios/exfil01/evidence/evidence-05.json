@@ -1,0 +1,16 @@
+{
+  "evidence_id": "EV-exfil01-05",
+  "incident_id": "INC-2026-0003",
+  "source": "zeek",
+  "event_type": "dns_query",
+  "timestamp": "2026-10-02T01:18:55Z",
+  "host_id": "FS-ARCH-05",
+  "description": "DNS resolution of storage-42.vendor-backup.example.com from FS-ARCH-05; threat reputation at alert time: unknown.",
+  "raw_data": {
+    "domain": "storage-42.vendor-backup.example.com",
+    "resolved_ip": "198.51.100.140",
+    "reputation": "unknown"
+  },
+  "collected_at": "2026-10-02T02:31:00Z",
+  "collection_tool": "zeek-sensor"
+}

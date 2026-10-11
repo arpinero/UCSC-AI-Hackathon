@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-ransom01-03",
+  "incident_id": "INC-2026-0001",
+  "source": "edr",
+  "event_type": "process_execution",
+  "timestamp": "2026-09-18T04:11:03Z",
+  "host_id": "WS-FIN-07",
+  "description": "Encoded PowerShell command executed that disabled Windows Defender real-time monitoring.",
+  "raw_data": {
+    "process": "powershell.exe",
+    "parent": "cmd.exe",
+    "cmdline_hint": "Set-MpPreference -DisableRealtimeMonitoring $true",
+    "mitre": "T1562.001"
+  },
+  "collected_at": "2026-09-18T04:36:00Z",
+  "collection_tool": "edr-agent"
+}

@@ -1,0 +1,20 @@
+{
+  "evidence_id": "EV-ransom01-01",
+  "incident_id": "INC-2026-0001",
+  "source": "zeek",
+  "event_type": "network_flow",
+  "timestamp": "2026-09-18T04:02:11Z",
+  "host_id": "WS-FIN-07",
+  "description": "Brute-force RDP: 1,847 failed authentication attempts from 203.0.113.66 against WS-FIN-07 in 7 minutes.",
+  "raw_data": {
+    "src_ip": "203.0.113.66",
+    "dst_port": 3389,
+    "failed_attempts": 1847,
+    "first_seen": "2026-09-18T03:55:12Z",
+    "last_seen": "2026-09-18T04:08:47Z",
+    "mitre": "T1110.001",
+    "asn": "64512"
+  },
+  "collected_at": "2026-09-18T04:35:00Z",
+  "collection_tool": "zeek-sensor"
+}

@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-ransom01-04",
+  "incident_id": "INC-2026-0001",
+  "source": "edr",
+  "event_type": "process_execution",
+  "timestamp": "2026-09-18T04:12:40Z",
+  "host_id": "WS-FIN-07",
+  "description": "vssadmin delete shadows /all /quiet executed on WS-FIN-07: volume shadow copies destroyed.",
+  "raw_data": {
+    "process": "vssadmin.exe",
+    "cmdline": "vssadmin delete shadows /all /quiet",
+    "volumes_affected": 3,
+    "mitre": "T1490"
+  },
+  "collected_at": "2026-09-18T04:36:00Z",
+  "collection_tool": "edr-agent"
+}

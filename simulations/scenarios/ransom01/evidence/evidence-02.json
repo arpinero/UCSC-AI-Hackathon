@@ -1,0 +1,18 @@
+{
+  "evidence_id": "EV-ransom01-02",
+  "incident_id": "INC-2026-0001",
+  "source": "auth",
+  "event_type": "authentication_success",
+  "timestamp": "2026-09-18T04:09:12Z",
+  "host_id": "WS-FIN-07",
+  "description": "Successful RDP logon as WIN-FIN\\Administrator on WS-FIN-07 originating from 203.0.113.66.",
+  "raw_data": {
+    "user": "WIN-FIN\\Administrator",
+    "logon_type": 10,
+    "src_ip": "203.0.113.66",
+    "event_id": 4624,
+    "mitre": "T1078"
+  },
+  "collected_at": "2026-09-18T04:35:00Z",
+  "collection_tool": "wef-forwarder"
+}

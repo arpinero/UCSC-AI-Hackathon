@@ -1,0 +1,18 @@
+{
+  "evidence_id": "EV-lateral01-03",
+  "incident_id": "INC-2026-0002",
+  "source": "auth",
+  "event_type": "interactive_logon",
+  "timestamp": "2026-09-25T09:14:52Z",
+  "host_id": "WS-SALES-12",
+  "description": "Interactive logon for CORP\\m.chen on WS-SALES-12 from external IP 203.0.113.90; impossible-travel alert (previous logon 20 minutes earlier in Singapore).",
+  "raw_data": {
+    "user": "CORP\\m.chen",
+    "logon_type": 2,
+    "src_ip": "203.0.113.90",
+    "geo": "external ASN 64512",
+    "mitre": "T1078"
+  },
+  "collected_at": "2026-09-25T10:21:00Z",
+  "collection_tool": "wef-forwarder"
+}

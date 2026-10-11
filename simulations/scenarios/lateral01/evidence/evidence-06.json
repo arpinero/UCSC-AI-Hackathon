@@ -1,0 +1,20 @@
+{
+  "evidence_id": "EV-lateral01-06",
+  "incident_id": "INC-2026-0002",
+  "source": "auth",
+  "event_type": "admin_share_access",
+  "timestamp": "2026-09-25T09:31:09Z",
+  "host_id": "FS-HR-01",
+  "description": "SMB ADMIN$ and C$ share access from WS-SALES-12 (10.0.30.12) to FS-HR-01 using CORP\\svc_deploy.",
+  "raw_data": {
+    "user": "CORP\\svc_deploy",
+    "shares": [
+      "ADMIN$",
+      "C$"
+    ],
+    "src_ip": "10.0.30.12",
+    "mitre": "T1021.002"
+  },
+  "collected_at": "2026-09-25T10:24:00Z",
+  "collection_tool": "wef-forwarder"
+}

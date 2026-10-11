@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-lateral01-11",
+  "incident_id": "INC-2026-0002",
+  "source": "auth",
+  "event_type": "kerberos_activity",
+  "timestamp": "2026-09-25T09:52:15Z",
+  "host_id": "WS-SALES-12",
+  "description": "47 failed Kerberos pre-authentication requests for distinct service accounts from WS-SALES-12 (kerberoasting indicator).",
+  "raw_data": {
+    "failed_requests": 47,
+    "service_accounts": 47,
+    "src_ip": "10.0.30.12",
+    "mitre": "T1558.003"
+  },
+  "collected_at": "2026-09-25T11:35:00Z",
+  "collection_tool": "wef-forwarder"
+}

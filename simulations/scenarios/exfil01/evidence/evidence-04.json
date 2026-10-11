@@ -1,0 +1,19 @@
+{
+  "evidence_id": "EV-exfil01-04",
+  "incident_id": "INC-2026-0003",
+  "source": "zeek",
+  "event_type": "network_flow",
+  "timestamp": "2026-10-02T01:20:12Z",
+  "host_id": "FS-ARCH-05",
+  "description": "12.4 GB HTTPS upload from FS-ARCH-05 (10.0.44.31) to 198.51.100.140 over 45 minutes; volume consistent with data exfiltration.",
+  "raw_data": {
+    "src_ip": "10.0.44.31",
+    "dst_ip": "198.51.100.140",
+    "dst_port": 443,
+    "tls_sni": "storage-42.vendor-backup.example.com",
+    "bytes": 13314398618,
+    "duration_s": 2700
+  },
+  "collected_at": "2026-10-02T02:31:00Z",
+  "collection_tool": "zeek-sensor"
+}

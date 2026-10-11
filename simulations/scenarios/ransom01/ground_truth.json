@@ -1,0 +1,69 @@
+{
+  "scenario_id": "ransom01",
+  "incident_id": "INC-2026-0001",
+  "classification": "confirmed_incident",
+  "expected_severity": "CRITICAL",
+  "containment_proposal": "Isolate WS-FIN-07 and FS-01 and block 203.0.113.66 and 198.51.100.23 at the perimeter",
+  "expected_stance": "SUPPORT",
+  "expected_findings": [
+    "External RDP brute force from 203.0.113.66 preceded a successful Administrator logon on WS-FIN-07",
+    "Defender was disabled, shadow copies deleted and recovery disabled before execution",
+    "Persistence was established via scheduled task SysHealthCheck and new admin account svc_backup2$",
+    "Lateral movement over SMB ADMIN$ deployed encryptor.exe to FS-01",
+    "encryptor.exe mass-encrypted 38,412 files with .locked extension and dropped ransom note HOW_TO_RECOVER.hta"
+  ],
+  "must_cite_evidence_ids": [
+    "EV-ransom01-01",
+    "EV-ransom01-02",
+    "EV-ransom01-09",
+    "EV-ransom01-10",
+    "EV-ransom01-11"
+  ],
+  "timeline_anchors": [
+    {
+      "timestamp": "2026-09-18T04:09:12Z",
+      "host_id": "WS-FIN-07",
+      "description_contains": "Administrator"
+    },
+    {
+      "timestamp": "2026-09-18T04:23:14Z",
+      "host_id": "FS-01",
+      "description_contains": "encryptor"
+    },
+    {
+      "timestamp": "2026-09-18T04:26:02Z",
+      "host_id": "FS-01",
+      "description_contains": "HOW_TO_RECOVER"
+    }
+  ],
+  "mitre_techniques": [
+    "T1110.001",
+    "T1078",
+    "T1562.001",
+    "T1490",
+    "T1053.005",
+    "T1136.001",
+    "T1046",
+    "T1021.002",
+    "T1486",
+    "T1491",
+    "T1071.001"
+  ],
+  "evidence_reveal_rounds": {
+    "EV-ransom01-01": 1,
+    "EV-ransom01-02": 1,
+    "EV-ransom01-03": 1,
+    "EV-ransom01-04": 1,
+    "EV-ransom01-05": 1,
+    "EV-ransom01-06": 1,
+    "EV-ransom01-07": 1,
+    "EV-ransom01-08": 1,
+    "EV-ransom01-09": 1,
+    "EV-ransom01-10": 1,
+    "EV-ransom01-11": 1,
+    "EV-ransom01-12": 2,
+    "EV-ransom01-13": 2
+  },
+  "expected_position_revisions": [],
+  "narrative": "Ransomware operator brute-forced RDP on WS-FIN-07, established persistence, moved laterally to FS-01 over SMB, deployed encryptor.exe, mass-encrypted shares and dropped ransom notes while beaconing to C2."
+}

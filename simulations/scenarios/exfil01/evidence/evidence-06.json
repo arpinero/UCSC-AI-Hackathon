@@ -1,0 +1,16 @@
+{
+  "evidence_id": "EV-exfil01-06",
+  "incident_id": "INC-2026-0003",
+  "source": "auth",
+  "event_type": "behavioral_alert",
+  "timestamp": "2026-10-02T01:03:12Z",
+  "host_id": "FS-ARCH-05",
+  "description": "UEBA: first-ever off-hours logon for svc_archive (01:00-02:00 UTC window); account previously only active 02:00-04:00 UTC.",
+  "raw_data": {
+    "user": "CORP\\svc_archive",
+    "alert": "off_hours_logon",
+    "prior_window": "02:00-04:00 UTC"
+  },
+  "collected_at": "2026-10-02T02:31:00Z",
+  "collection_tool": "ueba"
+}

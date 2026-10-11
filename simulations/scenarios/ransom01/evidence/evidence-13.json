@@ -1,0 +1,16 @@
+{
+  "evidence_id": "EV-ransom01-13",
+  "incident_id": "INC-2026-0001",
+  "source": "edr",
+  "event_type": "registry_modification",
+  "timestamp": "2026-09-18T04:13:02Z",
+  "host_id": "WS-FIN-07",
+  "description": "Recovery disabled on WS-FIN-07: bcdedit /set recoveryenabled no and registry RecoveryEnabled=0.",
+  "raw_data": {
+    "command": "bcdedit /set recoveryenabled no",
+    "registry_key": "HKLM\\SYSTEM\\CurrentControlSet",
+    "mitre": "T1490"
+  },
+  "collected_at": "2026-09-18T06:12:00Z",
+  "collection_tool": "edr-agent"
+}

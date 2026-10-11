@@ -1,0 +1,21 @@
+{
+  "evidence_id": "EV-ransom01-07",
+  "incident_id": "INC-2026-0001",
+  "source": "zeek",
+  "event_type": "network_scan",
+  "timestamp": "2026-09-18T04:18:11Z",
+  "host_id": "WS-FIN-07",
+  "description": "Internal SMB scanning: 252 connection attempts from WS-FIN-07 to 10.0.8.0/24 within 90 seconds.",
+  "raw_data": {
+    "src_ip": "10.0.8.15",
+    "dst_subnet": "10.0.8.0/24",
+    "ports": [
+      139,
+      445
+    ],
+    "attempts": 252,
+    "mitre": "T1046"
+  },
+  "collected_at": "2026-09-18T04:37:00Z",
+  "collection_tool": "zeek-sensor"
+}

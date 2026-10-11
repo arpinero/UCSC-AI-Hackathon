@@ -1,0 +1,73 @@
+{
+  "scenario_id": "lateral01",
+  "incident_id": "INC-2026-0002",
+  "classification": "confirmed_incident",
+  "expected_severity": "HIGH",
+  "containment_proposal": "Isolate WS-SALES-12, FS-HR-01 and DB-SRV-03; disable and reset m.chen, svc_deploy and db_admin credentials",
+  "expected_stance": "SUPPORT",
+  "expected_findings": [
+    "Phishing email delivered a credential harvester link to m.chen and credentials were POSTed to 203.0.113.90",
+    "Stolen credentials were used for an external interactive logon on WS-SALES-12",
+    "LSASS memory was dumped on WS-SALES-12 (comsvcs MiniDump) and an internal port scan followed",
+    "Lateral movement over SMB ADMIN$ installed a remote service on FS-HR-01",
+    "db_admin SSH access to DB-SRV-03 came from WS-SALES-12, followed by an authorized_keys entry and sudo to root"
+  ],
+  "must_cite_evidence_ids": [
+    "EV-lateral01-02",
+    "EV-lateral01-03",
+    "EV-lateral01-04",
+    "EV-lateral01-08",
+    "EV-lateral01-09"
+  ],
+  "timeline_anchors": [
+    {
+      "timestamp": "2026-09-25T08:52:33Z",
+      "host_id": "WS-SALES-12",
+      "description_contains": "credential"
+    },
+    {
+      "timestamp": "2026-09-25T09:22:18Z",
+      "host_id": "WS-SALES-12",
+      "description_contains": "lsass"
+    },
+    {
+      "timestamp": "2026-09-25T09:41:27Z",
+      "host_id": "DB-SRV-03",
+      "description_contains": "SSH"
+    },
+    {
+      "timestamp": "2026-09-25T09:44:03Z",
+      "host_id": "DB-SRV-03",
+      "description_contains": "authorized_keys"
+    }
+  ],
+  "mitre_techniques": [
+    "T1566.002",
+    "T1078",
+    "T1003.001",
+    "T1046",
+    "T1021.002",
+    "T1021.004",
+    "T1098.004",
+    "T1548.003",
+    "T1558.003",
+    "T1053.003"
+  ],
+  "evidence_reveal_rounds": {
+    "EV-lateral01-01": 1,
+    "EV-lateral01-02": 1,
+    "EV-lateral01-03": 1,
+    "EV-lateral01-04": 1,
+    "EV-lateral01-05": 1,
+    "EV-lateral01-06": 1,
+    "EV-lateral01-07": 1,
+    "EV-lateral01-08": 1,
+    "EV-lateral01-09": 1,
+    "EV-lateral01-10": 1,
+    "EV-lateral01-11": 2,
+    "EV-lateral01-12": 2,
+    "EV-lateral01-13": 2
+  },
+  "expected_position_revisions": [],
+  "narrative": "Phishing harvest of m.chen credentials, external logon, LSASS dump on the workstation, SMB lateral movement to FS-HR-01, then SSH lateral movement to DB-SRV-03 with key persistence, root escalation and second-hop attempts."
+}
