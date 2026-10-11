@@ -189,7 +189,9 @@ def health_read(url):
 
 
 class Handler(BaseHTTPRequestHandler):
-    def log_message(self, *_): pass
+    def log_message(self, format, *args):
+        # Request line/status only; never incident content, cookies or headers.
+        print(format % args, flush=True)
 
     def output(self, value, status=200):
         raw = json.dumps(value).encode()

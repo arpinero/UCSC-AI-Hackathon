@@ -14,7 +14,8 @@ let csrf = '';
 export async function request(path: string, body?: unknown) {
   if (window.sentinel) return window.sentinel.request(path, body);
   const response = await fetch(path, { method: body === undefined ? 'GET' : 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Sentinel-CSRF': csrf }, body: body === undefined ? undefined : JSON.stringify(body) });
+    headers: { 'Content-Type': 'application/json', 'X-Sentinel-CSRF': csrf }, body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(path.endsWith('/chat') ? 250000 : 20000) });
   if (!(response.headers.get('content-type') || '').includes('application/json')) throw new Error('Bridge unavailable. Start python -m desktop.bridge on the pipeline host.');
   const result = await response.json();
   if (path === '/api/health') csrf = result.csrf_token || '';
