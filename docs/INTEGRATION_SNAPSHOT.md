@@ -9,7 +9,8 @@ snapshot.
 ## Snapshot basis
 
 - Base commit: `278b920` (branch `main`, Stage A foundation)
-- Snapshot date: 2026-10-10
+- Snapshot date: 2026-10-11 (initial baseline 2026-10-10, revised after the
+  integration-qa READY_FOR_INTEGRATION handoff)
 - Starting point: the shared Stage A foundation — project scaffold, frozen
   v1 Pydantic contracts (`contracts/`), the SQLite coding-agent message bus
   (`coordination/`), inference and tool interfaces, and project docs.
@@ -24,25 +25,34 @@ snapshot.
   AGNTCY integration research, Stage B handoff, and team integration plan
   (`docs/`, `coding-agents/`, `AGENTS.md`).
 - Placeholder modules for the six Stage B workstreams.
+- **integration-qa Stage B suite** (merged from `test/integration-qa` @
+  `8382f08`, posted READY_FOR_INTEGRATION on the coordination bus):
+  the investigation HTTP API service (`src/forensics/api/`), integration
+  tests (`tests/integration/`), end-to-end investigation-cycle tests
+  (`tests/end_to_end/`), and validation/demo scripts
+  (`scripts/verify_stage_b.sh`, `scripts/demo_scenario.py`).
 
-## What is NOT included (work in progress, not yet committed)
+## What is NOT included (work in progress)
 
-As of the snapshot time, none of the six Stage B workstreams had committed
-implementation code to their branches yet; their work exists only as
-uncommitted files in their local worktrees and is therefore excluded by
-policy (no uncommitted or unfinished work is published):
+Snapshot policy: only committed work announced via READY_FOR_INTEGRATION
+on the coordination bus is merged. As of the snapshot time the following
+workstreams are excluded (their code exists only as uncommitted files or
+commits without a readiness handoff, and is not yet published):
 
-- `model-engineer` (`feat/inference`): LLM inference backends
-  (llama.cpp, transformers/Qwen tool parsing) — in progress.
-- `tools-engineer` (`feat/forensic-tools`): forensic tool suite — in progress.
-- `agntcy-engineer` (`feat/agntcy`): AGNTCY/SLIM runtime messaging — in progress.
-- `reasoning-engineer` (`feat/reasoning`): investigation/debate engine — in progress.
+- `model-engineer` (`feat/inference`): LLM inference backends committed at
+  `093ebd3` (llama.cpp + Transformers SOC backends) but no
+  READY_FOR_INTEGRATION posted yet and shared-file changes
+  (`pyproject.toml`) pending coordinator review — work continues.
+- `tools-engineer` (`feat/forensic-tools`): forensic tool suite — in
+  progress (uncommitted).
+- `agntcy-engineer` (`feat/agntcy`): AGNTCY/SLIM runtime messaging — in
+  progress (uncommitted).
+- `reasoning-engineer` (`feat/reasoning`): investigation/debate engine — in
+  progress (uncommitted).
 - `evaluation-engineer` (`feat/evaluation`): synthetic scenarios, loader,
-  scoring, benchmark — in progress.
-- `integration-qa` (`test/integration-qa`): API service and integration /
-  end-to-end tests — in progress.
+  scoring, benchmark — in progress (uncommitted).
 
-A later snapshot will merge each workstream once its agent posts
+A later snapshot will merge each remaining workstream once its agent posts
 READY_FOR_INTEGRATION on the coordination bus.
 
 ## Running the checks
@@ -54,6 +64,8 @@ ruff check .
 mypy
 ```
 
-Note: this snapshot contains only foundation code; the six workstream
-placeholder modules are intentionally minimal, so most Stage B functionality
-is not yet exercisable end to end.
+Note: this snapshot contains the Stage A foundation plus the integration-qa
+suite. The inference, tools, messaging, reasoning, and simulation components
+are still placeholders, so a full end-to-end investigation against a live
+model is not yet exercisable; the e2e suite currently drives the mock
+inference backend.
