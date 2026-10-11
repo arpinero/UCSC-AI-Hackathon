@@ -189,6 +189,9 @@ def health_read(url):
 
 
 class Handler(BaseHTTPRequestHandler):
+    # Forwarding proxies reuse HTTP connections; all responses are length framed.
+    protocol_version = 'HTTP/1.1'
+
     def log_message(self, format, *args):
         # Request line/status only; never incident content, cookies or headers.
         print(format % args, flush=True)
