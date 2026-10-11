@@ -89,7 +89,13 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30, obser
                 if case.fault == 'deadlock':
                     forensic['stance'] = 'object'
                     message(round_number, 'forensics', 'object', {'reason': 'Injected persistent disagreement for acceptance test', 'evidence_ids': forensic['evidence_ids']})
-                if forensic['stance'] == 'support' and compliance_stance == 'support':
+                # A deferral with no legal hold, Compliance approval, and nothing yet captured is premature:
+                # run the capture and let Fixing re-propose instead of accepting "nothing restored".
+                premature_defer = (fixing.get('verdict') == 'defer' and not incident['compliance']['legal_hold']
+                                   and not context['preservation_confirmed']
+                                   and context['fixing']['compliance']['status'] == 'approved'
+                                   and round_number < max_rounds)
+                if forensic['stance'] == 'support' and compliance_stance == 'support' and not premature_defer:
                     votes = {}
                     for role in ('containment', 'fixing'):
                         vote = seats.vote(role, context, containment, fixing)
@@ -149,6 +155,9 @@ def run(case, seats=None, max_rounds=3, threshold=75, response_seconds=30, obser
                                'evidence_ids': [e['id'] for e in incident['evidence']],
                                'at_seconds': sim.time, 'verification': 'Simulation receipt only'}
                     receipts.append(receipt)
+                    # Make the capture visible to every seat; otherwise a live Fixing model only sees
+                    # Compliance's earlier "capture first" objection and defers forever.
+                    message(round_number, 'tool', 'receipt', receipt)
                     context['preservation_confirmed'] = True
                     context['incident']['compliance']['evidence_preserved_host_ids'].append(context['fixing']['host_id'])
                     incident = copy.deepcopy(context['incident'])
