@@ -7,6 +7,7 @@
   import { request, mergeEvents, roleNames, summary, friendly, type Run, type Event, type Case } from './api';
   let cases = $state<Case[]>([]), runs = $state<Run[]>([]), current = $state<Run|null>(null);
   let events = $state<Event[]>([]), models = $state<any>(null), connected = $state(false);
+  let pipelineHost = $state('');
   let view = $state('activity'), modal = $state(''), input = $state(''), error = $state(''), search = $state('');
   let busy = $state(false), starting = $state(false), rail = $state(true), mode = $state<'mock'|'live'>('mock');
   let caseId = $state('mitre-T1041'), url = $state('http://127.0.0.1:8787'), decision = $state<'approve'|'reject'|null>(null);
@@ -36,6 +37,7 @@
       const health = await request('/api/health');
       if (health.service !== 'sentinel-desktop-bridge') throw new Error('This address is a model server. Connect to the Sentinel bridge on port 8787.');
       connected = true;
+      pipelineHost = health.host || new URL(url).hostname;
       [cases, runs] = await Promise.all([request('/api/cases'), request('/api/runs')]);
     } catch (e:any) { connected = false; error = e.message; }
   }
@@ -67,6 +69,11 @@
   async function start() {
     starting = true; error = '';
     try {
+      if (mode === 'live') {
+        models = await request('/api/models');
+        const missing = models.services.filter((service:any) => (service.required ?? ['containment','compliance','fixing'].includes(service.role)) && !service.reachable);
+        if (missing.length) throw new Error(`Live services unavailable on ${pipelineHost}: ${missing.map((service:any)=>roleNames[service.role]).join(', ')}. Open the bridge running on the ASUS, or connect these services through local forwarding.`);
+      }
       const data = await request('/api/runs', {case_id:caseId,mode});
       await refresh(); const item = runs.find(r => r.id === data.id);
       if (item) await selectRun(item); modal='';

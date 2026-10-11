@@ -6,6 +6,7 @@ import mimetypes
 import os
 from pathlib import Path
 import re
+import socket
 import threading
 import time
 import uuid
@@ -211,7 +212,7 @@ class Handler(BaseHTTPRequestHandler):
             space = self.server.workspace
             if path.path == '/api/health':
                 return self.output({'service': 'sentinel-desktop-bridge', 'version': 1, 'simulation_only': True,
-                    'csrf_token': self.server.csrf_token})
+                    'host': socket.gethostname(), 'csrf_token': self.server.csrf_token})
             if path.path == '/api/cases':
                 return self.output([{'id': c.case_id, 'evidence_count': len(c.incident['evidence']),
                     'family': c.expected.get('family', ''), 'title': c.case_id.replace('mitre-', 'ATT&CK ').replace('council-', '').replace('-', ' ')} for c in space.cases.values()])
@@ -229,6 +230,7 @@ class Handler(BaseHTTPRequestHandler):
                 for role, url in services:
                     info = health_read(url)
                     items.append({'role': role, 'reachable': info is not None, 'health': info,
+                        'required': role in ('containment', 'compliance') or (role == 'fixing' and bool(os.getenv('COUNCIL_FIXING_ENDPOINT'))),
                         'model': (info or {}).get('model', 'Identity not reported'), 'endpoint': url})
                 client = ModelClient()
                 resident = health_read(client.endpoint.removesuffix('/api') + '/api/ps') if client.endpoint.endswith('/api') else None
