@@ -10,7 +10,8 @@ from council.evaluate import metrics
 from council.protocol import run
 from council.report import save
 from council.scenarios import dataset
-from council.seats import Seats, ModelClient, local_url, validate_fixing, fixing_plan
+from council.seats import (Seats, ModelClient, local_url, validate_fixing, fixing_plan,
+                           mock_containment, mock_compliance, forensic_position)
 from council.severity import assess
 
 
@@ -89,6 +90,36 @@ class PipelineTests(unittest.TestCase):
         with patch('council.seats.post', return_value=rejected):
             with self.assertRaisesRegex(ValueError, 'Compliance rejected: unknown evidence id E9'):
                 Seats('live').compliance({'incident': {}}, [])
+
+    def test_malformed_seat_reply_escalates_instead_of_crashing(self):
+        bad = {'reason': 'r', 'verdict': 'propose', 'actions': ['remove x']}
+        with patch('council.seats.fixing_plan', return_value=bad):
+            result = run(self.by_id['mitre-T1041'], Seats('mock'))
+        self.assertTrue(result['human_alert']['required'])
+        self.assertFalse(result['decisions'])
+
+    def test_update_keeps_preservation_and_does_not_repeat_recovery(self):
+        result = run(self.by_id['x-0787d84f1a'], Seats('mock'))
+        kinds = [r['kind'] for r in result['tool_receipts']]
+        self.assertEqual(kinds.count('simulated_evidence_capture'), 1)
+        self.assertEqual(kinds.count('simulated_restoration'), 1)
+
+    def test_slow_live_decision_past_update_does_not_rewind_clock(self):
+        class MockPoliciesLiveClock(Seats):
+            def __init__(self):
+                super().__init__('mock')
+                self.mode = 'live'  # protocol uses wall-clock latency; seats stay deterministic
+            def containment(self, context, peers): return mock_containment(context, peers)
+            def fixing(self, context, approved): return validate_fixing(fixing_plan(context, approved), context)
+            def compliance(self, context, peers): return mock_compliance(context, peers)
+            def forensics(self, context, c, f): return forensic_position(context, c, f)
+            def vote(self, role, context, c, f):
+                return {'stance': 'support', 'reason': 'stub', 'evidence_ids': [e['id'] for e in context['incident']['evidence']]}
+        clock = iter(range(0, 100000, 300))  # every model call "takes" 300 s, past the update at 240 s
+        with patch('council.protocol.time.monotonic', side_effect=lambda: next(clock)):
+            result = run(self.by_id['x-0787d84f1a'], MockPoliciesLiveClock())
+        self.assertFalse(result['human_alert']['required'], result['human_alert']['reasons'])
+        self.assertEqual(result['outcomes']['simulated_seconds'], 600)
 
     def test_update_requires_new_consensus(self):
         case = next(c for c in self.cases if c.expected.get('family') == 'destination_rotation')

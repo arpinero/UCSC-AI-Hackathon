@@ -33,7 +33,7 @@ def metrics(case, result):
             'forensic_citation_coverage': len(set(citation_ids) & all_ids) / len(all_ids),
             'human_required': result['human_alert']['required'],
             'expected_human_check': None if 'human_required' not in case.expected else result['human_alert']['required'] == case.expected['human_required'],
-            'consensus': bool(result.get('decisions')), 'rounds': result['rounds'],
+            'consensus': bool(result.get('decisions')) or result['status'] == 'ACCEPTED_SINGLE_PASS_SIMULATION', 'rounds': result['rounds'],
             'outcome_horizon_complete': result['outcomes']['simulated_seconds'] == case.simulation['horizon_seconds'],
             'outcomes': {k: result['outcomes'][k] for k in ('bytes_lost', 'additional_hosts_compromised',
                 'identity_abuse_events', 'local_files_damaged', 'service_disruption_seconds', 'evidence_gap_seconds', 'false_positive_controls', 'policy_rejections')}}

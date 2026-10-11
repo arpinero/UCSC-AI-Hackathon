@@ -55,10 +55,10 @@ def run(case, mode='mock', client=None, threshold=75, response_seconds=30):
                 raise ValueError('Baseline rejected by simulator')
             # Deliberately no extra inference calls or mid-stream revisions.
             for update in case.simulation.get('updates', []):
-                sim.advance(update['at'])
+                sim.advance(max(sim.time, update['at']))
                 sim.update(update['incident'])
             sim.advance(case.simulation['horizon_seconds'])
-    except (ValueError, KeyError, TypeError, RuntimeError, OSError) as exc:
+    except (ValueError, KeyError, TypeError, AttributeError, IndexError, RuntimeError, OSError) as exc:
         reasons.append('Baseline seat/validation failure: ' + str(exc))
     severity = assess(case.impact, deadlines, reasons, threshold)
     return {'case_id': case.case_id, 'mode': mode, 'baseline': 'single-pass-no-negotiation',
