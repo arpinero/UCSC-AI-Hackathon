@@ -50,7 +50,7 @@ The only changes to `council/protocol.py` are optional observer and approval cal
 
 API: `GET /api/health`, `/api/cases`, `/api/models`, `/api/runs`, `/api/runs/{id}?after={event_count}`. `POST /api/runs` takes `case_id` and `mode`. `POST /api/runs/{id}/decision` takes `approval_id`, `decision` (`approve`/`reject`) and `reason`. Chat takes `message` at `/api/runs/{id}/chat`. Get the CSRF token from health and send it in `X-Sentinel-CSRF` on mutations.
 
-The preserved llama.cpp source and reused components are documented in `upstream/PROVENANCE.md`. Electron shell files are retained for later packaging; the supported workflow for this handoff is the browser app.
+The preserved llama.cpp source and reused components are documented in `upstream/PROVENANCE.md`. The Electron shell is now packaged for Linux arm64; see the section below. The browser app remains the simplest way to run Demo mode.
 
 ## Linux arm64 executable (GX10)
 
