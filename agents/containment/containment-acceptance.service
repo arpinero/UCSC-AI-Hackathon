@@ -1,0 +1,11 @@
+[Unit]
+Description=Containment candidate authorized-activity and regression evaluation
+
+[Service]
+WorkingDirectory=/home/asus/containment-agent
+ExecStart=/usr/bin/bash /home/asus/containment-agent/run-acceptance.sh
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

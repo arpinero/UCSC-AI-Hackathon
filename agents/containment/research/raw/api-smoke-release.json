@@ -1,0 +1,88 @@
+{
+  "status": "validated",
+  "proposal_id": "06fd9309-3131-47d0-9801-9f4dcb038106",
+  "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+  "created_at": "2026-10-10T21:26:24.748012+00:00",
+  "asset_facts": [
+    {
+      "id": "web-01",
+      "type": "host",
+      "critical": true,
+      "protected": false
+    },
+    {
+      "id": "workstation-01",
+      "type": "host",
+      "critical": false,
+      "protected": false
+    },
+    {
+      "id": "c2-01",
+      "type": "destination",
+      "critical": false,
+      "protected": false
+    },
+    {
+      "id": "collector-01",
+      "type": "destination",
+      "critical": false,
+      "protected": true
+    },
+    {
+      "id": "session-01",
+      "type": "session",
+      "critical": false,
+      "protected": false
+    }
+  ],
+  "latency_seconds": 34.859,
+  "proposal": {
+    "incident_id": "ambiguous-001",
+    "telemetry_version": 1,
+    "assessment": "Based on the provided evidence, we have a single anomaly on the critical host 'web-01'. The anomaly could be a legitimate backup process, but it requires further investigation to confirm its nature. No confirmed malicious activity or lateral movement has been observed. Given the critical nature of 'web-01', we must proceed with caution to avoid disrupting its operations unless the threat is confirmed.",
+    "evidence_review": [
+      {
+        "evidence_id": "E4",
+        "decision": "investigate",
+        "reason": "The anomaly on 'web-01' could be a benign process, and we lack sufficient evidence to confirm malicious activity. Requesting further evidence is the appropriate action to take at this time."
+      }
+    ],
+    "actions": [
+      {
+        "kind": "request_evidence",
+        "target_id": "web-01",
+        "scope_host_ids": [],
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "To clarify the nature of the anomaly on 'web-01', we are requesting additional evidence to confirm whether it is a threat or a legitimate process.",
+        "ttl_minutes": 30,
+        "preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "rollback": "Cancel this evidence request; leave asset state unchanged."
+      }
+    ],
+    "uncertainties": [
+      "The availability impact on 'web-01' is unknown due to the lack of dependency evidence. The action of requesting evidence should not impact the critical host's availability, but this cannot be confirmed without further information."
+    ],
+    "peer_responses": [],
+    "review_after_seconds": 180
+  },
+  "attempts": [
+    {
+      "raw": "{\n  \"incident_id\": \"ambiguous-001\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, we have a single anomaly on the critical host 'web-01'. The anomaly could be a legitimate backup process, but it requires further investigation to confirm its nature. No confirmed malicious activity or lateral movement has been observed. Given the critical nature of 'web-01', we must proceed with caution to avoid disrupting its operations unless the threat is confirmed.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"E4\",\n      \"decision\": \"investigate\",\n      \"reason\": \"The anomaly on 'web-01' could be a benign process, and we lack sufficient evidence to confirm malicious activity. Requesting further evidence is the appropriate action to take at this time.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"request_evidence\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"E4\"],\n      \"reason\": \"To clarify the nature of the anomaly on 'web-01', we are requesting additional evidence to confirm whether it is a threat or a legitimate process.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"],\n      \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact on 'web-01' is unknown due to the lack of dependency evidence. The action of requesting evidence should not impact the critical host's availability, but this cannot be confirmed without further information.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180\n}\n",
+      "usage": {
+        "completion_tokens": 374,
+        "prompt_tokens": 971,
+        "total_tokens": 1345,
+        "prompt_tokens_details": {
+          "cached_tokens": 705
+        }
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "audit_id": "f9ee3de3-bf15-4b29-8900-9021b05d5eaf"
+}

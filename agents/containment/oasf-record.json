@@ -1,0 +1,32 @@
+{
+  "name": "ucsc-incident-council-containment",
+  "description": "Simulation-only cybersecurity containment proposal service. Selects evidence-backed scoped controls, validates policy and telemetry version, and returns reversible plans. Includes a deterministic outcome benchmark. Does not execute real containment or provide raw-traffic threat detection.",
+  "version": "0.2.0",
+  "schema_version": "1.1.0",
+  "authors": [
+    "UCSC AI Hackathon containment contributor"
+  ],
+  "created_at": "2026-10-10T23:21:27.413066+00:00",
+  "skills": [
+    {
+      "id": 100703,
+      "name": "cybersecurity/security_operations/security_incident_response"
+    }
+  ],
+  "domains": [],
+  "modules": [],
+  "locators": [
+    {
+      "type": "source_code",
+      "urls": [
+        "https://github.com/arpinero/UCSC-AI-Hackathon/tree/containment/agents/containment"
+      ]
+    }
+  ],
+  "annotations": {
+    "deployment_status": "Prepared record; not published to an AGNTCY Directory",
+    "execution_mode": "simulated proposals only",
+    "transport_status": "Loopback HTTP proposal API ready; SLIM adapter not installed",
+    "api_contract": "POST /propose with incident, peer_messages and previous_proposal; do not expose unauthenticated loopback endpoint publicly"
+  }
+}

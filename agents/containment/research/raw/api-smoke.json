@@ -1,0 +1,49 @@
+{
+  "status": "validated",
+  "proposal_id": "6435105f-82f6-42f2-9ad7-6c15d1d34d4e",
+  "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+  "created_at": "2026-10-10T21:11:07.706315+00:00",
+  "latency_seconds": 10.615,
+  "proposal": {
+    "incident_id": "ambiguous-001",
+    "telemetry_version": 1,
+    "assessment": "Based on the provided evidence, the threat appears to be low confidence with potential for false positive. The action taken aims to minimize the risk while preserving critical services and forensic evidence.",
+    "actions": [
+      {
+        "kind": "request_evidence",
+        "target_id": "web-01",
+        "scope_host_ids": [],
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "To clarify the nature of the anomaly on web-01, ensuring no disruption to critical services while gathering more evidence.",
+        "ttl_minutes": 15,
+        "preserve_channels": [
+          "management",
+          "evidence_collector"
+        ],
+        "rollback": "If evidence confirms benign activity, no further action is taken. If malicious, isolate web-01 and block egress traffic."
+      }
+    ],
+    "uncertainties": [
+      "The anomaly on web-01 could be a benign backup process, but without further evidence, we cannot confirm its nature."
+    ],
+    "peer_responses": [],
+    "review_after_seconds": 180
+  },
+  "attempts": [
+    {
+      "raw": "{\n  \"incident_id\": \"ambiguous-001\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, the threat appears to be low confidence with potential for false positive. The action taken aims to minimize the risk while preserving critical services and forensic evidence.\",\n  \"actions\": [\n    {\n      \"kind\": \"request_evidence\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"E4\"],\n      \"reason\": \"To clarify the nature of the anomaly on web-01, ensuring no disruption to critical services while gathering more evidence.\",\n      \"ttl_minutes\": 15,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"],\n      \"rollback\": \"If evidence confirms benign activity, no further action is taken. If malicious, isolate web-01 and block egress traffic.\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The anomaly on web-01 could be a benign backup process, but without further evidence, we cannot confirm its nature.\"\n  ],\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180\n}\n",
+      "usage": {
+        "completion_tokens": 253,
+        "prompt_tokens": 635,
+        "total_tokens": 888,
+        "prompt_tokens_details": {
+          "cached_tokens": 369
+        }
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "audit_id": "b46e6e5f-b16d-47ad-be96-a664628213a1"
+}

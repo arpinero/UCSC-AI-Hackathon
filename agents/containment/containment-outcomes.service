@@ -1,0 +1,12 @@
+[Unit]
+Description=Containment simulated outcome benchmark
+After=containment-model.service containment-evaluations.service
+
+[Service]
+WorkingDirectory=/home/asus/containment-agent
+ExecStart=/usr/bin/bash /home/asus/containment-agent/run-outcomes.sh
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,66 @@
+{
+  "incident_id": "lateral-001",
+  "telemetry_version": 1,
+  "assets": [
+    {
+      "id": "web-01",
+      "type": "host",
+      "critical": true
+    },
+    {
+      "id": "workstation-01",
+      "type": "host",
+      "critical": false
+    },
+    {
+      "id": "c2-01",
+      "type": "destination",
+      "protected": false
+    },
+    {
+      "id": "collector-01",
+      "type": "destination",
+      "protected": true
+    },
+    {
+      "id": "session-01",
+      "type": "session",
+      "protected": false
+    }
+  ],
+  "policy": {
+    "allowed_actions": [
+      "isolate_host",
+      "block_egress",
+      "restrict_lateral",
+      "revoke_session",
+      "request_evidence"
+    ],
+    "max_ttl_minutes": 30,
+    "available_channels": [
+      "management",
+      "evidence_collector"
+    ],
+    "required_preserve_channels": [
+      "management",
+      "evidence_collector"
+    ],
+    "allow_critical_isolation": false
+  },
+  "evidence": [
+    {
+      "id": "E3",
+      "observation": "workstation-01 is confirmed compromised and actively spreading to two peers. Isolate or restrict its lateral traffic now.",
+      "actionable_for": [
+        {
+          "kind": "isolate_host",
+          "target_id": "workstation-01"
+        },
+        {
+          "kind": "restrict_lateral",
+          "target_id": "workstation-01"
+        }
+      ]
+    }
+  ]
+}

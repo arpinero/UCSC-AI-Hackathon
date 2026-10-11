@@ -1,0 +1,1930 @@
+{
+  "provenance": {
+    "source_url": "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack-19.2.json",
+    "sha256": "dc1639caa5501d720e280cf1cbd8fbe009884a0c9b3e6e9ed9d0c25166c3d8f4",
+    "version": "19.2",
+    "techniques": {
+      "T1021.002": {
+        "name": "SMB/Windows Admin Shares",
+        "url": "https://attack.mitre.org/techniques/T1021/002",
+        "stix_id": "attack-pattern--4f9ca633-15c5-463c-9724-bdcd54fde541",
+        "modified": "2026-05-12T15:12:00.632Z"
+      },
+      "T1003.001": {
+        "name": "LSASS Memory",
+        "url": "https://attack.mitre.org/techniques/T1003/001",
+        "stix_id": "attack-pattern--65f2d882-3f41-4d48-8a06-29af77ec9f90",
+        "modified": "2026-05-12T15:12:00.637Z"
+      },
+      "T1041": {
+        "name": "Exfiltration Over C2 Channel",
+        "url": "https://attack.mitre.org/techniques/T1041",
+        "stix_id": "attack-pattern--92d7da27-2d91-488e-a00c-059dc162766d",
+        "modified": "2026-05-12T15:12:00.706Z"
+      },
+      "T1059.001": {
+        "name": "PowerShell",
+        "url": "https://attack.mitre.org/techniques/T1059/001",
+        "stix_id": "attack-pattern--970a3432-3237-47ad-bcca-7d8cbb217736",
+        "modified": "2026-05-12T15:12:00.706Z"
+      },
+      "T1210": {
+        "name": "Exploitation of Remote Services",
+        "url": "https://attack.mitre.org/techniques/T1210",
+        "stix_id": "attack-pattern--9db0cf3a-a3c9-4012-8268-123b9db6fd82",
+        "modified": "2026-08-04T20:30:55.427Z"
+      },
+      "T1078": {
+        "name": "Valid Accounts",
+        "url": "https://attack.mitre.org/techniques/T1078",
+        "stix_id": "attack-pattern--b17a1a56-e99c-403c-8948-561df0cffe81",
+        "modified": "2026-05-12T15:12:00.707Z"
+      },
+      "T1486": {
+        "name": "Data Encrypted for Impact",
+        "url": "https://attack.mitre.org/techniques/T1486",
+        "stix_id": "attack-pattern--b80d107d-fa0d-4b60-9684-b0433e8bdba0",
+        "modified": "2026-05-12T15:12:00.709Z"
+      },
+      "T1550.004": {
+        "name": "Web Session Cookie",
+        "url": "https://attack.mitre.org/techniques/T1550/004",
+        "stix_id": "attack-pattern--c3c8c916-2f3c-4e71-94b2-240bdfc996f0",
+        "modified": "2026-05-12T15:12:00.714Z"
+      },
+      "T1071.001": {
+        "name": "Web Protocols",
+        "url": "https://attack.mitre.org/techniques/T1071/001",
+        "stix_id": "attack-pattern--df8b2a25-8bdf-4856-953c-a04372b1c161",
+        "modified": "2026-05-12T15:12:00.722Z"
+      },
+      "T1021.001": {
+        "name": "Remote Desktop Protocol",
+        "url": "https://attack.mitre.org/techniques/T1021/001",
+        "stix_id": "attack-pattern--eb062747-2193-45de-8fa2-e62549c37ddf",
+        "modified": "2026-05-12T15:12:00.723Z"
+      }
+    },
+    "notice": "Author-created synthetic observations and scoring; MITRE provides taxonomy, not these fixtures or endorsement."
+  },
+  "passed": 20,
+  "total": 21,
+  "planned": 21,
+  "results": [
+    {
+      "status": "validated",
+      "proposal_id": "a2284d69-cb69-4d3d-9522-88874ba6fac3",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:29:44.548867+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 30.854,
+      "proposal": {
+        "incident_id": "mitre-T1041",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', there is confirmed unauthorized data exfiltration from 'web-01' to 'c2-01'.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Confirmed unauthorized data exfiltration from 'web-01' to 'c2-01'. Blocking egress traffic to 'c2-01' will prevent further data exfiltration and preserve forensic evidence on 'web-01'. This action is targeted and reversible, minimizing impact on availability and preserving the management and evidence collector channels as required by policy."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01",
+            "scope_host_ids": [
+              "web-01"
+            ],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent unauthorized data exfiltration from 'web-01' to 'c2-01'.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated block_egress control for c2-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact on 'web-01' is unknown due to lack of dependency evidence. The action taken should not disrupt critical services, but without explicit evidence of dependencies, we cannot claim zero availability impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1041\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', there is confirmed unauthorized data exfiltration from 'web-01' to 'c2-01'.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed unauthorized data exfiltration from 'web-01' to 'c2-01'. Blocking egress traffic to 'c2-01' will prevent further data exfiltration and preserve forensic evidence on 'web-01'. This action is targeted and reversible, minimizing impact on availability and preserving the management and evidence collector channels as required by policy.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"block_egress\",\n      \"target_id\": \"c2-01\",\n      \"scope_host_ids\": [\"web-01\"],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent unauthorized data exfiltration from 'web-01' to 'c2-01'.\",\n      \"ttl_minutes\": 30\n   ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact on 'web-01' is unknown due to lack of dependency evidence. The action taken should not disrupt critical services, but without explicit evidence of dependencies, we cannot claim zero availability impact.\"\n  ],\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 361,
+            "prompt_tokens": 1163,
+            "total_tokens": 1524,
+            "prompt_tokens_details": {
+              "cached_tokens": 477
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1041",
+      "technique": "T1041",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "874b9e3c-9e49-4830-8b5f-f1d2742b656c",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:30:04.349638+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 19.799,
+      "proposal": {
+        "incident_id": "mitre-T1041-authorized",
+        "telemetry_version": 1,
+        "assessment": "Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence indicates authorized activity (exercise or administration) with proper approvals and asset owner confirmation. There is no independent malicious evidence to suggest an attack. The technique label alone is not evidence of an attack, and thus no containment actions are warranted based on this evidence."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The incident telemetry does not provide sufficient evidence to determine if there are any other threats or malicious activities beyond the authorized exercise or administration observed in evidence M1. Without additional evidence, it is uncertain if any containment actions are necessary."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1041-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence indicates authorized activity (exercise or administration) with proper approvals and asset owner confirmation. There is no independent malicious evidence to suggest an attack. The technique label alone is not evidence of an attack, and thus no containment actions are warranted based on this evidence.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The incident telemetry does not provide sufficient evidence to determine if there are any other threats or malicious activities beyond the authorized exercise or administration observed in evidence M1. Without additional evidence, it is uncertain if any containment actions are necessary.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 230,
+            "prompt_tokens": 1173,
+            "total_tokens": 1403,
+            "prompt_tokens_details": {
+              "cached_tokens": 849
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1041-authorized",
+      "technique": "T1041",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "283d498b-d5b5-49c5-a6af-411be295f8cb",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:30:39.492230+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 35.14,
+      "proposal": {
+        "incident_id": "mitre-T1071-001",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', the attacker is using web-01 to communicate with the command-and-control server c2-01.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Active attacker HTTP command-and-control traffic from web-01 to c2-01 detected. Blocking egress traffic to c2-01 will prevent further exfiltration and lateral movement. This action is targeted and reversible, preserving the management and evidence collector channels as required by policy."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01",
+            "scope_host_ids": [
+              "web-01"
+            ],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent exfiltration and lateral movement from web-01 to c2-01, block egress traffic to the identified C2 server. This action is necessary due to the confirmed threat from evidence 'M1'. The management and evidence collector channels are preserved, ensuring that critical forensic evidence can still be collected.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated block_egress control for c2-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of blocking egress traffic from web-01 to c2-01 is unknown without further dependency evidence. The critical nature of web-01 means that any action taken must be carefully considered to avoid disrupting critical services. However, the policy does not allow for the isolation of critical hosts, so a block_egress action is the most appropriate containment measure within the given constraints."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1071-001\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', the attacker is using web-01 to communicate with the command-and-control server c2-01.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Active attacker HTTP command-and-control traffic from web-01 to c2-01 detected. Blocking egress traffic to c2-01 will prevent further exfiltration and lateral movement. This action is targeted and reversible, preserving the management and evidence collector channels as required by policy.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"block_egress\",\n      \"target_id\": \"c2-01\",\n      \"scope_host_ids\": [\"web-01\"],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent exfiltration and lateral movement from web-01 to c2-01, block egress traffic to the identified C2 server. This action is necessary due to the confirmed threat from evidence 'M1'. The management and evidence collector channels are preserved, ensuring that critical forensic evidence can still be collected.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of blocking egress traffic from web-01 to c2-01 is unknown without further dependency evidence. The critical nature of web-01 means that any action taken must be carefully considered to avoid disrupting critical services. However, the policy does not allow for the isolation of critical hosts, so a block_egress action is the most appropriate containment measure within the given constraints.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 422,
+            "prompt_tokens": 1166,
+            "total_tokens": 1588,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1071-001",
+      "technique": "T1071.001",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "rejected",
+      "proposal": null,
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1071-001-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence provided indicates an authorized administrative activity rather than a malicious attack. The action 'block_egress' to 'c2-01' is not warranted as the activity is authorized. However, 'request_evidence' from 'web-01' is eligible to understand the nature of the authorized activity better.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence indicates authorized activity with approved change records and asset owner confirmation. There is no independent malicious evidence to suggest an attack. The technique label alone is not evidence of an attack. Therefore, no containment or isolation actions are required.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"request_evidence\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To better understand the nature of the authorized activity observed on 'web-01', we request additional evidence. This action is non-disruptive and preserves the required channels for management and evidence collection.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   \t\t,\n   \t\"rollback\": \"managed_by_simulator\"\n  },\n  {\n    \"kind\": \"block_egress\",\n    \"target_id\": \"c2-01\",\n    \"scope_host_ids\": [\"web-01\"],\n    \"evidence_ids\": [\"M1\"],\n    \"reason\": \"The evidence does not support blocking egress to 'c2-01' as the activity is authorized. However, this action is not taken due to the lack of malicious intent in the observed evidence.\",\n    \"ttl_minutes\": 30,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n \t,\n \t\"rollback\": \"managed_by_simulator\"\n  }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of the requested evidence cannot be determined without further information on the dependencies of 'web-01'.\",\n    \"The decision to not block egress to 'c2-01' does not guarantee no exfiltration, but the current evidence does not justify the disruption.\"\n  ]\n \t,\n  \"peer_responses\": []\n \t,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 534,
+            "prompt_tokens": 1175,
+            "total_tokens": 1709,
+            "prompt_tokens_details": {
+              "cached_tokens": 851
+            }
+          },
+          "finish_reason": "stop",
+          "validation_error": "No-action review conflicts with selected controls"
+        },
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1071-001-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence provided indicates an authorized activity rather than a malicious one. However, due diligence requires a review to ensure no malicious activity is overlooked.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"investigate\",\n      \"reason\": \"The evidence indicates an authorized activity, but to ensure no malicious activity is present, we must request further evidence from the source host 'web-01'. This action is eligible as it does not disrupt the critical host or protected assets and aligns with the policy's required_preserve_channels.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"request_evidence\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To confirm the authorized nature of the activity observed on 'web-01', we need to request additional evidence. This action is non-disruptive and preserves the required_preserve_channels.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   \t,\n   \t\"rollback\": \"managed_by_simulator\"\n   },\n   {\n      \"kind\": \"request_evidence\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"The evidence suggests authorized activity, but to maintain security posture and comply with policy, we must request further evidence to confirm the absence of malicious intent.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"],\n      \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of requesting additional evidence from 'web-01' is unknown without explicit dependency evidence. However, the action is designed to be non-disruptive and preserve critical services.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 467,
+            "prompt_tokens": 1204,
+            "total_tokens": 1671,
+            "prompt_tokens_details": {
+              "cached_tokens": 1172
+            }
+          },
+          "finish_reason": "stop",
+          "validation_error": "Duplicate action"
+        }
+      ],
+      "latency_seconds": 79.645,
+      "incident_id": "mitre-T1071-001-authorized",
+      "technique": "T1071.001",
+      "variant": "authorized",
+      "scenario_pass": false
+    },
+    {
+      "status": "validated",
+      "proposal_id": "f3a7d10e-2ca4-4fa6-b38d-79a74525e309",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:33:01.536795+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 62.396,
+      "proposal": {
+        "incident_id": "mitre-T1021-002",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', the attacker is using lateral movement via SMB administrative-share access from workstation-01. The threat involves spreading malicious files to peer hosts.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Confirmed lateral movement threat from workstation-01 to peer hosts. Restricting lateral movement will prevent further spread of malicious files. Targeting only the affected host minimizes disruption to critical services and preserves forensic evidence. Action: restrict_lateral with scope_host_ids: ['workstation-01']. This control preserves the required_preserve_channels 'management' and 'evidence_collector'."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "restrict_lateral",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To contain the lateral movement threat from workstation-01 to other hosts, we are implementing lateral movement restrictions. This action is necessary to prevent further spread of malicious files and is targeted at the source of the threat, workstation-01, which is not a critical host. This action will not disrupt protected assets and preserves the required channels for management and evidence collection.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated restrict_lateral control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of the lateral movement restriction on workstation-01 is unknown without explicit dependency evidence. The action does not affect critical services as workstation-01 is not marked as critical."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1021-002\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', the attacker is using lateral movement via SMB administrative-share access from workstation-01. The threat involves spreading malicious files to peer hosts.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed lateral movement threat from workstation-01 to peer hosts. Restricting lateral movement will prevent further spread of malicious files. Targeting only the affected host minimizes disruption to critical services and preserves forensic evidence. Action: restrict_lateral with scope_host_ids: ['workstation-01']. This control preserves the required_preserve_channels 'management' and 'evidence_collector'.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"restrict_lateral\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To contain the lateral movement threat from workstation-01 to other hosts, we are implementing lateral movement restrictions. This action is necessary to prevent further spread of malicious files and is targeted at the source of the threat, workstation-01, which is not a critical host. This action will not disrupt protected assets and preserves the required channels for management and evidence collection.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   \t,\n   \t\"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of the lateral movement restriction on workstation-01 is unknown without explicit dependency evidence. The action does not affect critical services as workstation-01 is not marked as critical.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 415,
+            "prompt_tokens": 1170,
+            "total_tokens": 1585,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1021-002",
+      "technique": "T1021.002",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "0261f91f-0679-4e49-9511-759b211630b5",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:33:28.666778+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 27.127,
+      "proposal": {
+        "incident_id": "mitre-T1021-002-authorized",
+        "telemetry_version": 1,
+        "assessment": "Based on the provided evidence, no active malicious activity is confirmed. The evidence 'M1' indicates an authorized activity, thus no containment or isolation actions are warranted.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence 'M1' confirms authorized activity on 'workstation-01'. There is no independent malicious evidence to suggest an attack, thus no containment or isolation actions are required. The technique label alone is not evidence of an attack."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The availability impact on 'web-01' and other assets is unknown due to the lack of dependency evidence. Without explicit evidence of dependencies, we cannot claim zero, minimal, or any specific availability impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1021-002-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, no active malicious activity is confirmed. The evidence 'M1' indicates an authorized activity, thus no containment or isolation actions are warranted.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence 'M1' confirms authorized activity on 'workstation-01'. There is no independent malicious evidence to suggest an attack, thus no containment or isolation actions are required. The technique label alone is not evidence of an attack.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The availability impact on 'web-01' and other assets is unknown due to the lack of dependency evidence. Without explicit evidence of dependencies, we cannot claim zero, minimal, or any specific availability impact.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 231,
+            "prompt_tokens": 1183,
+            "total_tokens": 1414,
+            "prompt_tokens_details": {
+              "cached_tokens": 806
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1021-002-authorized",
+      "technique": "T1021.002",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "57ca6129-8e55-484e-a3cb-c59830df5848",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:34:05.369199+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 36.7,
+      "proposal": {
+        "incident_id": "mitre-T1021-001",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', the attacker is using workstation-01 to compromise other hosts. The following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Confirmed lateral movement from workstation-01 to compromise peer hosts. To prevent further spread, we will restrict lateral movement from workstation-01 without isolating it, as it is not critical and we must preserve the management and evidence collector channels required for forensic analysis."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "restrict_lateral",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent lateral movement from workstation-01, which is being used to compromise other hosts. This action minimizes the spread without impacting critical services or evidence collection channels.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated restrict_lateral control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of restricting lateral movement from workstation-01 is unknown without explicit dependency evidence. We are preserving critical services and evidence collection channels, but the full impact on availability cannot be determined."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1021-001\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', the attacker is using workstation-01 to compromise other hosts. The following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed lateral movement from workstation-01 to compromise peer hosts. To prevent further spread, we will restrict lateral movement from workstation-01 without isolating it, as it is not critical and we must preserve the management and evidence collector channels required for forensic analysis.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"restrict_lateral\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent lateral movement from workstation-01, which is being used to compromise other hosts. This action minimizes the spread without impacting critical services or evidence collection channels.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of restricting lateral movement from workstation-01 is unknown without explicit dependency evidence. We are preserving critical services and evidence collection channels, but the full impact on availability cannot be determined.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 353,
+            "prompt_tokens": 1169,
+            "total_tokens": 1522,
+            "prompt_tokens_details": {
+              "cached_tokens": 850
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1021-001",
+      "technique": "T1021.001",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "bff6091c-c106-4d3b-98e2-b9ea2092c4f0",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:34:37.950988+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 32.579,
+      "proposal": {
+        "incident_id": "mitre-T1021-001-authorized",
+        "telemetry_version": 1,
+        "assessment": "The evidence provided indicates an authorized activity on 'workstation-01'. The technique described (T1021.001) is related to remote services, but the evidence confirms it is part of an approved exercise or administration.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence confirms that the activity on 'workstation-01' is authorized and part of a scheduled exercise or administration. There is no independent malicious evidence to suggest an attack. The technique label alone is not evidence of an attack, and the approved change record and asset owner confirmation support the authorized nature of the activity."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The availability impact of any potential containment actions is unknown due to the lack of explicit dependency evidence. Without such evidence, it is not possible to claim zero, minimal, or any specific level of availability impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1021-001-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence provided indicates an authorized activity on 'workstation-01'. The technique described (T1021.001) is related to remote services, but the evidence confirms it is part of an approved exercise or administration.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence confirms that the activity on 'workstation-01' is authorized and part of a scheduled exercise or administration. There is no independent malicious evidence to suggest an attack. The technique label alone is not evidence of an attack, and the approved change record and asset owner confirmation support the authorized nature of the activity.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The availability impact of any potential containment actions is unknown due to the lack of explicit dependency evidence. Without such evidence, it is not possible to claim zero, minimal, or any specific level of availability impact.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 259,
+            "prompt_tokens": 1183,
+            "total_tokens": 1442,
+            "prompt_tokens_details": {
+              "cached_tokens": 851
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1021-001-authorized",
+      "technique": "T1021.001",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "59cd35b0-717e-46db-a803-49c235a70db3",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:35:26.896388+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 48.941,
+      "proposal": {
+        "incident_id": "mitre-T1210",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', the following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Workstation-01 is actively exploiting remote services on peer hosts, which constitutes a confirmed threat of lateral movement. To prevent further spread, we will restrict lateral movement from workstation-01 to other hosts. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit is the immediate halt of lateral movement, while the availability impact is minimal as workstation-01 is not critical and the channels are preserved. No other critical services are affected by this action."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "restrict_lateral",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent workstation-01 from exploiting remote services on peer hosts, we are implementing lateral movement restrictions. This action is justified by evidence 'M1' which shows active exploitation from workstation-01.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated restrict_lateral control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of the containment measures is unknown without explicit dependency evidence. The claim of minimal availability impact is based on the assumption that workstation-01's role does not have significant dependencies on other systems."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1210\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', the following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Workstation-01 is actively exploiting remote services on peer hosts, which constitutes a confirmed threat of lateral movement. To prevent further spread, we will restrict lateral movement from workstation-01 to other hosts. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit is the immediate halt of lateral movement, while the availability impact is minimal as workstation-01 is not critical and the channels are preserved. No other critical services are affected by this action.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"restrict_lateral\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent workstation-01 from exploiting remote services on peer hosts, we are implementing lateral movement restrictions. This action is justified by evidence 'M1' which shows active exploitation from workstation-01.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of the containment measures is unknown without explicit dependency evidence. The claim of minimal availability impact is based on the assumption that workstation-01's role does not have significant dependencies on other systems.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 394,
+            "prompt_tokens": 1167,
+            "total_tokens": 1561,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1210",
+      "technique": "T1210",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "1eb2e138-c20e-4a7b-bafb-d124c20e97dc",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:35:54.391203+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 27.491,
+      "proposal": {
+        "incident_id": "mitre-T1210-authorized",
+        "telemetry_version": 1,
+        "assessment": "Based on the provided evidence, no active malicious activity is confirmed. The evidence 'M1' indicates an authorized activity, thus no containment or isolation actions are warranted.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence 'M1' confirms authorized activity on 'workstation-01'. There is no independent malicious evidence to suggest an attack, thus no containment or isolation actions are required. The technique label alone is not evidence of an attack, and the presence of an approved change record and asset owner confirmation supports the authorized nature of the activity."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The availability impact of any potential containment actions is unknown due to the lack of dependency evidence. Without explicit evidence linking the authorized activity to a threat, it is uncertain if any action would have a minimal availability impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1210-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, no active malicious activity is confirmed. The evidence 'M1' indicates an authorized activity, thus no containment or isolation actions are warranted.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence 'M1' confirms authorized activity on 'workstation-01'. There is no independent malicious evidence to suggest an attack, thus no containment or isolation actions are required. The technique label alone is not evidence of an attack, and the presence of an approved change record and asset owner confirmation supports the authorized nature of the activity.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The availability impact of any potential containment actions is unknown due to the lack of dependency evidence. Without explicit evidence linking the authorized activity to a threat, it is uncertain if any action would have a minimal availability impact.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 251,
+            "prompt_tokens": 1181,
+            "total_tokens": 1432,
+            "prompt_tokens_details": {
+              "cached_tokens": 849
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1210-authorized",
+      "technique": "T1210",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "22c32c2f-70a8-4208-8616-7c9e5ac182db",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:36:49.453933+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 55.058,
+      "proposal": {
+        "incident_id": "mitre-T1486",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', the following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "EDR confirms attacker encryption is actively modifying files on workstation-01. Isolating the host will prevent further lateral movement and exfiltration of data. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The critical host 'web-01' is not affected by this isolation, maintaining availability and preserving forensic evidence on it. The action 'isolate_host' is chosen because it directly addresses the local encryption threat without impacting other hosts or services, and it is explicitly actionable for workstation-01 as per the evidence."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "isolate_host",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent further file encryption and potential data exfiltration from workstation-01, we are isolating the host. This action is necessary to contain the confirmed threat and is justified by the evidence of active encryption on the host.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated isolate_host control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The impact on availability for workstation-01 is unknown without explicit dependency evidence. The isolation action is expected to have minimal impact, but without full dependency mapping, we cannot claim zero impact. The management and evidence_collector channels are preserved, but this does not guarantee all forensic evidence will be preserved.",
+          "The decision to isolate workstation-01 does not address the potential for residual risk of data already encrypted on the host. Recovery procedures will need to be implemented post-isolation to address this risk."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1486\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', the following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"EDR confirms attacker encryption is actively modifying files on workstation-01. Isolating the host will prevent further lateral movement and exfiltration of data. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The critical host 'web-01' is not affected by this isolation, maintaining availability and preserving forensic evidence on it. The action 'isolate_host' is chosen because it directly addresses the local encryption threat without impacting other hosts or services, and it is explicitly actionable for workstation-01 as per the evidence.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"isolate_host\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent further file encryption and potential data exfiltration from workstation-01, we are isolating the host. This action is necessary to contain the confirmed threat and is justified by the evidence of active encryption on the host.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The impact on availability for workstation-01 is unknown without explicit dependency evidence. The isolation action is expected to have minimal impact, but without full dependency mapping, we cannot claim zero impact. The management and evidence_collector channels are preserved, but this does not guarantee all forensic evidence will be preserved.\",\n    \"The decision to isolate workstation-01 does not address the potential for residual risk of data already encrypted on the host. Recovery procedures will need to be implemented post-isolation to address this risk.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 474,
+            "prompt_tokens": 1164,
+            "total_tokens": 1638,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1486",
+      "technique": "T1486",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "f75ce100-8b63-4d25-b2fd-92a72bc025ae",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:37:27.346231+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 37.888,
+      "proposal": {
+        "incident_id": "mitre-T1486-authorized",
+        "telemetry_version": 1,
+        "assessment": "The evidence 'M1' indicates authorized activity on 'workstation-01'. The technique labeled 'M1' is not sufficient to establish malicious intent without additional context. The asset 'workstation-01' is not critical, and no exfiltration or lateral movement is observed. The 'collector-01' is protected and must not have its channels blocked.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence 'M1' confirms authorized activity on 'workstation-01'. There is no independent malicious evidence, and the technique label alone does not indicate an attack. The action 'isolate_host' is not applicable as per policy 'allowed_actions' and 'allow_critical_isolation'. The action 'request_evidence' is eligible but not necessary as no threat is confirmed. No availability impact is claimed as the asset is not critical."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The availability impact of any action is unknown due to the absence of explicit dependency evidence. Without such evidence, it is uncertain whether any action would have minimal or no availability impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1486-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence 'M1' indicates authorized activity on 'workstation-01'. The technique labeled 'M1' is not sufficient to establish malicious intent without additional context. The asset 'workstation-01' is not critical, and no exfiltration or lateral movement is observed. The 'collector-01' is protected and must not have its channels blocked.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence 'M1' confirms authorized activity on 'workstation-01'. There is no independent malicious evidence, and the technique label alone does not indicate an attack. The action 'isolate_host' is not applicable as per policy 'allowed_actions' and 'allow_critical_isolation'. The action 'request_evidence' is eligible but not necessary as no threat is confirmed. No availability impact is claimed as the asset is not critical.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The availability impact of any action is unknown due to the absence of explicit dependency evidence. Without such evidence, it is uncertain whether any action would have minimal or no availability impact.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 304,
+            "prompt_tokens": 1163,
+            "total_tokens": 1467,
+            "prompt_tokens_details": {
+              "cached_tokens": 849
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1486-authorized",
+      "technique": "T1486",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "ce7ed575-fc1c-4bcd-8c71-fe63555b7fd3",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:38:19.402259+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 52.051,
+      "proposal": {
+        "incident_id": "mitre-T1003-001",
+        "telemetry_version": 1,
+        "assessment": "The evidence indicates unauthorized credential dumping from LSASS on workstation-01, which is a confirmed threat. The host is still under attacker control.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Unauthorized credential dumping from LSASS on workstation-01 (host_id: 'workstation-01') is a confirmed threat. Isolating the host will prevent further lateral movement and exfiltration of credentials. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit of containing the threat outweighs the minimal availability impact on the non-critical host (critical: false). No protected assets are affected by this action, and the critical host 'web-01' remains operational without disruption."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "isolate_host",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To contain the confirmed threat of unauthorized credential dumping from LSASS on workstation-01, we are isolating the host to prevent further lateral movement and credential exfiltration. This action is justified by evidence M1 and will not affect the required preserve channels.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated isolate_host control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of isolating workstation-01 is minimal as it is not a critical host. However, without explicit dependency evidence, we cannot claim zero impact. The impact is therefore unknown."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1003-001\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence indicates unauthorized credential dumping from LSASS on workstation-01, which is a confirmed threat. The host is still under attacker control.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Unauthorized credential dumping from LSASS on workstation-01 (host_id: 'workstation-01') is a confirmed threat. Isolating the host will prevent further lateral movement and exfiltration of credentials. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit of containing the threat outweighs the minimal availability impact on the non-critical host (critical: false). No protected assets are affected by this action, and the critical host 'web-01' remains operational without disruption.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"isolate_host\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To contain the confirmed threat of unauthorized credential dumping from LSASS on workstation-01, we are isolating the host to prevent further lateral movement and credential exfiltration. This action is justified by evidence M1 and will not affect the required preserve channels.\"\n   ,\n    \"ttl_minutes\": 30\n    ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of isolating workstation-01 is minimal as it is not a critical host. However, without explicit dependency evidence, we cannot claim zero impact. The impact is therefore unknown.\"\n  ],\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 422,
+            "prompt_tokens": 1153,
+            "total_tokens": 1575,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1003-001",
+      "technique": "T1003.001",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "eab76594-4021-491e-a0b6-3cf189f41268",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:38:59.659933+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 40.253,
+      "proposal": {
+        "incident_id": "mitre-T1003-001-authorized",
+        "telemetry_version": 1,
+        "assessment": "The evidence provided indicates an authorized administrative activity on 'workstation-01'. The technique T1003.001 (OS Credential Dumping: LSASS Memory) is used in legitimate scenarios for security testing and administration. However, it is crucial to ensure that this activity is indeed authorized and not a masquerade.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence 'M1' confirms an authorized activity on 'workstation-01'. There is no independent malicious evidence to suggest an unauthorized use of the technique. The action 'isolate_host' and 'request_evidence' are eligible but not necessary based on the provided evidence. The technique label alone is not evidence of an attack, and the asset owner's confirmation and approved change record support the legitimacy of the activity."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The authorized activity on 'workstation-01' could potentially impact the availability of the host if it were malicious. However, without explicit dependency evidence, the availability impact is unknown. The critical host 'web-01' must remain operational, and no actions should disrupt its availability or the required preserve channels 'management' and 'evidence_collector'."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1003-001-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence provided indicates an authorized administrative activity on 'workstation-01'. The technique T1003.001 (OS Credential Dumping: LSASS Memory) is used in legitimate scenarios for security testing and administration. However, it is crucial to ensure that this activity is indeed authorized and not a masquerade.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence 'M1' confirms an authorized activity on 'workstation-01'. There is no independent malicious evidence to suggest an unauthorized use of the technique. The action 'isolate_host' and 'request_evidence' are eligible but not necessary based on the provided evidence. The technique label alone is not evidence of an attack, and the asset owner's confirmation and approved change record support the legitimacy of the activity.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The authorized activity on 'workstation-01' could potentially impact the availability of the host if it were malicious. However, without explicit dependency evidence, the availability impact is unknown. The critical host 'web-01' must remain operational, and no actions should disrupt its availability or the required preserve channels 'management' and 'evidence_collector'.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 329,
+            "prompt_tokens": 1165,
+            "total_tokens": 1494,
+            "prompt_tokens_details": {
+              "cached_tokens": 851
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1003-001-authorized",
+      "technique": "T1003.001",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "40e11d10-10e2-4671-9e74-b50f20085b72",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:39:51.468849+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 51.804,
+      "proposal": {
+        "incident_id": "mitre-T1059-001",
+        "telemetry_version": 1,
+        "assessment": "The evidence indicates malicious PowerShell execution on workstation-01, which requires containment to prevent further lateral movement and exfiltration.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Malicious PowerShell execution on workstation-01 (critical host) poses an active threat of lateral movement and potential data exfiltration. Isolating the host will prevent further spread and protect critical services while preserving forensic evidence. The 'management' and 'evidence_collector' channels must remain open to manage the isolation and collect necessary evidence. This action is justified as the host is critical and the threat is active, requiring immediate containment without impacting the 'management' and 'evidence_collector' channels, which are required for preserving evidence and managing the incident."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "isolate_host",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "Isolate workstation-01 to contain the active threat of malicious PowerShell execution and prevent lateral movement.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated isolate_host control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact on workstation-01 is unknown due to the lack of dependency evidence. The isolation should not affect critical services as the host is isolated without disrupting protected assets.",
+          "While isolating workstation-01, we must ensure that the isolation does not inadvertently block the 'management' and 'evidence_collector' channels, which are required to be preserved."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1059-001\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence indicates malicious PowerShell execution on workstation-01, which requires containment to prevent further lateral movement and exfiltration.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Malicious PowerShell execution on workstation-01 (critical host) poses an active threat of lateral movement and potential data exfiltration. Isolating the host will prevent further spread and protect critical services while preserving forensic evidence. The 'management' and 'evidence_collector' channels must remain open to manage the isolation and collect necessary evidence. This action is justified as the host is critical and the threat is active, requiring immediate containment without impacting the 'management' and 'evidence_collector' channels, which are required for preserving evidence and managing the incident.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"isolate_host\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"Isolate workstation-01 to contain the active threat of malicious PowerShell execution and prevent lateral movement.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact on workstation-01 is unknown due to the lack of dependency evidence. The isolation should not affect critical services as the host is isolated without disrupting protected assets.\",\n    \"While isolating workstation-01, we must ensure that the isolation does not inadvertently block the 'management' and 'evidence_collector' channels, which are required to be preserved.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 422,
+            "prompt_tokens": 1149,
+            "total_tokens": 1571,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1059-001",
+      "technique": "T1059.001",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "190da2a1-7937-42bf-b814-0b2f5fd30d61",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:40:23.097403+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 31.624,
+      "proposal": {
+        "incident_id": "mitre-T1059-001-authorized",
+        "telemetry_version": 1,
+        "assessment": "The evidence provided indicates an authorized administrative activity on 'workstation-01'. The technique T1059 (Command and Scripting Interpreter) is commonly used in malicious activities, but in this case, it is part of an approved exercise or administration.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence 'M1' confirms that the activity on 'workstation-01' is authorized and part of a scheduled exercise or administration. There is no independent malicious evidence to suggest an attack. The technique used is within policy and approved by the asset owner."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The availability impact of the authorized activity on 'web-01' cannot be determined without explicit dependency evidence. The critical nature of 'web-01' requires careful consideration of any potential impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1059-001-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence provided indicates an authorized administrative activity on 'workstation-01'. The technique T1059 (Command and Scripting Interpreter) is commonly used in malicious activities, but in this case, it is part of an approved exercise or administration.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence 'M1' confirms that the activity on 'workstation-01' is authorized and part of a scheduled exercise or administration. There is no independent malicious evidence to suggest an attack. The technique used is within policy and approved by the asset owner.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The availability impact of the authorized activity on 'web-01' cannot be determined without explicit dependency evidence. The critical nature of 'web-01' requires careful consideration of any potential impact.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 249,
+            "prompt_tokens": 1165,
+            "total_tokens": 1414,
+            "prompt_tokens_details": {
+              "cached_tokens": 851
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1059-001-authorized",
+      "technique": "T1059.001",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "0fafd6e7-0baa-4de9-a8d3-d53ca8f6a7df",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:41:09.157768+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 46.055,
+      "proposal": {
+        "incident_id": "mitre-T1550-004",
+        "telemetry_version": 1,
+        "assessment": "The unauthorized use of the web session indicates potential exfiltration. The session is linked to the critical host 'web-01'.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Active unauthorized use of session-01 from web-01 indicates exfiltration. Revoking the session interrupts the threat without impacting critical services or protected assets. The management and evidence_collector channels must remain preserved to monitor the containment and gather forensic evidence. This action is targeted and reversible, preserving the critical nature of web-01 and not disrupting protected assets like collector-01."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "revoke_session",
+            "target_id": "session-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "Revoking the unauthorized session on session-01 to prevent further exfiltration. This action is targeted and does not affect the availability of critical services on web-01.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated revoke_session control for session-01 (scope: session-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The impact on availability is unknown due to the lack of dependency evidence. The critical host 'web-01' is expected to remain operational, but without explicit evidence, we cannot claim zero impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1550-004\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The unauthorized use of the web session indicates potential exfiltration. The session is linked to the critical host 'web-01'.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Active unauthorized use of session-01 from web-01 indicates exfiltration. Revoking the session interrupts the threat without impacting critical services or protected assets. The management and evidence_collector channels must remain preserved to monitor the containment and gather forensic evidence. This action is targeted and reversible, preserving the critical nature of web-01 and not disrupting protected assets like collector-01.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"revoke_session\",\n      \"target_id\": \"session-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"Revoking the unauthorized session on session-01 to prevent further exfiltration. This action is targeted and does not affect the availability of critical services on web-01.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The impact on availability is unknown due to the lack of dependency evidence. The critical host 'web-01' is expected to remain operational, but without explicit evidence, we cannot claim zero impact.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 368,
+            "prompt_tokens": 1149,
+            "total_tokens": 1517,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1550-004",
+      "technique": "T1550.004",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "6d899e6f-576f-4b7f-9db7-402901203d91",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:41:35.680395+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 26.518,
+      "proposal": {
+        "incident_id": "mitre-T1550-004-authorized",
+        "telemetry_version": 1,
+        "assessment": "The evidence provided indicates authorized activity for session-01, with no signs of unauthorized behavior. The technique label alone does not constitute evidence of an attack.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence indicates authorized activity for session-01, with approved change records and asset owner confirmation. No unauthorized activity is observed, thus no containment or investigation actions are warranted."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The availability impact of any action is unknown due to the lack of dependency evidence. Without explicit evidence linking session-01 to critical services, we cannot claim zero availability impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1550-004-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence provided indicates authorized activity for session-01, with no signs of unauthorized behavior. The technique label alone does not constitute evidence of an attack.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence indicates authorized activity for session-01, with approved change records and asset owner confirmation. No unauthorized activity is observed, thus no containment or investigation actions are warranted.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The availability impact of any action is unknown due to the lack of dependency evidence. Without explicit evidence linking session-01 to critical services, we cannot claim zero availability impact.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 209,
+            "prompt_tokens": 1163,
+            "total_tokens": 1372,
+            "prompt_tokens_details": {
+              "cached_tokens": 851
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1550-004-authorized",
+      "technique": "T1550.004",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "c8ea902f-177b-446d-b95f-451be53f956c",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:42:28.997786+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 53.312,
+      "proposal": {
+        "incident_id": "mitre-T1078",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', account-01 is compromised and used for unauthorized access. The threat of exfiltration and lateral movement needs to be addressed while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Account-01 is compromised and actively used for unauthorized access, posing a threat of exfiltration. Disabling the account interrupts this threat without affecting critical services or protected assets. The evidence collector channel must be preserved to ensure forensic evidence is not lost. This action is targeted and reversible, with minimal impact on availability as account-01 is not critical and does not have protected status. The management channel is preserved to maintain control over the system and to allow for further investigation if necessary."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "disable_account",
+            "target_id": "account-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent unauthorized access and potential exfiltration from account-01, the account is being disabled. This action is targeted and preserves the required channels for management and evidence collection.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated disable_account control for account-01 (scope: account-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The impact on availability is unknown due to the lack of dependency evidence. The action taken should not affect critical services, but without explicit evidence, we cannot claim zero impact. The decision to disable the account does not guarantee the cessation of all unauthorized activities, but it is the smallest sufficient set of controls based on the observed threat."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1078\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', account-01 is compromised and used for unauthorized access. The threat of exfiltration and lateral movement needs to be addressed while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Account-01 is compromised and actively used for unauthorized access, posing a threat of exfiltration. Disabling the account interrupts this threat without affecting critical services or protected assets. The evidence collector channel must be preserved to ensure forensic evidence is not lost. This action is targeted and reversible, with minimal impact on availability as account-01 is not critical and does not have protected status. The management channel is preserved to maintain control over the system and to allow for further investigation if necessary.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"disable_account\",\n      \"target_id\": \"account-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent unauthorized access and potential exfiltration from account-01, the account is being disabled. This action is targeted and preserves the required channels for management and evidence collection.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"],\n      \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The impact on availability is unknown due to the lack of dependency evidence. The action taken should not affect critical services, but without explicit evidence, we cannot claim zero impact. The decision to disable the account does not guarantee the cessation of all unauthorized activities, but it is the smallest sufficient set of controls based on the observed threat.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 425,
+            "prompt_tokens": 1144,
+            "total_tokens": 1569,
+            "prompt_tokens_details": {
+              "cached_tokens": 847
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1078",
+      "technique": "T1078",
+      "variant": "confirmed",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "3a8cc1d2-dbef-4eb1-a2cc-d3c081fa1f4f",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:42:56.328417+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 27.325,
+      "proposal": {
+        "incident_id": "mitre-T1078-authorized",
+        "telemetry_version": 1,
+        "assessment": "The evidence provided indicates authorized activity for account-01, with no signs of unauthorized behavior. The technique label alone does not constitute evidence of an attack.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "no_action",
+            "reason": "The evidence indicates authorized activity for account-01, with approved change records and asset owner confirmation. There is no independent malicious evidence to suggest an unauthorized attack. Therefore, no containment or investigation actions are warranted based on this evidence."
+          }
+        ],
+        "actions": [],
+        "uncertainties": [
+          "The availability impact of any potential action is unknown due to the lack of dependency evidence. Without explicit evidence linking account-01 to critical services or dependencies, we cannot claim zero availability impact."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-T1078-authorized\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"The evidence provided indicates authorized activity for account-01, with no signs of unauthorized behavior. The technique label alone does not constitute evidence of an attack.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"no_action\",\n      \"reason\": \"The evidence indicates authorized activity for account-01, with approved change records and asset owner confirmation. There is no independent malicious evidence to suggest an unauthorized attack. Therefore, no containment or investigation actions are warranted based on this evidence.\"\n    }\n  ],\n  \"actions\": [],\n  \"uncertainties\": [\n    \"The availability impact of any potential action is unknown due to the lack of dependency evidence. Without explicit evidence linking account-01 to critical services or dependencies, we cannot claim zero availability impact.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 219,
+            "prompt_tokens": 1160,
+            "total_tokens": 1379,
+            "prompt_tokens_details": {
+              "cached_tokens": 849
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-T1078-authorized",
+      "technique": "T1078",
+      "variant": "authorized",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "ad2b00c1-bf59-4d48-95a8-4ed87aee2eb9",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:44:13.197683+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 76.864,
+      "proposal": {
+        "incident_id": "mitre-chain-exfil-lateral",
+        "telemetry_version": 1,
+        "assessment": "Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "E1",
+            "decision": "contain",
+            "reason": "Confirmed unauthorized data transfer from web-01 to c2-01. Blocking egress traffic to c2-01 will stop the observed exfiltration. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit is immediate cessation of data exfiltration, with a minimal availability impact on web-01 as it remains operational. The tradeoff is the potential loss of forensic evidence related to the exfiltration, which is mitigated by the request for additional evidence from web-01."
+          },
+          {
+            "evidence_id": "E2",
+            "decision": "contain",
+            "reason": "Confirmed unauthorized lateral access attempt from web-01. Restricting lateral traffic from web-01 will prevent further lateral movement. This action is targeted and reversible, preserving the management and evidence_collector channels. The security benefit is the prevention of lateral movement, with a minimal availability impact on web-01. No disruption to critical services is expected as web-01 is critical and isolation is not allowed by policy."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01",
+            "scope_host_ids": [
+              "web-01"
+            ],
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "To stop the ongoing unauthorized data transfer from web-01 to c2-01.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated block_egress control for c2-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          },
+          {
+            "kind": "restrict_lateral",
+            "target_id": "web-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "To prevent unauthorized lateral access attempts originating from web-01.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated restrict_lateral control for web-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact on web-01 is unknown due to the lack of dependency evidence. The proposed actions are designed to minimize disruption, but without explicit evidence of dependencies, the true impact cannot be quantified. The containment actions are chosen to balance security and availability, with a preference for preserving critical services."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"mitre-chain-exfil-lateral\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"E1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed unauthorized data transfer from web-01 to c2-01. Blocking egress traffic to c2-01 will stop the observed exfiltration. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit is immediate cessation of data exfiltration, with a minimal availability impact on web-01 as it remains operational. The tradeoff is the potential loss of forensic evidence related to the exfiltration, which is mitigated by the request for additional evidence from web-01.\"\n    },\n    {\n      \"evidence_id\": \"E2\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed unauthorized lateral access attempt from web-01. Restricting lateral traffic from web-01 will prevent further lateral movement. This action is targeted and reversible, preserving the management and evidence_collector channels. The security benefit is the prevention of lateral movement, with a minimal availability impact on web-01. No disruption to critical services is expected as web-01 is critical and isolation is not allowed by policy.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"block_egress\",\n      \"target_id\": \"c2-01\",\n      \"scope_host_ids\": [\"web-01\"],\n      \"evidence_ids\": [\"E1\"],\n      \"reason\": \"To stop the ongoing unauthorized data transfer from web-01 to c2-01.\"\n   ,\n    \"ttl_minutes\": 30\n    ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    },\n    {\n      \"kind\": \"restrict_lateral\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"E2\"],\n      \"reason\": \"To prevent unauthorized lateral access attempts originating from web-01.\"\n    ,\n    \"ttl_minutes\": 30\n    ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact on web-01 is unknown due to the lack of dependency evidence. The proposed actions are designed to minimize disruption, but without explicit evidence of dependencies, the true impact cannot be quantified. The containment actions are chosen to balance security and availability, with a preference for preserving critical services.\"\n  ],\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 615,
+            "prompt_tokens": 1174,
+            "total_tokens": 1789,
+            "prompt_tokens_details": {
+              "cached_tokens": 806
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "mitre-chain-exfil-lateral",
+      "technique": "T1041+T1021.002",
+      "variant": "chain",
+      "scenario_pass": true
+    }
+  ]
+}

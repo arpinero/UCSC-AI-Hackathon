@@ -1,0 +1,34 @@
+{
+  "observed_at_local": "2026-10-10 around 16:00 PDT",
+  "connection": "VS Code Remote Tunnels: asus-machine, Microsoft account authenticated by user",
+  "hostname": "16RW",
+  "architecture": "aarch64",
+  "uptime_at_connection": "1 hour 1 minute",
+  "verified_services": {
+    "containment-api": "active",
+    "containment-evaluations": "active and enabled",
+    "containment-model": "active"
+  },
+  "remote_unit_tests_passed": 34,
+  "inference_ready": true,
+  "gpu_layers_offloaded": "33/33",
+  "model_sha256": "d0072df70235e92bd996d4efd2347b38c9db530ed83df21f6be3f8958a9832d0",
+  "saved_result_counts_read_over_tunnel": {
+    "challenge-qwen-policy.json": {
+      "completed": 6,
+      "passed": 6,
+      "planned": 6
+    },
+    "mitre-qwen-policy.json": {
+      "completed": 12,
+      "passed": 12,
+      "planned": 21
+    },
+    "mitre-foundation-policy.json": {
+      "completed": 9,
+      "passed": 9,
+      "planned": 21
+    }
+  },
+  "note": "Observed directly on device. Evaluations resumed through user service. Local archived raw MITRE snapshots remain older; these counts are observations, not archived completed benchmarks. Tunnel persistence after reboot not verified."
+}

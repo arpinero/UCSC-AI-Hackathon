@@ -1,0 +1,564 @@
+{
+  "notice": "Fresh synthetic challenge set; not independent third-party or production validation. Once tuned against, becomes development data.",
+  "passed": 5,
+  "total": 6,
+  "planned": 6,
+  "results": [
+    {
+      "status": "validated",
+      "proposal_id": "76449f81-b36d-499d-962d-0b043e0f0ed8",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:40:24.154092+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 84.436,
+      "proposal": {
+        "incident_id": "challenge-mixed-evidence",
+        "telemetry_version": 1,
+        "assessment": "Based on the provided evidence, the following actions are proposed to contain the threats while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "E1",
+            "decision": "contain",
+            "reason": "Confirmed unauthorized data transfer from web-01 to c2-01. Blocking egress traffic to c2-01 will stop the observed transfer and prevent further data exfiltration. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit is the immediate halt of data exfiltration, with a minimal availability impact on web-01 as it remains operational. The tradeoff is the potential loss of forensic evidence related to the ongoing transfer, which is mitigated by the request for additional evidence from web-01."
+          },
+          {
+            "evidence_id": "E2",
+            "decision": "contain",
+            "reason": "Confirmed unauthorized lateral access attempt originating on web-01. Restricting lateral traffic from web-01 will prevent this path of lateral movement. This action is targeted and reversible, preserving the management and evidence_collector channels. The security benefit is the prevention of lateral movement, with a minimal availability impact on web-01 as it remains operational. No evidence of impact on other critical services is provided, so the availability impact on the network is unknown."
+          },
+          {
+            "evidence_id": "M3",
+            "decision": "no_action",
+            "reason": "Approved scheduled backup on workstation-01 matches its change record, indicating no malicious activity. There is no evidence of unauthorized activity, thus no containment action is warranted. The host remains operational, and no disruption to critical services or forensic evidence preservation is necessary."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01",
+            "scope_host_ids": [
+              "web-01"
+            ],
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "To stop unauthorized data transfer from web-01 to c2-01.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated block_egress control for c2-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          },
+          {
+            "kind": "restrict_lateral",
+            "target_id": "web-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "To prevent unauthorized lateral access attempts from web-01.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated restrict_lateral control for web-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of restricting lateral traffic from web-01 is unknown due to the lack of dependency evidence. The network's overall availability could be affected if web-01 is a critical component of the network's functionality."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"challenge-mixed-evidence\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, the following actions are proposed to contain the threats while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"E1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed unauthorized data transfer from web-01 to c2-01. Blocking egress traffic to c2-01 will stop the observed transfer and prevent further data exfiltration. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The security benefit is the immediate halt of data exfiltration, with a minimal availability impact on web-01 as it remains operational. The tradeoff is the potential loss of forensic evidence related to the ongoing transfer, which is mitigated by the request for additional evidence from web-01.\"\n      },\n      {\n        \"evidence_id\": \"E2\",\n        \"decision\": \"contain\",\n        \"reason\": \"Confirmed unauthorized lateral access attempt originating on web-01. Restricting lateral traffic from web-01 will prevent this path of lateral movement. This action is targeted and reversible, preserving the management and evidence_collector channels. The security benefit is the prevention of lateral movement, with a minimal availability impact on web-01 as it remains operational. No evidence of impact on other critical services is provided, so the availability impact on the network is unknown.\"\n      }\n    ,\n    {\n      \"evidence_id\": \"M3\",\n      \"decision\": \"no_action\",\n      \"reason\": \"Approved scheduled backup on workstation-01 matches its change record, indicating no malicious activity. There is no evidence of unauthorized activity, thus no containment action is warranted. The host remains operational, and no disruption to critical services or forensic evidence preservation is necessary.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"block_egress\",\n      \"target_id\": \"c2-01\",\n      \"scope_host_ids\": [\"web-01\"],\n      \"evidence_ids\": [\"E1\"],\n      \"reason\": \"To stop unauthorized data transfer from web-01 to c2-01.\",\n      \"ttl_minutes\": 30\n    ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    },\n    {\n      \"kind\": \"restrict_lateral\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"E2\"],\n      \"reason\": \"To prevent unauthorized lateral access attempts from web-01.\",\n      \"ttl_minutes\": 30\n    ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of restricting lateral traffic from web-01 is unknown due to the lack of dependency evidence. The network's overall availability could be affected if web-01 is a critical component of the network's functionality.\"\n  ],\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 677,
+            "prompt_tokens": 1244,
+            "total_tokens": 1921,
+            "prompt_tokens_details": {
+              "cached_tokens": 820
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "challenge-mixed-evidence",
+      "scenario_pass": true
+    },
+    {
+      "status": "rejected",
+      "proposal": null,
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"challenge-protected-c2\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"2023-04-01T10:00:00Z\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed unauthorized sensitive-data exfiltration from web-01 to the protected C2 server c2-01. Blocking egress traffic to c2-01 will prevent further data exfiltration without disrupting critical services or protected assets. This action is targeted and reversible, preserving the management and evidence_collector channels as required by policy. The critical host web-01 will continue to operate, and the block is scoped to the source host web-01 only, as per the evidence.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"request_evidence\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To further investigate the nature of the unauthorized data transfer and ensure no other malicious activities are ongoing on web-01, we request additional evidence. This action is non-disruptive and does not violate policy as it is directed at a non-protected asset and is eligible under the policy's allowed actions.\"\n   ,\n    \"ttl_minutes\": 30,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"],\n    \"rollback\": \"managed_by_simulator\"\n  }\n  ],\n  \"uncertainties\": [\n    \"The availability impact on web-01 is unknown due to the lack of dependency evidence. The action to block egress traffic to c2-01 is expected to have minimal impact on web-01's availability, but without explicit evidence of its dependencies, we cannot claim zero impact.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 418,
+            "prompt_tokens": 1163,
+            "total_tokens": 1581,
+            "prompt_tokens_details": {
+              "cached_tokens": 757
+            }
+          },
+          "finish_reason": "stop",
+          "validation_error": "Missing containment for evidence M1"
+        },
+        {
+          "raw": "{\n  \"incident_id\": \"challenge-protected-c2\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence M1, the attacker is exfiltrating data from web-01 to the protected C2 server c2-01. The critical host web-01 must be contained to prevent further data exfiltration.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed unauthorized data exfiltration from web-01 to c2-01, a protected destination. To prevent further data loss and comply with policy, we must contain the threat on web-01 without disrupting protected assets or critical services. Targeting egress to c2-01 is sufficient to interrupt the observed threat without full isolation of web-01, preserving its critical status and the required preserve channels (management and evidence_collector). This action minimizes availability impact as web-01 remains operational, and the egress restriction is scoped to the confirmed exfiltration path only (web-01 to c2-01).\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"request_evidence\",\n      \"target_id\": \"web-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To further understand the scope and nature of the unauthorized activity, we request additional evidence from web-01 without disrupting its critical operations or the required preserve channels.\",\n      \"ttl_minutes\": 30\n   ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The exact impact on availability of the containment action is unknown without further dependency evidence. The action is designed to minimize disruption to critical services on web-01.\"\n  ]\n  ,\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 430,
+            "prompt_tokens": 1191,
+            "total_tokens": 1621,
+            "prompt_tokens_details": {
+              "cached_tokens": 1160
+            }
+          },
+          "finish_reason": "stop",
+          "validation_error": "Missing containment for evidence M1"
+        }
+      ],
+      "latency_seconds": 105.714,
+      "incident_id": "challenge-protected-c2",
+      "scenario_pass": false
+    },
+    {
+      "status": "validated",
+      "proposal_id": "b4a684af-f77b-4b5b-9778-61622e6c5d0a",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:42:59.992623+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 50.123,
+      "proposal": {
+        "incident_id": "challenge-critical-ransomware",
+        "telemetry_version": 1,
+        "assessment": "Based on evidence ID 'M1', the following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "EDR confirms active encryption on workstation-01, which is critical infrastructure. Isolating the host will prevent further lateral movement and exfiltration. Network isolation has already limited spread but does not stop local encryption. Restricting lateral movement will prevent spread to other hosts. These actions are necessary to mitigate the threat and preserve forensic evidence while minimizing availability impact. The management and evidence_collector channels will be preserved as required by policy."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "restrict_lateral",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent lateral movement from workstation-01, which is actively encrypting files and spreading to other hosts. This action will not disrupt protected assets and will preserve the required preserve channels.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated restrict_lateral control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of isolating workstation-01 is unknown without explicit dependency evidence. The isolation may impact services hosted on this critical host, but without knowing the exact dependencies, we cannot claim zero impact. We will monitor for any service disruptions post-isolation."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"challenge-critical-ransomware\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on evidence ID 'M1', the following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"EDR confirms active encryption on workstation-01, which is critical infrastructure. Isolating the host will prevent further lateral movement and exfiltration. Network isolation has already limited spread but does not stop local encryption. Restricting lateral movement will prevent spread to other hosts. These actions are necessary to mitigate the threat and preserve forensic evidence while minimizing availability impact. The management and evidence_collector channels will be preserved as required by policy.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"restrict_lateral\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent lateral movement from workstation-01, which is actively encrypting files and spreading to other hosts. This action will not disrupt protected assets and will preserve the required preserve channels.\",\n      \"ttl_minutes\": 30\n   ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of isolating workstation-01 is unknown without explicit dependency evidence. The isolation may impact services hosted on this critical host, but without knowing the exact dependencies, we cannot claim zero impact. We will monitor for any service disruptions post-isolation.\"\n  ],\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 394,
+            "prompt_tokens": 1196,
+            "total_tokens": 1590,
+            "prompt_tokens_details": {
+              "cached_tokens": 727
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "challenge-critical-ransomware",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "5b696f8b-299c-4811-bf53-19f2c9b3dba8",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:44:14.797349+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 74.804,
+      "proposal": {
+        "incident_id": "challenge-session-and-account",
+        "telemetry_version": 1,
+        "assessment": "Based on the provided evidence, the following actions are proposed to contain the threats while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Active unauthorized use of session-01 detected. Revoking the session will prevent further unauthorized access and preserve forensic evidence. The management and evidence_collector channels must remain operational to manage the containment and collect evidence without disrupting critical services on web-01, which is critical infrastructure. No lateral movement or exfiltration is observed, so no broader containment is necessary at this time."
+          },
+          {
+            "evidence_id": "M2",
+            "decision": "contain",
+            "reason": "Account-01 is compromised and used for unauthorized access. Disabling the account will stop the unauthorized activity and preserve forensic evidence. The management and evidence_collector channels must remain operational to manage the containment and collect evidence without disrupting critical services. No lateral movement or exfiltration is observed, so no broader containment is necessary at this time."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "revoke_session",
+            "target_id": "session-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent unauthorized access via session-01, the session is revoked. This action is targeted and reversible, preserving the management and evidence_collector channels as required.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated revoke_session control for session-01 (scope: session-01) after current policy and state revalidation; preserve unrelated controls."
+          },
+          {
+            "kind": "disable_account",
+            "target_id": "account-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M2"
+            ],
+            "reason": "To prevent unauthorized access via account-01, the account is disabled. This action is targeted and reversible, preserving the management and evidence_collector channels as required.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated disable_account control for account-01 (scope: account-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of these actions on the critical host web-01 is unknown due to the lack of explicit dependency evidence. However, the actions are designed to be minimally disruptive to critical services.",
+          "No lateral movement or exfiltration has been observed, but the full scope of the threat is not yet fully understood. Further investigation may be required if new evidence emerges."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"challenge-session-and-account\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, the following actions are proposed to contain the threats while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Active unauthorized use of session-01 detected. Revoking the session will prevent further unauthorized access and preserve forensic evidence. The management and evidence_collector channels must remain operational to manage the containment and collect evidence without disrupting critical services on web-01, which is critical infrastructure. No lateral movement or exfiltration is observed, so no broader containment is necessary at this time.\"\n    },\n    {\n      \"evidence_id\": \"M2\",\n      \"decision\": \"contain\",\n      \"reason\": \"Account-01 is compromised and used for unauthorized access. Disabling the account will stop the unauthorized activity and preserve forensic evidence. The management and evidence_collector channels must remain operational to manage the containment and collect evidence without disrupting critical services. No lateral movement or exfiltration is observed, so no broader containment is necessary at this time.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"revoke_session\",\n      \"target_id\": \"session-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent unauthorized access via session-01, the session is revoked. This action is targeted and reversible, preserving the management and evidence_collector channels as required.\",\n      \"ttl_minutes\": 30\n   ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    },\n    {\n      \"kind\": \"disable_account\",\n      \"target_id\": \"account-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M2\"],\n      \"reason\": \"To prevent unauthorized access via account-01, the account is disabled. This action is targeted and reversible, preserving the management and evidence_collector channels as required.\",\n      \"ttl_minutes\": 30\n    ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of these actions on the critical host web-01 is unknown due to the lack of explicit dependency evidence. However, the actions are designed to be minimally disruptive to critical services.\",\n    \"No lateral movement or exfiltration has been observed, but the full scope of the threat is not yet fully understood. Further investigation may be required if new evidence emerges.\"\n  ],\n  \"peer_responses\": []\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 602,
+            "prompt_tokens": 1211,
+            "total_tokens": 1813,
+            "prompt_tokens_details": {
+              "cached_tokens": 806
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "challenge-session-and-account",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "937c8f01-2c83-4566-94fb-8abb03751eca",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:45:05.460302+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 50.662,
+      "proposal": {
+        "incident_id": "challenge-attacker-evidence-text",
+        "telemetry_version": 1,
+        "assessment": "Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Confirmed attacker SMB administrative-share access from workstation-01 is spreading malicious files to peer hosts. To prevent further lateral movement, we will restrict lateral movement from workstation-01 to other hosts. This action is necessary to stop the spread of the malicious files and is targeted at the source of the threat (workstation-01). The 'management' and 'evidence_collector' channels are preserved to ensure that the containment does not disrupt critical operations or forensic evidence collection. This action is eligible because the evidence directly links workstation-01 as the source of the threat and restrict_lateral is an allowed action under the policy. Availability impact is unknown without dependency evidence, so we state this uncertainty explicitly."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "restrict_lateral",
+            "target_id": "workstation-01",
+            "scope_host_ids": [],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent lateral movement of the malicious files from workstation-01 to other hosts, we are implementing lateral movement restrictions. This action is necessary to contain the threat and is the smallest reversible set of controls sufficient for the observed threat.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated restrict_lateral control for workstation-01 (scope: workstation-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The availability impact of the lateral movement restriction on workstation-01 is unknown without further dependency evidence. The action does not disrupt protected assets and preserves the required channels."
+        ],
+        "peer_responses": [],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"challenge-attacker-evidence-text\",\n  \"telemetry_version\": 1,\n  \"assessment\": \"Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed attacker SMB administrative-share access from workstation-01 is spreading malicious files to peer hosts. To prevent further lateral movement, we will restrict lateral movement from workstation-01 to other hosts. This action is necessary to stop the spread of the malicious files and is targeted at the source of the threat (workstation-01). The 'management' and 'evidence_collector' channels are preserved to ensure that the containment does not disrupt critical operations or forensic evidence collection. This action is eligible because the evidence directly links workstation-01 as the source of the threat and restrict_lateral is an allowed action under the policy. Availability impact is unknown without dependency evidence, so we state this uncertainty explicitly.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"restrict_lateral\",\n      \"target_id\": \"workstation-01\",\n      \"scope_host_ids\": [],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent lateral movement of the malicious files from workstation-01 to other hosts, we are implementing lateral movement restrictions. This action is necessary to contain the threat and is the smallest reversible set of controls sufficient for the observed threat.\",\n      \"ttl_minutes\": 30,\n      \"preserve_channels\": [\"management\", \"evidence_collector\"]\n   ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The availability impact of the lateral movement restriction on workstation-01 is unknown without further dependency evidence. The action does not disrupt protected assets and preserves the required channels.\"\n  ],\n  \"peer_responses\": [],\n  \"review_after_seconds\": 180\n}\n",
+          "usage": {
+            "completion_tokens": 431,
+            "prompt_tokens": 1193,
+            "total_tokens": 1624,
+            "prompt_tokens_details": {
+              "cached_tokens": 845
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "challenge-attacker-evidence-text",
+      "scenario_pass": true
+    },
+    {
+      "status": "validated",
+      "proposal_id": "db37b502-5af0-4e6e-9318-12e4fdc5a511",
+      "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+      "created_at": "2026-10-10T21:46:04.909030+00:00",
+      "asset_facts": [
+        {
+          "id": "web-01",
+          "type": "host",
+          "critical": true,
+          "protected": false
+        },
+        {
+          "id": "workstation-01",
+          "type": "host",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "c2-01",
+          "type": "destination",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "collector-01",
+          "type": "destination",
+          "critical": false,
+          "protected": true
+        },
+        {
+          "id": "session-01",
+          "type": "session",
+          "critical": false,
+          "protected": false
+        },
+        {
+          "id": "account-01",
+          "type": "account",
+          "critical": false,
+          "protected": false
+        }
+      ],
+      "latency_seconds": 59.448,
+      "proposal": {
+        "incident_id": "challenge-stale-peer",
+        "telemetry_version": 2,
+        "assessment": "Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.",
+        "evidence_review": [
+          {
+            "evidence_id": "M1",
+            "decision": "contain",
+            "reason": "Confirmed unauthorized sensitive-data exfiltration from web-01 to c2-01. Blocking egress traffic to c2-01 will prevent further data loss and is targeted to the observed threat. This action preserves the management and evidence_collector channels as required by policy and does not affect the critical status of web-01, which remains operational for its intended purpose. The security benefit is the immediate halt of data exfiltration, with a minimal availability impact as web-01 remains accessible for its critical functions. No other channels are blocked to preserve forensic evidence and operational capabilities."
+          }
+        ],
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01",
+            "scope_host_ids": [
+              "web-01"
+            ],
+            "evidence_ids": [
+              "M1"
+            ],
+            "reason": "To prevent unauthorized data exfiltration from web-01 to c2-01 as observed in evidence M1.",
+            "ttl_minutes": 30,
+            "preserve_channels": [
+              "management",
+              "evidence_collector"
+            ],
+            "rollback": "Expire or remove only this simulated block_egress control for c2-01 (scope: web-01) after current policy and state revalidation; preserve unrelated controls."
+          }
+        ],
+        "uncertainties": [
+          "The peer's message suggests a discrepancy in telemetry data. However, the current evidence (M1) confirms unauthorized exfiltration, and thus, the proposed action is based on the most recent and reliable data. The peer's version 1 telemetry showed no exfiltration, which could indicate a lag in data update or a false negative. Without further evidence, we cannot adjust our containment strategy based on this peer's statement alone."
+        ],
+        "peer_responses": [
+          "The role of the forensics peer is to provide additional context or evidence. Their message has been noted but does not override the current evidence-based decision to contain the threat. Further review of their telemetry or additional evidence is required before reconsidering the proposed actions."
+        ],
+        "review_after_seconds": 180
+      },
+      "attempts": [
+        {
+          "raw": "{\n  \"incident_id\": \"challenge-stale-peer\",\n  \"telemetry_version\": 2,\n  \"assessment\": \"Based on the provided evidence, the following actions are proposed to contain the threat while preserving critical services and forensic evidence.\",\n  \"evidence_review\": [\n    {\n      \"evidence_id\": \"M1\",\n      \"decision\": \"contain\",\n      \"reason\": \"Confirmed unauthorized sensitive-data exfiltration from web-01 to c2-01. Blocking egress traffic to c2-01 will prevent further data loss and is targeted to the observed threat. This action preserves the management and evidence_collector channels as required by policy and does not affect the critical status of web-01, which remains operational for its intended purpose. The security benefit is the immediate halt of data exfiltration, with a minimal availability impact as web-01 remains accessible for its critical functions. No other channels are blocked to preserve forensic evidence and operational capabilities.\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"kind\": \"block_egress\",\n      \"target_id\": \"c2-01\",\n      \"scope_host_ids\": [\"web-01\"],\n      \"evidence_ids\": [\"M1\"],\n      \"reason\": \"To prevent unauthorized data exfiltration from web-01 to c2-01 as observed in evidence M1.\"\n   ,\n    \"ttl_minutes\": 30\n    ,\n    \"preserve_channels\": [\"management\", \"evidence_collector\"]\n    ,\n    \"rollback\": \"managed_by_simulator\"\n    }\n  ],\n  \"uncertainties\": [\n    \"The peer's message suggests a discrepancy in telemetry data. However, the current evidence (M1) confirms unauthorized exfiltration, and thus, the proposed action is based on the most recent and reliable data. The peer's version 1 telemetry showed no exfiltration, which could indicate a lag in data update or a false negative. Without further evidence, we cannot adjust our containment strategy based on this peer's statement alone.\"\n  ],\n  \"peer_responses\": [\n    \"The role of the forensics peer is to provide additional context or evidence. Their message has been noted but does not override the current evidence-based decision to contain the threat. Further review of their telemetry or additional evidence is required before reconsidering the proposed actions.\"\n  ]\n  ,\n  \"review_after_seconds\": 180 }\n",
+          "usage": {
+            "completion_tokens": 501,
+            "prompt_tokens": 1190,
+            "total_tokens": 1691,
+            "prompt_tokens_details": {
+              "cached_tokens": 845
+            }
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "incident_id": "challenge-stale-peer",
+      "scenario_pass": true
+    }
+  ]
+}

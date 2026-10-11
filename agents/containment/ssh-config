@@ -1,0 +1,9 @@
+Host containment-gb10
+    HostName 169.233.72.113
+    User asus
+    HostKeyAlias 169.233.72.113
+    StrictHostKeyChecking yes
+    ServerAliveInterval 15
+    ServerAliveCountMax 3
+    LocalForward 8000 127.0.0.1:8000
+    LocalForward 8010 127.0.0.1:8010

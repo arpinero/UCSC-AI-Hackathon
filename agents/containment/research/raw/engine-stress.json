@@ -1,0 +1,22 @@
+{
+  "mode": "engine_properties_no_inference",
+  "seeds": 100,
+  "families": 16,
+  "cases_checked": 1600,
+  "failures": [],
+  "checks": [
+    "Fixture consistency",
+    "Controls never increase modeled attack harm",
+    "Network controls do not stop local encryption",
+    "Time-partition invariance with expiring controls",
+    "Finite nonnegative metrics and deterministic event traces"
+  ],
+  "limitations": "Generated correlated cases validate engine semantics, not model quality or real-world realism.",
+  "source_hashes": {
+    "stress_simulator.py": "1b4f4978317a43c783b02d9b9aec9dccada973e3fd8900e61d97fd3b0d31aee7",
+    "simulator.py": "969b9703541521084b84de7cce8877b5ed4f817586dd730c155980845b610de5",
+    "benchmark_cases.py": "f28f76376dd07fcbfbb36466d2dc25056333f35bbe40428b7f8eaf225284d98e",
+    "outcome_benchmark.py": "541d81cf311ef4610fca1b3a0c9a84485b2c0b4ca8cc305ae652533366387cf4",
+    "agent.py": "ede088df13c1d96899cfaad6dc50f8ab2135be9e51b6b1adc1697ca85c90e1f2"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "status": "rejected",
+  "proposal": null,
+  "attempts": [
+    {
+      "raw": "",
+      "usage": {
+        "prompt_tokens": 690,
+        "completion_tokens": 2200,
+        "total_tokens": 2890
+      },
+      "finish_reason": "length",
+      "validation_error": "Incomplete model response"
+    },
+    {
+      "raw": "",
+      "usage": {
+        "prompt_tokens": 716,
+        "completion_tokens": 2200,
+        "total_tokens": 2916
+      },
+      "finish_reason": "length",
+      "validation_error": "Incomplete model response"
+    }
+  ],
+  "latency_seconds": 128.387
+}

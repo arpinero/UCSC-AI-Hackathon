@@ -1,0 +1,68 @@
+{
+  "source_url": "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack-19.2.json",
+  "sha256": "dc1639caa5501d720e280cf1cbd8fbe009884a0c9b3e6e9ed9d0c25166c3d8f4",
+  "version": "19.2",
+  "techniques": {
+    "T1021.002": {
+      "name": "SMB/Windows Admin Shares",
+      "url": "https://attack.mitre.org/techniques/T1021/002",
+      "stix_id": "attack-pattern--4f9ca633-15c5-463c-9724-bdcd54fde541",
+      "modified": "2026-05-12T15:12:00.632Z"
+    },
+    "T1003.001": {
+      "name": "LSASS Memory",
+      "url": "https://attack.mitre.org/techniques/T1003/001",
+      "stix_id": "attack-pattern--65f2d882-3f41-4d48-8a06-29af77ec9f90",
+      "modified": "2026-05-12T15:12:00.637Z"
+    },
+    "T1041": {
+      "name": "Exfiltration Over C2 Channel",
+      "url": "https://attack.mitre.org/techniques/T1041",
+      "stix_id": "attack-pattern--92d7da27-2d91-488e-a00c-059dc162766d",
+      "modified": "2026-05-12T15:12:00.706Z"
+    },
+    "T1059.001": {
+      "name": "PowerShell",
+      "url": "https://attack.mitre.org/techniques/T1059/001",
+      "stix_id": "attack-pattern--970a3432-3237-47ad-bcca-7d8cbb217736",
+      "modified": "2026-05-12T15:12:00.706Z"
+    },
+    "T1210": {
+      "name": "Exploitation of Remote Services",
+      "url": "https://attack.mitre.org/techniques/T1210",
+      "stix_id": "attack-pattern--9db0cf3a-a3c9-4012-8268-123b9db6fd82",
+      "modified": "2026-08-04T20:30:55.427Z"
+    },
+    "T1078": {
+      "name": "Valid Accounts",
+      "url": "https://attack.mitre.org/techniques/T1078",
+      "stix_id": "attack-pattern--b17a1a56-e99c-403c-8948-561df0cffe81",
+      "modified": "2026-05-12T15:12:00.707Z"
+    },
+    "T1486": {
+      "name": "Data Encrypted for Impact",
+      "url": "https://attack.mitre.org/techniques/T1486",
+      "stix_id": "attack-pattern--b80d107d-fa0d-4b60-9684-b0433e8bdba0",
+      "modified": "2026-05-12T15:12:00.709Z"
+    },
+    "T1550.004": {
+      "name": "Web Session Cookie",
+      "url": "https://attack.mitre.org/techniques/T1550/004",
+      "stix_id": "attack-pattern--c3c8c916-2f3c-4e71-94b2-240bdfc996f0",
+      "modified": "2026-05-12T15:12:00.714Z"
+    },
+    "T1071.001": {
+      "name": "Web Protocols",
+      "url": "https://attack.mitre.org/techniques/T1071/001",
+      "stix_id": "attack-pattern--df8b2a25-8bdf-4856-953c-a04372b1c161",
+      "modified": "2026-05-12T15:12:00.722Z"
+    },
+    "T1021.001": {
+      "name": "Remote Desktop Protocol",
+      "url": "https://attack.mitre.org/techniques/T1021/001",
+      "stix_id": "attack-pattern--eb062747-2193-45de-8fa2-e62549c37ddf",
+      "modified": "2026-05-12T15:12:00.723Z"
+    }
+  },
+  "notice": "Author-created synthetic observations and scoring; MITRE provides taxonomy, not these fixtures or endorsement."
+}

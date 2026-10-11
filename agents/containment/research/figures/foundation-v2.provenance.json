@@ -1,0 +1,24 @@
+{
+  "source_sha256": "edeb55fe58e6b79bd4c5a05fa41bb99d3f52617e57252ecac53f0d1dfcbc5e31",
+  "plot_script_sha256": "cda3d8a5b05f4cceb5b5fb593991bd74b77ac546de6664e949587c56f015f6cc",
+  "matplotlib": "3.10.8",
+  "source_config": {
+    "model": "fdtn-ai/Foundation-Sec-8B-Instruct",
+    "endpoint": "http://127.0.0.1:8000/v1",
+    "max_tokens": 2200,
+    "reasoning_effort": null,
+    "inference_sha256": "7312cfda732bdb410333f0f96540d5163ab8fb4332ca06930f8f31e7b36da9ba",
+    "dataset_sha256": "e897c0759f279b58808f881746278e59330616c464f1550e15647ff8812410b7",
+    "mode": "model",
+    "source_hashes": {
+      "simulator.py": "969b9703541521084b84de7cce8877b5ed4f817586dd730c155980845b610de5",
+      "outcome_benchmark.py": "541d81cf311ef4610fca1b3a0c9a84485b2c0b4ca8cc305ae652533366387cf4",
+      "benchmark_cases.py": "f28f76376dd07fcbfbb36466d2dc25056333f35bbe40428b7f8eaf225284d98e",
+      "agent.py": "d9fd0973fcaba2271ba3a3ec96040bbf8fee243acf2b1dee6304a4bcde4e04a2",
+      "eval_checkpoint.py": "1865922787eb93f60d417d9b388abd528cadd46860d78a2f19ecc168d0e58f78"
+    }
+  },
+  "complete": false,
+  "completed": 30,
+  "planned": 48
+}
