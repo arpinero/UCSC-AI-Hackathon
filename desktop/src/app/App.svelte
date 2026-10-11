@@ -1,18 +1,22 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import { Shield, Plus, Search, ArrowUp, ArrowUpRight, ChevronDown, ChevronRight, Check, Circle, X, Settings2, Cpu, Radio, FileText, Fingerprint, ShieldCheck, Wrench, Activity, Bell, Layers, Download, Cable, TriangleAlert, Clock3, ArrowRight, PanelRightClose, PanelRightOpen, CheckCheck, MessageSquare, FolderOpen, LoaderCircle } from '@lucide/svelte';
+  import { Moon, PanelLeft, Shield, Plus, Search, ArrowUp, ArrowUpRight, ChevronDown, ChevronRight, Check, Circle, X, Settings2, Cpu, Radio, FileText, Fingerprint, ShieldCheck, Wrench, Activity, Bell, Layers, Download, Cable, TriangleAlert, Clock3, ArrowRight, PanelRightClose, PanelRightOpen, CheckCheck, MessageSquare, FolderOpen, LoaderCircle } from '@lucide/svelte';
   import Button from '../lib/ui/button.svelte';
-  import Textarea from '../lib/ui/textarea.svelte';
+  import ChatFormTextarea from '../lib/llama/ChatFormTextarea.svelte';
+  import {INPUT_CLASSES} from '../lib/llama/css-classes';
+  import * as Sidebar from '../lib/ui/sidebar';
+  import * as Tooltip from '../lib/ui/tooltip';
+  import {ModeWatcher, toggleMode} from 'mode-watcher';
   import Badge from '../lib/ui/badge.svelte';
   import { request, mergeEvents, roleNames, summary, friendly, type Run, type Event, type Case } from './api';
   let cases = $state<Case[]>([]), runs = $state<Run[]>([]), current = $state<Run|null>(null);
   let events = $state<Event[]>([]), models = $state<any>(null), connected = $state(false);
   let pipelineHost = $state('');
   let view = $state('activity'), modal = $state(''), input = $state(''), error = $state(''), search = $state('');
-  let busy = $state(false), starting = $state(false), rail = $state(true), mode = $state<'mock'|'live'>('mock');
+  let busy = $state(false), starting = $state(false), rail = $state(false), sidebarOpen = $state(false), mode = $state<'mock'|'live'>('live');
   let caseId = $state('mitre-T1041'), url = $state('http://127.0.0.1:8787'), decision = $state<'approve'|'reject'|null>(null);
   let pane: HTMLDivElement;
-  let composer = $state<HTMLTextAreaElement|null>(null);
+  let composer = $state<ChatFormTextarea|null>(null);
   let selectionVersion = 0, notified = '', pollInFlight = false, selectionLoading = false;
   const roles = ['containment','forensics','compliance','fixing'];
   const icons: Record<string, any> = {containment:Shield,forensics:Fingerprint,compliance:ShieldCheck,fixing:Wrench,telemetry:Radio};
@@ -128,36 +132,35 @@
   });
 </script>
 
-<div class="workspace">
-  <aside class="sidebar">
-    <div class="brand"><span class="brand-mark"><Shield size={19} strokeWidth={1.6}/></span><span>sentinel<span class="brand-dot">.</span></span><span class="edition">WEB</span></div>
-    <button class="workspace-picker" onclick={() => modal='connection'}><span class="workspace-avatar">IR</span><span>Incident response<small>UCSC security workspace</small></span><ChevronDown size={14}/></button>
-    <Button class="new-button" onclick={newIncident}><Plus size={16}/> New investigation <span class="keycap">N</span></Button>
-    <label class="search"><Search size={15}/><input aria-label="Search investigations" placeholder="Search investigations" bind:value={search}/></label>
-    <div class="sidebar-label">WORKSPACE</div>
-    <button class:nav-active={modal!=='models'} class="nav-item" onclick={() => modal=''}><MessageSquare size={17}/> Investigations <span>{runs.length}</span></button>
-    <button class="nav-item" onclick={() => modal='models'}><Cpu size={17}/> Models & services <span class="small-dot" class:green={models?.services?.some((s:any)=>s.reachable)}></span></button>
-    <button class="nav-item" onclick={() => { if(queued.length) {selectRun(queued[0]);} else if(result?.human_alert?.required) view='activity'; else {error='No approval is waiting in this investigation.';} }}><Bell size={17}/> Review queue <span>{queued.length}</span></button>
-    <div class="sidebar-label recent-label">INVESTIGATIONS <span>{filteredRuns.length}</span></div>
-    <div class="history">
-      {#each filteredRuns as run}
-        <button class:selected={current?.id===run.id} class="history-item" onclick={() => selectRun(run)}><span class="history-indicator" class:waiting={run.status==='awaiting_approval'} class:done={run.status==='completed'}></span><span>{run.case_id}<small>{run.mode==='mock'?'Demo':'Live models'} · {friendly(run.status)}</small></span></button>
-      {:else}<p class="empty-history">Your investigations will appear here.<br/>Start with a simulated incident.</p>{/each}
-    </div>
-    <div class="sidebar-bottom"><div class="connection-line"><span class="small-dot" class:green={connected}></span>{connected?'Bridge connected':'Bridge offline'}<button aria-label="Connection settings" onclick={()=>modal='connection'}><Settings2 size={15}/></button></div><button class="profile" onclick={()=>modal='connection'}><span class="user-avatar">YO</span><span>Your workspace<small>Security analyst</small></span><ChevronDown size={14}/></button></div>
-  </aside>
-
-  <main class="main">
-    <header class="topbar"><div class="breadcrumb">Workspace <ChevronRight size={13}/> <span>{current?current.case_id:'New investigation'}</span></div><div class="top-actions"><span class="mode-pill"><span class="small-dot" class:green={current?.mode==='live'}></span>{current?.mode==='live'?'Live inference':'Simulation'}</span><button class="icon-button" aria-label="Export investigation" disabled={!current} onclick={exportReport}><Download size={17}/></button><button class="icon-button" aria-label="Toggle agent panel" onclick={()=>rail=!rail}>{#if rail}<PanelRightClose size={18}/>{:else}<PanelRightOpen size={18}/>{/if}</button></div></header>
+<!-- Layout uses llama.cpp +layout.svelte's floating Sidebar.Provider/Root/Inset. -->
+<Tooltip.Provider delayDuration={200}>
+<ModeWatcher />
+<Sidebar.Provider bind:open={sidebarOpen}>
+<div class="flex h-screen w-full">
+  <Sidebar.Root variant="floating" class="h-full">
+    <Sidebar.Header class="p-3">
+      <div class="flex items-center justify-between px-2 py-2"><strong class="text-sm">llama.cpp <span class="text-muted-foreground font-normal">/ Sentinel</span></strong><Button variant="ghost" size="icon" aria-label="Close sidebar" onclick={()=>sidebarOpen=false}><PanelLeft size={16}/></Button></div>
+      <Button variant="ghost" class="justify-start" onclick={newIncident}><Plus size={16}/>New investigation</Button>
+      <label class="flex items-center gap-2 px-3 py-2"><Search size={16}/><input class="w-full bg-transparent text-sm outline-none" aria-label="Search investigations" placeholder="Search conversations..." bind:value={search}/></label>
+      <Button variant="ghost" class="justify-start" onclick={()=>modal='models'}><Cpu size={16}/>Models & services</Button>
+    </Sidebar.Header>
+    <Sidebar.Content><Sidebar.Group><Sidebar.GroupLabel>Investigations</Sidebar.GroupLabel><Sidebar.GroupContent><Sidebar.Menu>
+      {#each filteredRuns as run}<Sidebar.MenuItem><Sidebar.MenuButton isActive={current?.id===run.id} onclick={()=>selectRun(run)}><MessageSquare size={16}/><span>{run.case_id}</span></Sidebar.MenuButton><div class="px-7 pb-2 text-xs text-muted-foreground">{run.mode==='live'?'Live models':'Deterministic'} � {friendly(run.status)}</div></Sidebar.MenuItem>{:else}<p class="px-3 py-4 text-sm text-muted-foreground">No investigations yet.</p>{/each}
+    </Sidebar.Menu></Sidebar.GroupContent></Sidebar.Group></Sidebar.Content>
+    <Sidebar.Footer class="p-3"><Button variant="ghost" class="justify-start" onclick={()=>modal='connection'}><Settings2 size={16}/>Connection settings</Button><Button variant="ghost" class="justify-start" onclick={toggleMode}><Moon size={16}/>Toggle theme</Button><div class="px-3 py-2 text-xs text-muted-foreground">{connected?'Connected to '+pipelineHost:'Bridge offline'}</div></Sidebar.Footer>
+  </Sidebar.Root>
+  <div class="icon-strip" class:strip-hidden={sidebarOpen}><Sidebar.Trigger/><Button variant="ghost" size="icon" aria-label="New investigation" onclick={newIncident}><Plus size={18}/></Button><Button variant="ghost" size="icon" aria-label="Search investigations" onclick={()=>sidebarOpen=true}><Search size={18}/></Button><Button variant="ghost" size="icon" aria-label="Models and services" onclick={()=>modal='models'}><Cpu size={18}/></Button><Button variant="ghost" size="icon" aria-label="Toggle theme" onclick={toggleMode}><Moon size={18}/></Button></div>
+  <Sidebar.Inset class="flex flex-1 flex-col overflow-hidden">
+    <header class="topbar" class:empty-header={!current}><div class="flex items-center gap-2"><button class="mobile-trigger" aria-label="Open sidebar" onclick={()=>sidebarOpen=!sidebarOpen}><PanelLeft size={18}/></button><button class="model-picker" onclick={()=>modal='models'}>Security pipeline<ChevronDown size={15}/></button></div><div class="top-actions"><span class="mode-pill">{current?.mode==='live'?'Live models':current?'Deterministic':'ASUS pipeline'}</span><button class="icon-button" aria-label="Export investigation" disabled={!current} onclick={exportReport}><Download size={17}/></button><button class="icon-button" aria-label="Toggle agent panel" onclick={()=>rail=!rail}><PanelRightOpen size={18}/></button></div></header>
     {#if error}<div class="error-bar" role="alert"><TriangleAlert size={16}/><span>{error}</span><button aria-label="Dismiss error" onclick={()=>error=''}><X size={15}/></button></div>{/if}
     <div class="content-layout" class:without-rail={!rail}>
-      <section class="conversation">
+      <section class="conversation" class:empty={!current}>
         {#if current}
-          <div class="incident-header"><div class="eyebrow"><span class="small-dot" class:green={current.status==='completed'}></span>{friendly(current.status)} <span>·</span> {time(current.created)}</div><div class="incident-title"><h1>{current.case_id.startsWith('mitre-') ? 'Investigating '+ current.case_id.replace('mitre-','ATT&CK ') : friendly(current.case_id)}</h1>{#if result}<Badge class="severity-badge">{result.severity.band} · {result.severity.score}</Badge>{/if}</div><p>One incident. Four perspectives. A decision you can trace.</p><nav class="view-tabs" aria-label="Investigation views">{#each ['activity','evidence','metrics'] as tab}<button class:active={view===tab} onclick={()=>view=tab}>{#if tab==='activity'}<Activity size={15}/>{:else if tab==='evidence'}<Fingerprint size={15}/>{:else}<Layers size={15}/>{/if}{tab.charAt(0).toUpperCase()+tab.slice(1)}{#if tab==='evidence'}<span>{incident?.evidence?.length||0}</span>{/if}</button>{/each}</nav></div>
+          <div class="incident-header"><div class="eyebrow"><span class="small-dot" class:green={current.status==='completed'}></span>{friendly(current.status)} <span>·</span> {time(current.created)}</div><div class="incident-title"><h1>{current.case_id.startsWith('mitre-') ? 'Investigating '+ current.case_id.replace('mitre-','ATT&CK ') : friendly(current.case_id)}</h1>{#if result}<Badge class="severity-badge">{result.severity.band} · {result.severity.score}</Badge>{/if}</div><nav class="view-tabs" aria-label="Investigation views">{#each ['activity','evidence','metrics'] as tab}<button class:active={view===tab} onclick={()=>view=tab}>{#if tab==='activity'}<Activity size={15}/>{:else if tab==='evidence'}<Fingerprint size={15}/>{:else}<Layers size={15}/>{/if}{tab.charAt(0).toUpperCase()+tab.slice(1)}{#if tab==='evidence'}<span>{incident?.evidence?.length||0}</span>{/if}</button>{/each}</nav></div>
         {/if}
         <div class="conversation-scroll" bind:this={pane}>
           {#if !current}
-            <div class="welcome"><div class="welcome-emblem"><Shield size={32} strokeWidth={1.3}/><span></span></div><div class="eyebrow">YOUR INCIDENT RESPONSE WORKSPACE</div><h1>Every signal.<br/><em>One clear picture.</em></h1><p>Follow the investigation, understand each agent’s findings,<br class="wide"/> and make the decisions that matter.</p><div class="welcome-actions"><Button class="primary-button" onclick={newIncident}><Plus size={16}/> Start an investigation</Button><button class="text-button" onclick={()=>modal='connection'}>Connect your pipeline <ArrowUpRight size={15}/></button></div><div class="starter-grid"><button onclick={()=>{caseId='mitre-T1041';mode='mock';modal='new';}}><span class="starter-icon"><Radio size={20}/></span><h3>Trace a suspicious signal</h3><p>Follow a simulated exfiltration incident through the real pipeline.</p><span class="starter-link">Explore a demo <ArrowRight size={14}/></span></button><button onclick={()=>modal='models'}><span class="starter-icon"><Cpu size={20}/></span><h3>Know who’s on the case</h3><p>See agent endpoints, service health and reported model identities.</p><span class="starter-link">View your agents <ArrowRight size={14}/></span></button></div><div class="welcome-foot"><ShieldCheck size={14}/> Human decisions stay in your hands.</div></div>
+            <div class="welcome"><h1 class="mb-2 text-2xl font-semibold tracking-tight md:text-3xl">Hello there</h1><p class="text-muted-foreground md:text-lg">Start an investigation to chat with your security pipeline</p></div>
           {:else if view==='activity'}
             <div class="feed">
               {#each feed as event (event.id)}
@@ -191,17 +194,19 @@
         </div>
         <div class="composer-area">
           {#if current}<div class="suggestions"><button onclick={()=>ask('Summarize the evidence and what is still uncertain.')}>Summarize findings</button><button onclick={()=>ask('What risks should I review before approving this plan?')}>Explain the risks</button><button onclick={()=>ask('What are the recorded outcomes and statistics?')}>Show outcomes</button></div>{/if}
-          <form class="composer" class:decision-mode={decision!==null} onsubmit={(e)=>{e.preventDefault();send();}}>
+          <form class="composer {INPUT_CLASSES}" class:decision-mode={decision!==null} onsubmit={(e)=>{e.preventDefault();send();}}>
             {#if decision}<div class="decision-banner"><ShieldCheck size={15}/><strong>{decision==='approve'?'Approve':'Reject'} the current plan</strong><span>Type your reason below</span><button type="button" aria-label="Cancel decision" onclick={()=>decision=null}><X size={14}/></button></div>{/if}
-            <Textarea class="chat-input" bind:ref={composer} bind:value={input} disabled={!current||busy} aria-label={decision?'Decision reason':'Message Sentinel'} placeholder={!current?'Start an investigation to ask about its evidence…':decision?'Explain your decision. This will be recorded in the incident timeline.':'Ask about this incident, its evidence, or the proposed response…'} onkeydown={(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}}/>
-            <div class="composer-toolbar"><span><Shield size={13}/>{decision?'Human decision':current?.mode==='live'?'Incident assistant':'Demo context assistant'}<ChevronDown size={12}/></span><button type="submit" class="send-button" aria-label={decision?'Submit decision':'Send message'} disabled={!input.trim()||busy||!current}>{#if busy}<LoaderCircle class="spin" size={17}/>{:else}<ArrowUp size={17}/>{/if}</button></div>
+            <ChatFormTextarea class="px-5 pt-4" bind:this={composer} bind:value={input} disabled={!current||busy} placeholder={!current?'Ask anything...':decision?'Explain your decision. This will be recorded in the incident timeline.':'Ask about this incident, its evidence, or the proposed response…'} onKeydown={(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}}/>
+            <div class="composer-toolbar"><Button type="button" variant="ghost" size="icon" class="rounded-full bg-background shadow-sm" aria-label="New investigation" onclick={newIncident}><Plus size={18}/></Button><div class="flex items-center gap-3"><button type="button" class="composer-model" onclick={()=>modal='models'}><Cpu size={13}/>{decision?'Human decision':'Security pipeline'}<ChevronDown size={12}/></button><button type="submit" class="send-button" aria-label={decision?'Submit decision':'Send message'} disabled={!input.trim()||busy||!current}>{#if busy}<LoaderCircle class="spin" size={17}/>{:else}<ArrowUp size={17}/>{/if}</button></div></div>
           </form><div class="composer-note">{decision?'Applies only to the exact pending plan. Compliance vetoes stay binding.':'Simulation workspace · actions do not modify real systems'}<span>Shift + Enter for a new line</span></div>
         </div>
       </section>
       {#if rail}<aside class="inspector"><div class="inspector-heading"><span class="micro-label">ON THIS INCIDENT</span><span class="live-label"><span class="small-dot" class:green={running}></span>{running?'Active':'Standby'}</span></div><h2>Your response team</h2><p class="inspector-caption">Specialized perspectives.<br/>A shared incident context.</p><div class="agent-stack">{#each roles as role}{@const Icon=icons[role]}{@const state=roleState(role)}<div class="agent-status" class:is-working={state==='Working'}><span class="agent-avatar {role}"><Icon size={17}/></span><div><strong>{roleNames[role]}</strong><small>{roleNotes[role]}</small></div><span class="agent-state" class:working={state==='Working'}>{#if state==='Working'}<LoaderCircle class="spin" size={13}/>{:else if state==='Reviewed'}<Check size={14}/>{:else}<Circle size={9}/>{/if}</span></div>{/each}</div><div class="inspector-divider"></div><div class="inspector-section"><span class="micro-label">AT A GLANCE</span><dl><div><dt>Evidence items</dt><dd>{incident?.evidence?.length??'—'}</dd></div><div><dt>Agent responses</dt><dd>{current?messages:'—'}</dd></div><div><dt>Telemetry version</dt><dd>{incident?'v'+incident.telemetry_version:'—'}</dd></div><div><dt>Human review</dt><dd class:amber={hasPending}>{hasPending?'Required':current?'No pending request':'—'}</dd></div></dl></div>{#if hasPending}<button class="review-nudge" onclick={()=>review('approve')}><ShieldCheck size={19}/><span>A decision is waiting<small>Review scope, then type your reason</small></span><ChevronRight size={15}/></button>{/if}<div class="inspector-section models-section"><div class="section-inline"><span class="micro-label">MODEL SERVICES</span><button onclick={()=>modal='models'} aria-label="View model services"><ArrowUpRight size={15}/></button></div>{#if current?.mode!=='live'}<p class="demo-model-note">Demo runs use deterministic agents.<br/>No model inference is claimed.</p>{/if}{#each models?.services||[] as service}<div class="model-mini"><span class="small-dot" class:green={service.reachable}></span><span>{roleNames[service.role]}</span><small>{service.reachable?'Reachable':'Offline'}</small></div>{:else}<p class="demo-model-note">Checking service health…</p>{/each}</div><div class="inspector-footer"><Fingerprint size={16}/><p>Every proposal has a source.<br/>Every decision leaves a record.</p></div></aside>{/if}
     </div>
-  </main>
+  </Sidebar.Inset>
 </div>
+</Sidebar.Provider>
+</Tooltip.Provider>
 
 {#if modal}
   <div class="modal-backdrop" role="presentation" onclick={(e)=>{if(e.target===e.currentTarget)modal='';}}>

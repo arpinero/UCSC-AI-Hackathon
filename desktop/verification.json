@@ -26,5 +26,6 @@
     "No browser console errors after snapshot/poll race fix"
   ],
   "prior_live_failure": "Run 20314cc16b4749b094318fc24e10e48d: optional Recovery endpoint on 8001 timed out at 240 seconds. Failure retained; specialist server untouched.",
-  "live_chat": "Read-only incident chat returned an actual ASUS model response after the compliance escalation."
+  "live_chat": "Read-only incident chat returned an actual ASUS model response after the compliance escalation.",
+  "ui_base": "Original llama.cpp floating sidebar and ChatFormTextarea, original app.css light/dark theme; council adapter replaces conversation transport."
 }
