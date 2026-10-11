@@ -101,6 +101,18 @@ class ApprovalTests(unittest.TestCase):
 
 
 class WebServerTests(unittest.TestCase):
+    def test_inventory_reports_actual_shared_recovery_route(self):
+        from unittest.mock import patch
+        with patch.dict('os.environ', {'COUNCIL_MODEL': 'gemma4:26b', 'COUNCIL_FORENSICS_URL': 'http://127.0.0.1:8747'}, clear=True), patch('desktop.bridge.health_read', return_value={'models': []}):
+            with urlopen(self.base+'/api/models') as response:
+                inventory = json.load(response)
+        roles = {item['role']: item for item in inventory['services']}
+        self.assertEqual(roles['fixing']['model'], 'gemma4:26b')
+        self.assertTrue(roles['fixing']['shared'])
+        self.assertEqual(roles['fixing']['endpoint'], 'http://127.0.0.1:11434/api/tags')
+        self.assertEqual(roles['forensics']['endpoint'], 'http://127.0.0.1:8747/health')
+        self.assertFalse(roles['forensics']['shared'])
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
