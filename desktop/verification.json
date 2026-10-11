@@ -1,6 +1,6 @@
 {
-  "pipeline_base": "b2dc838",
-  "live_model_run": "Not validated in this UI handoff",
+  "pipeline_base": "e0312bd",
+  "live_model_run": "ASUS run 20314cc16b4749b094318fc24e10e48d: Containment completed in 46.045 seconds; Recovery on port 8001 timed out after 240 seconds. End-to-end live execution is not verified.",
   "upstream": "b97ebdc98f6053604a19d861c08d8087601b96e0",
   "build": "passed",
   "frontend_check": "0 errors, 0 warnings",
