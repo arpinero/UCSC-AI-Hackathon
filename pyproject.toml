@@ -22,6 +22,16 @@ dev = [
 # NOTE: PyTorch / Transformers / vLLM / AGNTCY are intentionally NOT Stage A
 # dependencies. They are Stage B concerns and must be added per-workstream.
 
+# Stage B (model-engineer): approved optional extra for the Transformers
+# backend that loads `alirezaaminzadeh/soc-analyst-tool-use` locally.
+# On this aarch64 GB10 host, PyPI torch wheels are CPU-only builds.
+inference = [
+    "torch",
+    "transformers",
+    "accelerate",
+    "peft",
+]
+
 [tool.setuptools.packages.find]
 where = ["src", "."]
 include = ["forensics", "forensics.*", "contracts", "coordination"]
@@ -29,6 +39,9 @@ include = ["forensics", "forensics.*", "contracts", "coordination"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+    "integration: tests that REALLY call inference servers/models (skipped when unavailable)",
+]
 
 [tool.ruff]
 line-length = 100
