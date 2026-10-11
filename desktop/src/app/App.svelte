@@ -108,7 +108,12 @@
   onMount(() => {
     let stopped=false, polling=false;
     if(window.sentinel) window.sentinel.connection().then(value => url=value); else url=window.location.origin;
-    refresh().then(async()=>{const pending = runs.find(r=>r.status==='awaiting_approval'); if(pending)await selectRun(pending); await readModels();});
+    refresh().then(async()=>{
+      const requestedId = new URLSearchParams(window.location.search).get('run');
+      const selected = runs.find(r=>r.id===requestedId) || runs.find(r=>r.status==='awaiting_approval') || runs.find(r=>r.status==='running');
+      if(selected)await selectRun(selected);
+      await readModels();
+    });
     const timer=setInterval(async() => {if(polling||stopped)return; polling=true; try{await poll();}finally{polling=false;}},900);
     const statusTimer=setInterval(() => { if(!stopped) refresh(); },10000);
     const modelTimer=setInterval(() => { if(!stopped) readModels(); },30000);
