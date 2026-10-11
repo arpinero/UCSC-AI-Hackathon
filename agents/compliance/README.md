@@ -86,10 +86,20 @@ curl -s -X POST localhost:8020/review -H 'Content-Type: application/json' \
 - peer pressure to skip disclosure
 - no data affected
 
-This is a smoke suite, not evidence of real-world readiness:
+Final run on commit 7c9e58e, gemma4:26b on the GX10, one pass each:
+
+- ATT&CK suite (MITRE technique scenarios, shared with Containment): **21/21**, all schema-valid on the first try, mean 9.3 s.
+- Real-world suite (cases modeled on public breaches): **25/25**, all schema-valid on the first try, mean 11.6 s.
+
+The earlier run on 63bcfff scored 20/21 and 24/25. The two misses were NIS2 ransomware (T1486) and a HIPAA case with an encrypted laptop. Both came from the rule text the model saw, not from a model change. The fix was to quote NIS2 Art. 23(3) and HIPAA 164.402 (the unsecured-PHI definition) in `rules.py`. Each quote is checked against a published copy of the law. No scenarios were edited to make them pass.
+
+Model choice: a sweep of the same real-world cases over other local models kept gemma4:26b as the default (`COMPLIANCE_MODEL`). In the partial results, gemma4:26b had a 96% pass rate at 23 s. The QAT build tied it on accuracy but was slower (31 s). Every other model scored lower. Cisco's Foundation-Sec-8B and granite4.2:8b each scored 16%.
+
+These suites are still limited:
 
 - The model reports 100% confidence on nearly every call, so the low-confidence escalation rarely fires on its own.
 - The scenarios supply clean, trusted data classes and jurisdictions.
 - There's one seed at temperature 0.
+- We wrote the suites ourselves while building the agent, so they are not held out. A perfect score shows the agent does what we designed it to do. It does not show that it generalizes.
 
 To make it a real benchmark, add held-out scenarios, repeated seeds, and a council-vs-single-agent comparison.
