@@ -1,6 +1,6 @@
 # Sentinel web workspace
 
-Browser-first incident response UI on branch `desktop-ui`, based on `council` commit `b2dc838`. Run activity comes from the actual council protocol. All incidents and execution remain simulated. Demo mode uses deterministic seats; live mode calls the configured model services. There is no automatic live-to-demo fallback.
+Browser-first incident response UI on branch `desktop-ui`, synced with `council` commit `e0312bd`. Run activity comes from the actual council protocol. All incidents and execution remain simulated. Demo mode uses deterministic seats; live mode calls the configured model services. There is no automatic live-to-demo fallback.
 
 ## Open locally
 
@@ -58,3 +58,4 @@ npm --prefix desktop test
 ```
 
 Approval tests exercise actual pipeline blocking, rejection, timeout, duplicate/stale decision handling, unchanged binding escalation and ordered incremental events. Live-model correctness is the pipeline team's responsibility; a working web Demo does not claim all live services are ready.
+
