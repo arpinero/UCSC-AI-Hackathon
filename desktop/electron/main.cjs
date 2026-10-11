@@ -2,15 +2,42 @@ const { app, BrowserWindow, ipcMain, session, dialog, Notification } = require('
 const path = require('node:path');
 const fs = require('node:fs');
 const { validateBase, validatePath } = require('./security.cjs');
-let main, base = 'http://127.0.0.1:8787', connectionFile, csrf='';
+const { resolveCommand, startBridge, waitForHealth } = require('./bridge-process.cjs');
+let main, base = 'http://127.0.0.1:8787', connectionFile, csrf='', bridge = null;
 app.setName('Sentinel');
 app.setAppUserModelId('org.ucsc.sentinel');
 function trusted(event) {
   if (!main || event.sender !== main.webContents || event.senderFrame !== main.webContents.mainFrame) throw new Error('Untrusted renderer');
 }
-app.whenReady().then(() => {
+function fail(message) {
+  dialog.showErrorBox('Sentinel could not start', message);
+  app.exit(1);
+}
+// Starts the bundled bridge on a free loopback port. SENTINEL_USE_SAVED_CONNECTION=1 instead reuses the
+// last bridge URL saved in Connection settings (a bridge you started yourself, or a private tunnel).
+async function connectBridge() {
   connectionFile = path.join(app.getPath('userData'), 'connection.json');
-  try { base = validateBase(JSON.parse(fs.readFileSync(connectionFile, 'utf8')).url); } catch {}
+  if (process.env.SENTINEL_USE_SAVED_CONNECTION === '1') {
+    try { base = validateBase(JSON.parse(fs.readFileSync(connectionFile, 'utf8')).url); return; } catch {}
+  }
+  const command = resolveCommand({ packaged: app.isPackaged, resourcesPath: process.resourcesPath, repoRoot: path.join(__dirname, '..', '..') });
+  const started = await startBridge({ ...command, dataDir: path.join(app.getPath('userData'), 'reports') });
+  bridge = started.child;
+  base = 'http://127.0.0.1:' + started.port;
+  if (!(await waitForHealth(base))) throw new Error('The Sentinel bridge started but did not answer health checks.');
+}
+function stopBridge() {
+  if (bridge && bridge.exitCode === null) bridge.kill();
+  bridge = null;
+}
+app.on('before-quit', stopBridge);
+app.on('quit', stopBridge);
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) app.quit();
+app.whenReady().then(async () => {
+  if (!gotLock) return;
+  try { await connectBridge(); } catch (error) { return fail(error.message); }
+  if (bridge) bridge.on('exit', code => { if (main && !main.isDestroyed()) fail('The Sentinel bridge stopped unexpectedly (exit ' + code + ').'); });
   const transport = session.fromPartition('persist:sentinel-connection');
   main = new BrowserWindow({ width: 1460, height: 980, minWidth: 980, minHeight: 680,
     title: 'Sentinel — Incident workspace', backgroundColor: '#f8f7f4',

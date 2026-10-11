@@ -4,3 +4,5 @@ release/
 *.log
 
 upstream/source/
+build/
+release/

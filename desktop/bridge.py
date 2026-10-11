@@ -286,21 +286,22 @@ class Handler(BaseHTTPRequestHandler):
             self.output({'error': str(exc)}, 400)
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=8787)
-    parser.add_argument('--data', default='reports/desktop')
+    parser.add_argument('--port', type=int, default=8787, help='Loopback port; 0 picks a free port')
+    parser.add_argument('--data', default=os.environ.get('SENTINEL_DATA_DIR', 'reports/desktop'))
     parser.add_argument('--pace', type=float, default=0.6)
     parser.add_argument('--origin', action='append', default=[], help='Additional trusted browser origin, such as a private devtunnel URL')
     parser.add_argument('--web-root', default=str(Path(__file__).parent / 'web-build'))
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     server = ThreadingHTTPServer(('127.0.0.1', args.port), Handler)
+    port = server.server_address[1]
     server.workspace = Workspace(args.data, args.pace)
     server.csrf_token = uuid.uuid4().hex
     server.web_root = Path(args.web_root).resolve()
-    server.allowed_origins = {f'http://127.0.0.1:{args.port}', f'http://localhost:{args.port}',
+    server.allowed_origins = {f'http://127.0.0.1:{port}', f'http://localhost:{port}',
         'http://127.0.0.1:5173', 'http://localhost:5173'} | {o.rstrip('/') for o in args.origin}
-    print(f'Sentinel bridge listening at http://127.0.0.1:{args.port}', flush=True)
+    print(f'Sentinel bridge listening at http://127.0.0.1:{port}', flush=True)
     server.serve_forever()
 
 

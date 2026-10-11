@@ -149,4 +149,26 @@ class WebServerTests(unittest.TestCase):
                 urlopen(Request(self.base+'/api/runs',data=b'{}',headers={'Content-Type':'application/json',**headers}))
             self.assertEqual(error.exception.code,403)
 
+class RelocatableLaunchTests(unittest.TestCase):
+    def test_entry_point_runs_from_other_directory_on_free_port(self):
+        import os, subprocess, sys, re
+        root = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as tmp:
+            env = {**os.environ, 'PYTHONPATH': str(root), 'SENTINEL_DATA_DIR': str(Path(tmp) / 'data')}
+            process = subprocess.Popen([sys.executable, '-m', 'desktop.sentinel_server', '--port', '0'],
+                cwd=tmp, env=env, stdout=subprocess.PIPE, text=True)
+            try:
+                port = int(re.search(r':(\d+)', process.stdout.readline()).group(1))
+                self.assertGreater(port, 0)
+                health = json.load(urlopen(f'http://127.0.0.1:{port}/api/health', timeout=10))
+                self.assertTrue(health['simulation_only'])
+                self.assertEqual(len(json.load(urlopen(f'http://127.0.0.1:{port}/api/cases', timeout=10))), 57)
+                self.assertTrue((Path(tmp) / 'data').is_dir())
+                self.assertFalse((Path(tmp) / 'reports').exists())
+            finally:
+                process.terminate()
+                process.wait(10)
+                process.stdout.close()
+
+
 if __name__=='__main__': unittest.main()

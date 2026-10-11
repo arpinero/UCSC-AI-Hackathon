@@ -52,6 +52,35 @@ API: `GET /api/health`, `/api/cases`, `/api/models`, `/api/runs`, `/api/runs/{id
 
 The preserved llama.cpp source and reused components are documented in `upstream/PROVENANCE.md`. Electron shell files are retained for later packaging; the supported workflow for this handoff is the browser app.
 
+## Linux arm64 executable (GX10)
+
+Sentinel can be packaged as a single desktop app: Electron starts a frozen copy of the Python bridge on a free loopback port, waits for its health check, and opens the UI. Nothing else needs to be launched, and Demo mode works with no network.
+
+Build on the GX10 itself so the Python bridge is native aarch64 (needs Node 22.12+, Python 3.10+ with `venv`, and network access the first time to download Electron and the packaging tools):
+
+```bash
+desktop/scripts/build-exe.sh        # AppImage + .deb in desktop/release
+desktop/scripts/build-exe.sh dir    # unpacked app only: desktop/release/linux-arm64-unpacked/sentinel
+```
+
+The script runs `npm ci`, the frontend build, PyInstaller (`desktop/packaging/sentinel-server.spec`, which ships the teammate fixture and agent sources that `council/sources.py` loads by path), and electron-builder.
+
+Run it:
+
+```bash
+sudo apt install ./desktop/release/sentinel-web_0.1.0_arm64.deb && /opt/Sentinel/sentinel   # installed; also in the app menu
+./desktop/release/Sentinel-0.1.0-arm64.AppImage                           # portable
+```
+
+The GX10 image has no `libfuse2`; run the AppImage with `APPIMAGE_EXTRACT_AND_RUN=1` or install `libfuse2t64`. Incident history is stored under `~/.config/sentinel/reports`.
+
+Things to know:
+
+- **Live mode still needs the model services.** The executable does not bundle model weights. For Live, start Ollama and the Containment, Compliance and (optionally) Forensics services first, and set the same `COUNCIL_*` environment variables as for the bridge. The app passes its environment to the bridge.
+- **Sandbox.** Chromium's process sandbox needs a root-owned setuid helper. The `.deb` installs it that way. The AppImage and unpacked build lack that, so their launcher starts Electron with `--no-sandbox`. Renderer isolation, the CSP and the IPC route allowlist still apply. Use the `.deb` when the sandbox matters.
+- **Remote bridge.** `SENTINEL_USE_SAVED_CONNECTION=1 /opt/Sentinel/sentinel` reuses the bridge URL saved in Connection settings instead of starting a local one.
+- Everything remains simulated; incidents and actions never touch real hosts.
+
 ## Validation
 
 ```bash

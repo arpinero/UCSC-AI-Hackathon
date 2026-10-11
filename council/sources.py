@@ -11,7 +11,8 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+# A PyInstaller bundle unpacks data files under sys._MEIPASS instead of the source tree.
+ROOT = Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parent.parent))
 CONTAINMENT_DIR = ROOT / 'agents' / 'containment'
 COMPLIANCE_DIR = ROOT / 'agents' / 'compliance'
 COMPLIANCE_REALWORLD = COMPLIANCE_DIR / 'realworld'

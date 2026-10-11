@@ -77,5 +77,33 @@
       "No browser console errors"
     ],
     "asus_deployment": "Pending pull: VS Code remote editor rejected client as unauthorized; existing ASUS app remained online. No runtime restart or permission changes performed."
+  },
+  "linux_arm64_executable": {
+    "date": "2026-10-11",
+    "branch": "sentinel-exe",
+    "host": "ASUS Ascent GX10 (aarch64, Ubuntu 24.04)",
+    "artifacts": [
+      "Sentinel-0.1.0-arm64.AppImage (129 MB)",
+      "sentinel-web_0.1.0_arm64.deb (97 MB; installs to /opt/Sentinel, no /usr/bin symlink)",
+      "linux-arm64-unpacked"
+    ],
+    "frozen_bridge": "PyInstaller 6.22.3 aarch64 build, 21 MB; run from an unrelated directory it served 57 cases and completed a mock run with written approval",
+    "packaged_app_smoke": [
+      "Unpacked app and AppImage both started the bundled bridge on a free loopback port",
+      "window.sentinel IPC returned health and 57 cases",
+      "Mock investigation paused for approval, accepted a written approval, and completed",
+      "UI loaded the finished run",
+      "Closing the app stopped the bridge process"
+    ],
+    "tests": {
+      "python": 40,
+      "javascript": 18,
+      "svelte_check": "0 errors, 0 warnings"
+    },
+    "not_verified": [
+      "Live-model run from the packaged app",
+      ".deb installation (dpkg-deb metadata inspected only)",
+      "Offline behaviour with the network physically disconnected"
+    ]
   }
 }
