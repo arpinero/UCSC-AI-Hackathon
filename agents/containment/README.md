@@ -1,3 +1,5 @@
+**Current team handoff:** See [READINESS.md](READINESS.md). Use containment_client.py with the Qwen API profile for the qualified integration path. Latest outcome result: 44/48 with four excess-isolation failures.
+
 # Containment agent
 
 Foundation-Sec-8B-Instruct proposes reversible containment controls for the hackathon simulator. The Python validator rejects unsupported actions before returning an accepted proposal. There is no real firewall, endpoint, account, or shell executor in this package.
@@ -96,3 +98,4 @@ Read `BENCHMARK.md` for the new deterministic simulator and 48-case outcome benc
 - [NVIDIA Spark serving instructions](https://build.nvidia.com/spark/vllm/instructions)
 - [NVIDIA container release](https://docs.nvidia.com/deeplearning/frameworks/vllm-release-notes/rel-26-01.html)
 - [vLLM structured outputs](https://docs.vllm.ai/en/v0.11.1/features/structured_outputs/)
+
