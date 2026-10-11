@@ -23,6 +23,7 @@ env -u COUNCIL_FIXING_ENDPOINT -u COUNCIL_FIXING_MODEL \
 
 The optional Recovery model endpoint on 8001 was tested first. Run `20314cc16b4749b094318fc24e10e48d` completed Containment in 46.045 seconds, then Recovery timed out after 240 seconds. That failure is retained in the event journal; it was not replaced with mock output. The optional model service was left untouched.
 
-The subsequent real-model run is `4d36e846d28842a79972514929df3fee`. Its completion is not claimed until the recorded protocol result is inspected. Open a specific investigation using `?run=RUN_ID` on the ASUS UI address.
+The subsequent real-model run is `4d36e846d28842a79972514929df3fee`. All four stages returned validated live responses: Containment 30.56s, Recovery 17.566s, Forensics 100.366s, Compliance 61.513s. Compliance requested human review; the run escalated without executing actions. This verifies real service integration through a policy escalation. It does not verify live unanimous approval or production incident response. Open a specific investigation using `?run=RUN_ID` on the ASUS UI address.
 
 The UI now preflights required live services before starting a run. The model inventory reports the actual configured routes, including shared inference, instead of displaying an unused specialist server. Current checks: 35 Python tests, 6 JavaScript tests, and a clean frontend check/build.
+

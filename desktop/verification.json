@@ -1,6 +1,6 @@
 {
   "pipeline_base": "e0312bd",
-  "live_model_run": "ASUS run 20314cc16b4749b094318fc24e10e48d: Containment completed in 46.045 seconds; Recovery on port 8001 timed out after 240 seconds. End-to-end live execution is not verified.",
+  "live_model_run": "ASUS run 4d36e846d28842a79972514929df3fee: all four stages returned validated live responses. Compliance requested human review, so the protocol escalated without executing actions. Recovery used the supported real gemma4:26b shared-model route; Forensics used its dedicated API on 8747.",
   "upstream": "b97ebdc98f6053604a19d861c08d8087601b96e0",
   "build": "passed",
   "frontend_check": "0 errors, 0 warnings",
@@ -14,7 +14,7 @@
     "Demo context chat returned actual recorded metrics"
   ],
   "deployment": "browser-first",
-  "python_tests": 34,
+  "python_tests": 35,
   "date": "2026-10-10",
   "branch": "desktop-ui",
   "javascript_tests": 6,
@@ -24,5 +24,6 @@
     "Written approval recorded through the browser",
     "Simulator outcomes displayed and residual uncertainty retained",
     "No browser console errors after snapshot/poll race fix"
-  ]
+  ],
+  "prior_live_failure": "Run 20314cc16b4749b094318fc24e10e48d: optional Recovery endpoint on 8001 timed out at 240 seconds. Failure retained; specialist server untouched."
 }
