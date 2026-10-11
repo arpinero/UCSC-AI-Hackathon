@@ -10,8 +10,9 @@ import agent
 import server
 
 
-def call(base, path, body=None):
-    req = urllib.request.Request(base + path, data=body, method='POST' if body is not None else 'GET')
+def call(base, path, body=None, headers=None):
+    headers = headers or ({'Content-Type': 'application/json'} if body is not None else {})
+    req = urllib.request.Request(base + path, data=body, headers=headers, method='POST' if body is not None else 'GET')
     try:
         with urllib.request.urlopen(req) as r:
             return r.status, json.load(r)
@@ -44,6 +45,13 @@ class ServerTest(unittest.TestCase):
         self.assertEqual(call(self.base, '/review', b'{"incident": {}}')[0], 400)  # real validate_incident
         self.assertEqual(call(self.base, '/nope')[0], 404)
         self.assertEqual(call(self.base, '/nope', b'{}')[0], 404)
+
+    def test_rejects_browser_style_requests(self):
+        with mock.patch.object(agent, 'propose') as p:
+            self.assertEqual(call(self.base, '/review', b'{}', {'Content-Type': 'text/plain'})[0], 415)
+            self.assertEqual(call(self.base, '/review', b'{}', {'Content-Type': 'application/json', 'Host': 'evil.example:8020'})[0], 403)
+            self.assertEqual(call(self.base, '/health', None, {'Host': 'evil.example'})[0], 403)
+        p.assert_not_called()
 
 
 if __name__ == '__main__':

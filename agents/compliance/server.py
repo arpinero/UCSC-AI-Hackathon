@@ -6,6 +6,7 @@ import os
 import agent
 
 PORT = int(os.environ.get('COMPLIANCE_PORT', '8020'))
+LOCAL_HOSTS = {'127.0.0.1', 'localhost'}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -17,14 +18,29 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def local(self):
+        # Loopback bind alone doesn't stop a browser on the box: DNS rebinding sends a
+        # foreign Host header, and a cross-site form post can't set a JSON content type.
+        host = (self.headers.get('Host') or '').rsplit(':', 1)[0]
+        if host not in LOCAL_HOSTS:
+            self.respond(403, {'error': 'Host must be 127.0.0.1 or localhost'})
+            return False
+        return True
+
     def do_GET(self):
+        if not self.local():
+            return
         if self.path != '/health':
             return self.respond(404, {'error': 'Unknown route'})
         self.respond(200, {'status': 'ok', 'model': agent.MODEL, 'endpoint': agent.ENDPOINT})
 
     def do_POST(self):
+        if not self.local():
+            return
         if self.path != '/review':
             return self.respond(404, {'error': 'Unknown route'})
+        if not (self.headers.get('Content-Type') or '').startswith('application/json'):
+            return self.respond(415, {'error': 'Content-Type must be application/json'})
         try:
             self.connection.settimeout(10)
             size = int(self.headers.get('Content-Length', '0'))
