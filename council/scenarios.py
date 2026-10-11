@@ -43,7 +43,9 @@ def attach_fixing(incident, technique, variant):
     fix['hosts'] = [{'id': a['id'], 'critical': a.get('critical', False)} for a in hosts]
     for e in fix['evidence']:
         e['observation'] = e['observation'].replace(old, host)
-        e['actionable_for'] = []
+        # Fixing artifacts are informational for Containment, but a live model may reasonably ask to
+        # investigate them. Offer the one legal, read-only response: an evidence request on the host.
+        e['actionable_for'] = [{'kind': 'request_evidence', 'target_id': host}]
         e['source_host_ids'] = [host]
     incident['evidence'].extend(copy.deepcopy(fix['evidence']))
     return fix, truth
