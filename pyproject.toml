@@ -32,6 +32,14 @@ inference = [
     "peft",
 ]
 
+# Stage B (agntcy-engineer proposal, coordinator-approved 2026-10-11):
+# slim-bindings==2.2.0 verified on aarch64/py3.12 by a genuine SLIM exchange
+# (tests/messaging/test_messaging_slim.py). Optional: SLIM tests skip cleanly
+# without it; memory + HTTP/A2A transports need no extra dependencies.
+slim = [
+    "slim-bindings==2.2.0",
+]
+
 [tool.setuptools.packages.find]
 where = ["src", "."]
 include = ["forensics", "forensics.*", "contracts", "coordination"]
