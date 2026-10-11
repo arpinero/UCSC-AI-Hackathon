@@ -1,6 +1,9 @@
 export type Event = { id: number; time: string; type: string; data: any };
 export type Run = { id: string; case_id: string; mode: 'mock'|'live'; status: string; created: string; events?: Event[]; pending?: any; result?: any };
 export type Case = { id: string; title: string; family: string; evidence_count: number };
+export function mergeEvents(existing: Event[], incoming: Event[]): Event[] {
+  return [...new Map([...existing, ...incoming].map(event => [event.id, event])).values()].sort((a, b) => a.id - b.id);
+}
 export type DesktopAPI = {
   request: (path: string, body?: unknown) => Promise<any>;
   connection: () => Promise<string>;

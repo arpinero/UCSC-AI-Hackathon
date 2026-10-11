@@ -4,7 +4,7 @@
   import Button from '../lib/ui/button.svelte';
   import Textarea from '../lib/ui/textarea.svelte';
   import Badge from '../lib/ui/badge.svelte';
-  import { request, roleNames, summary, friendly, type Run, type Event, type Case } from './api';
+  import { request, mergeEvents, roleNames, summary, friendly, type Run, type Event, type Case } from './api';
   let cases = $state<Case[]>([]), runs = $state<Run[]>([]), current = $state<Run|null>(null);
   let events = $state<Event[]>([]), models = $state<any>(null), connected = $state(false);
   let view = $state('activity'), modal = $state(''), input = $state(''), error = $state(''), search = $state('');
@@ -12,7 +12,7 @@
   let caseId = $state('mitre-T1041'), url = $state('http://127.0.0.1:8787'), decision = $state<'approve'|'reject'|null>(null);
   let pane: HTMLDivElement;
   let composer = $state<HTMLTextAreaElement|null>(null);
-  let selectionVersion = 0, notified = '', pollInFlight = false;
+  let selectionVersion = 0, notified = '', pollInFlight = false, selectionLoading = false;
   const roles = ['containment','forensics','compliance','fixing'];
   const icons: Record<string, any> = {containment:Shield,forensics:Fingerprint,compliance:ShieldCheck,fixing:Wrench,telemetry:Radio};
   const roleNotes: Record<string,string> = {containment:'Limit the blast radius',forensics:'Preserve and trace evidence',compliance:'Review obligations & policy',fixing:'Restore with verification'};
@@ -41,14 +41,14 @@
   }
   async function readModels() { try { models = await request('/api/models'); } catch { models = null; } }
   async function poll() {
-    if (!current || pollInFlight) return;
+    if (!current || pollInFlight || selectionLoading) return;
     pollInFlight = true;
     const id = current.id, version = selectionVersion;
     try {
       const update = await request(`/api/runs/${id}?after=${events.length}`);
       if (version !== selectionVersion || id !== current?.id) return;
       const nearEnd = !pane || pane.scrollHeight - pane.scrollTop - pane.clientHeight < 120;
-      current = update; events = [...events, ...update.events]; connected = true;
+      current = update; events = mergeEvents(events, update.events); connected = true;
       if (update.pending && notified !== update.pending.id) {
         notified = update.pending.id; window.sentinel?.notify();
       }
@@ -58,9 +58,11 @@
   }
   async function selectRun(run:Run) {
     const version = ++selectionVersion;
+    selectionLoading = true;
     current = run; events = []; input = ''; decision = null; error = ''; view = 'activity';
     try { const data = await request(`/api/runs/${run.id}`); if (version === selectionVersion) {current=data; events=data.events;} }
-    catch(e:any) {error=e.message;}
+    catch(e:any) {if (version === selectionVersion) error=e.message;}
+    finally {if (version === selectionVersion) selectionLoading=false;}
   }
   async function start() {
     starting = true; error = '';

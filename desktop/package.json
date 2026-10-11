@@ -10,7 +10,7 @@
     "build": "vite build --outDir web-build",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "start": "node scripts/serve.mjs",
-    "test": "node --test electron/*.test.cjs"
+    "test": "node --test electron/*.test.cjs src/app/*.test.mjs"
   },
   "dependencies": {
     "svelte": "^5.38.2",
