@@ -113,6 +113,23 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(roles['forensics']['endpoint'], 'http://127.0.0.1:8747/health')
         self.assertFalse(roles['forensics']['shared'])
 
+    def test_forensics_model_label_is_configured_and_marked_as_such(self):
+        from unittest.mock import patch
+        health = lambda url: {'status': 'ok'} if url.endswith('/health') else {'models': []}
+        env = {'COUNCIL_MODEL': 'gemma4:26b', 'COUNCIL_FORENSICS_URL': 'http://127.0.0.1:8747'}
+        with patch.dict('os.environ', {**env, 'COUNCIL_FORENSICS_MODEL': 'fdtn-ai/Foundation-Sec-8B-Instruct'}, clear=True), patch('desktop.bridge.health_read', side_effect=health):
+            with urlopen(self.base+'/api/models') as response:
+                forensics = {i['role']: i for i in json.load(response)['services']}['forensics']
+        self.assertEqual((forensics['model'], forensics['model_source']), ('fdtn-ai/Foundation-Sec-8B-Instruct', 'configured'))
+        with patch.dict('os.environ', env, clear=True), patch('desktop.bridge.health_read', side_effect=health):
+            with urlopen(self.base+'/api/models') as response:
+                forensics = {i['role']: i for i in json.load(response)['services']}['forensics']
+        self.assertEqual((forensics['model'], forensics['model_source']), ('Identity not reported', 'unreported'))
+        with patch.dict('os.environ', {**env, 'COUNCIL_FORENSICS_MODEL': 'ignored-label'}, clear=True), patch('desktop.bridge.health_read', return_value={'status': 'ok', 'model': 'service-says-this'}):
+            with urlopen(self.base+'/api/models') as response:
+                forensics = {i['role']: i for i in json.load(response)['services']}['forensics']
+        self.assertEqual((forensics['model'], forensics['model_source']), ('service-says-this', 'service'))
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.server=ThreadingHTTPServer(('127.0.0.1',0),Handler)

@@ -229,11 +229,16 @@ class Handler(BaseHTTPRequestHandler):
                     ('forensics', os.environ['COUNCIL_FORENSICS_URL'] + '/health' if os.getenv('COUNCIL_FORENSICS_URL') else shared_health),
                     ('fixing', os.environ['COUNCIL_FIXING_ENDPOINT'].removesuffix('/v1') + '/health' if os.getenv('COUNCIL_FIXING_ENDPOINT') else shared_health)]
                 items = []
+                # The Forensics API's /health reports no model. COUNCIL_FORENSICS_MODEL supplies a label for it,
+                # and 'model_source' keeps that label distinct from an identity the service reported itself.
+                configured = {'forensics': os.getenv('COUNCIL_FORENSICS_MODEL', '').strip()}
                 for role, url in services:
                     info = health_read(url)
+                    reported = (info or {}).get('model')
+                    source = 'shared' if url == shared_health else 'service' if reported else 'configured' if configured.get(role) else 'unreported'
                     items.append({'role': role, 'reachable': info is not None, 'health': info,
-                        'required': True, 'shared': url == shared_health,
-                        'model': client.model if url == shared_health else (info or {}).get('model', 'Identity not reported'), 'endpoint': url})
+                        'required': True, 'shared': url == shared_health, 'model_source': source,
+                        'model': client.model if url == shared_health else reported or configured.get(role) or 'Identity not reported', 'endpoint': url})
                 resident = health_read(client.endpoint.removesuffix('/api') + '/api/ps') if client.endpoint.endswith('/api') else None
                 return self.output({'checked_at': now(), 'services': items, 'running_models': (resident or {}).get('models', []),
                     'shared_inference': {'model': ModelClient().model, 'endpoint': ModelClient().endpoint}})
