@@ -67,6 +67,15 @@
       "Expandable scope, preservation, expiry and rollback",
       "Suggestions respect pending decisions and escalation"
     ],
-    "browser_checks": []
+    "browser_checks": [
+      "Local source preview against existing saved run; no new model run started",
+      "Stage opens latest non-vote response; all four roles selectable",
+      "Scope and rollback expand to recorded values",
+      "Citation F1 opens only F1 evidence; All evidence restores the list",
+      "Follow-up fills composer without submitting",
+      "Evidence follow-ups reachable at scroll end",
+      "No browser console errors"
+    ],
+    "asus_deployment": "Pending pull: VS Code remote editor rejected client as unauthorized; existing ASUS app remained online. No runtime restart or permission changes performed."
   }
 }

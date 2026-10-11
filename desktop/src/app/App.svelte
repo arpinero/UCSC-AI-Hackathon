@@ -37,7 +37,7 @@
   let result = $derived(current?.result);
   let evidenceIds = $derived((incident?.evidence||[]).map((e:any)=>String(e.id)));
   let latestResponse = $derived([...events].reverse().find(e=>e.type==='agent_finished'));
-  let agentResponse = $derived([...events].reverse().find(e=>e.type==='agent_finished' && e.data.role===selectedAgent));
+  let agentResponse = $derived([...events].reverse().find(e=>e.type==='agent_finished' && e.data.role===selectedAgent && e.data.operation!=='vote') || [...events].reverse().find(e=>e.type==='agent_finished' && e.data.role===selectedAgent));
   let quickActions = $derived(suggestions({running,pending:hasPending,decision:!!decision,escalated:!!result?.human_alert?.required,view,latestRole:latestResponse?.data.role||''}));
   let humanReview = $derived(hasPending || !!result?.human_alert?.required);
   function serviceFor(role:string) {return models?.services?.find((s:any)=>s.role===role);}
