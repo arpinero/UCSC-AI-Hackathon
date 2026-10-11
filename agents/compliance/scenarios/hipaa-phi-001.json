@@ -1,0 +1,52 @@
+{
+  "incident_id": "hipaa-phi-001",
+  "telemetry_version": 1,
+  "evidence": [
+    {
+      "id": "E6",
+      "observation": "Confirmed attacker queried the patient records database from web-01 and exported 3,400 records with diagnoses, all California patients."
+    }
+  ],
+  "compliance": {
+    "discovered_at": "2026-10-09T09:00:00Z",
+    "now": "2026-10-10T15:00:00Z",
+    "organization": {
+      "hipaa_covered_entity": true
+    },
+    "affected_data": [
+      {
+        "class": "phi",
+        "jurisdictions": [
+          "US-CA"
+        ],
+        "records": 3400
+      },
+      {
+        "class": "personal_data",
+        "jurisdictions": [
+          "US-CA"
+        ],
+        "records": 3400
+      }
+    ],
+    "legal_hold": false,
+    "evidence_preserved_host_ids": []
+  },
+  "peer_proposals": [
+    {
+      "role": "containment",
+      "proposal": {
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01"
+          },
+          {
+            "kind": "restrict_lateral",
+            "target_id": "web-01"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "incident_id": "public-co-001",
+  "telemetry_version": 1,
+  "evidence": [
+    {
+      "id": "E4",
+      "observation": "Ransomware confirmed encrypting the order-processing cluster. Orders halted for 9 hours. No evidence personal data left the network."
+    }
+  ],
+  "compliance": {
+    "discovered_at": "2026-10-09T09:00:00Z",
+    "now": "2026-10-10T15:00:00Z",
+    "organization": {
+      "public_company": true
+    },
+    "affected_data": [],
+    "legal_hold": false,
+    "evidence_preserved_host_ids": []
+  },
+  "peer_proposals": [
+    {
+      "role": "containment",
+      "proposal": {
+        "actions": [
+          {
+            "kind": "block_egress",
+            "target_id": "c2-01"
+          },
+          {
+            "kind": "restrict_lateral",
+            "target_id": "web-01"
+          }
+        ]
+      }
+    }
+  ]
+}
