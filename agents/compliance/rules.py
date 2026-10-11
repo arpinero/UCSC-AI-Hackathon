@@ -26,7 +26,10 @@ RULES = {
         'notify': 'Affected individuals; HHS; media if >500 residents of a state',
         'applies': lambda org, data, juris: 'phi' in data and org.get('hipaa_covered_entity', False),
         'clock': 'discovery', 'days': 60,
-        'note': 'Without unreasonable delay, no later than 60 calendar days after discovery (45 CFR 164.404).',
+        'note': ('Without unreasonable delay, no later than 60 calendar days after discovery (45 CFR 164.404). '
+                 'Notification is owed only after a breach of unsecured PHI (164.404(a)(1)). 164.402: unsecured PHI is PHI '
+                 '"not rendered unusable, unreadable, or indecipherable to unauthorized persons through the use of a technology '
+                 'or methodology specified by the Secretary" in HHS guidance.'),
         'source': 'https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D',
     },
     'nydfs_500_17': {
