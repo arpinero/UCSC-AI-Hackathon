@@ -40,7 +40,11 @@ RULES = {
         'notify': 'National CSIRT / competent authority',
         'applies': lambda org, data, juris: org.get('nis2_entity', False),
         'clock': 'discovery', 'hours': 24,
-        'note': 'Early warning within 24h of awareness of a significant incident; full notification 72h; final report 1 month (Art. 23).',
+        'note': ('Early warning within 24h of awareness of a significant incident; full notification 72h; final report 1 month (Art. 23). '
+                 'Art. 23(3): significant if it (a) has caused or is capable of causing severe operational disruption of the services '
+                 'or financial loss for the entity concerned, or (b) has affected or is capable of affecting other natural or legal persons '
+                 'by causing considerable material or non-material damage. Cross-border impact is something the early warning reports '
+                 '(Art. 23(4)(a)), not a condition for significance. Wording checked against a mirror; EUR-Lex blocked the automated check.'),
         'source': 'https://eur-lex.europa.eu/eli/dir/2022/2555/oj',
     },
     'ca_1798_82': {
