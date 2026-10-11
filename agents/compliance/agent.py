@@ -81,9 +81,9 @@ triggered and not_triggered must cite at least one evidence ID. Give an honest
 confidence_pct. Suspicion alone is not confirmation.
 Review EVERY action in peer_proposals exactly once by kind and target_id:
   support: legally safe. object: risky; say what would make it safe.
-  veto: required when legal_hold is true, the kind is not in safe_kinds, and the
-    target is not in evidence_preserved_host_ids; never otherwise. Use veto, not
-    object, in that case. A target in evidence_preserved_host_ids is never vetoed.
+  veto: required for exactly the actions listed in veto_required (computed from
+    legal hold, safe_kinds and evidence_preserved_host_ids); never for any other.
+    Use veto, not object, for those.
 Containment controls (isolation, egress blocks, session revocation) normally
 preserve evidence; do not obstruct them. Ask for memory and disk capture before
 anything destructive in preservation_requests. Set request_human when the council
@@ -155,6 +155,8 @@ def decoding_schema(incident, peer_proposals):
     if actions:
         rv['items']['properties']['kind']['enum'] = sorted({k for k, _ in actions})
         rv['items']['properties']['target_id']['enum'] = sorted({t for _, t in actions})
+    if not held_destructive(incident, peer_proposals):  # nothing may be vetoed, so don't offer it
+        rv['items']['properties']['stance']['enum'] = ['support', 'object']
     for items in (ob['items'], rv['items']):
         if evidence:
             items['properties']['evidence_ids']['items']['enum'] = evidence
@@ -251,6 +253,7 @@ def propose(incident, endpoint=ENDPOINT, model=MODEL, peers=None, previous=None,
     validate_incident(incident)
     clocks = rules.deadlines(incident['compliance'])
     context = {'incident': incident, 'candidate_regimes': clocks, 'peer_proposals': peer_proposals or [],
+               'veto_required': [{'kind': k, 'target_id': t} for k, t in held_destructive(incident, peer_proposals)],
                'peer_messages': peers or [], 'previous_proposal': previous}
     if len(json.dumps(context).encode()) > 48000:
         raise ValueError('Context too large; summarize telemetry before inference')

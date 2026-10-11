@@ -121,6 +121,11 @@ class ValidatorTests(unittest.TestCase):
         self.assertNotIn('enum', schema['properties']['assessment'])
         self.assertNotIn('enum', ob['items']['properties']['reason'])
 
+    def test_decoding_schema_offers_veto_only_when_one_is_required(self):
+        stance = lambda i, p: decoding_schema(i, p)['properties']['action_reviews']['items']['properties']['stance']['enum']
+        self.assertIn('veto', stance(*by_id('legal-hold-reimage-001')))
+        self.assertNotIn('veto', stance(*by_id('legal-hold-preserved-001')))
+
 
 class EscalationTests(unittest.TestCase):
     def esc(self, proposal, incident_id, peers=None):
